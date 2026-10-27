@@ -3,106 +3,178 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>UPSC Syllabus-Aligned Current Affairs</title>
+  <title>UPSC CSE Syllabus-Aligned Daily Portal</title>
   <style>
+    /* Reset & Base Variables */
     * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    :root {
+      --bg-gradient: linear-gradient(135deg, #090d16 0%, #111827 50%, #0b0f19 100%);
+      --surface-glass: rgba(17, 24, 39, 0.75);
+      --surface-glass-hover: rgba(31, 41, 55, 0.85);
+      --border-color: rgba(55, 65, 81, 0.5);
+      --border-color-hover: rgba(56, 189, 248, 0.6);
+      --text-main: #f3f4f6;
+      --text-muted: #9ca3af;
+      
+      /* GS Accent Color Mapping */
+      --gs1-color: #f59e0b;
+      --gs1-bg: rgba(245, 158, 11, 0.15);
+      --gs1-border: rgba(245, 158, 11, 0.35);
+
+      --gs2-color: #3b82f6;
+      --gs2-bg: rgba(59, 130, 246, 0.15);
+      --gs2-border: rgba(59, 130, 246, 0.35);
+
+      --gs3-color: #10b981;
+      --gs3-bg: rgba(16, 185, 129, 0.15);
+      --gs3-border: rgba(16, 185, 129, 0.35);
+
+      --gs4-color: #a855f7;
+      --gs4-bg: rgba(168, 85, 247, 0.15);
+      --gs4-border: rgba(168, 85, 247, 0.35);
+    }
+
     body {
-      background-color: #0f172a;
-      color: #f1f5f9;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg-gradient);
+      color: var(--text-main);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
       min-height: 100vh;
       padding: 2rem 1rem;
+      line-height: 1.5;
     }
-    .container { max-width: 1200px; margin: 0 auto; }
-    header { text-align: center; margin-bottom: 2rem; }
-    h1 { font-size: 2.25rem; font-weight: 700; margin-bottom: 0.5rem; color: #ffffff; }
-    .subtitle { color: #94a3b8; font-size: 0.95rem; }
-    
-    .controls { display: flex; flex-direction: column; align-items: center; gap: 1rem; margin-bottom: 2rem; }
+
+    .container { max-width: 1240px; margin: 0 auto; }
+
+    /* Header Section */
+    header { text-align: center; margin-bottom: 2.5rem; }
+    .hero-title {
+      font-size: 2.35rem; font-weight: 800; letter-spacing: -0.02em;
+      background: linear-gradient(90deg, #38bdf8 0%, #818cf8 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      margin-bottom: 0.5rem;
+    }
+    .subtitle { color: var(--text-muted); font-size: 0.95rem; max-width: 640px; margin: 0 auto; }
+
+    /* Controls: Search & Filter Bar */
+    .controls { display: flex; flex-direction: column; align-items: center; gap: 1.25rem; margin-bottom: 2.5rem; }
     .search-box {
-      width: 100%; max-width: 500px; padding: 0.75rem 1rem;
-      border-radius: 0.5rem; border: 1px solid #334155;
-      background-color: #1e293b; color: #ffffff; font-size: 0.9rem;
-      outline: none; transition: border-color 0.2s;
+      width: 100%; max-width: 540px; padding: 0.85rem 1.25rem;
+      border-radius: 9999px; border: 1px solid var(--border-color);
+      background: rgba(17, 24, 39, 0.8); color: #ffffff; font-size: 0.95rem;
+      backdrop-filter: blur(12px); outline: none; transition: all 0.2s ease;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
     }
-    .search-box:focus { border-color: #38bdf8; }
+    .search-box:focus { border-color: #38bdf8; box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2); }
 
     .filter-bar { display: flex; justify-content: center; gap: 0.5rem; flex-wrap: wrap; }
     .filter-btn {
-      background-color: #1e293b; color: #cbd5e1; border: 1px solid #334155;
-      padding: 0.5rem 1rem; border-radius: 0.5rem; cursor: pointer;
-      font-weight: 500; font-size: 0.875rem; transition: all 0.2s ease;
+      background: rgba(31, 41, 55, 0.7); color: var(--text-muted); border: 1px solid var(--border-color);
+      padding: 0.55rem 1.25rem; border-radius: 9999px; cursor: pointer;
+      font-weight: 600; font-size: 0.875rem; transition: all 0.2s ease;
     }
-    .filter-btn:hover, .filter-btn.active {
-      background-color: #0284c7; color: #ffffff; border-color: #38bdf8;
+    .filter-btn:hover { background: #374151; color: #ffffff; }
+    .filter-btn.active {
+      background: #0284c7; color: #ffffff; border-color: #38bdf8;
+      box-shadow: 0 0 12px rgba(2, 132, 199, 0.4);
     }
-    
-    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 1.5rem; }
+
+    /* Action Buttons (Print / Export) */
+    .utility-bar { display: flex; justify-content: flex-end; margin-bottom: 1rem; }
+    .btn-print {
+      background: rgba(31, 41, 55, 0.8); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.4);
+      padding: 0.45rem 0.9rem; border-radius: 0.5rem; cursor: pointer; font-size: 0.8rem;
+      font-weight: 600; display: inline-flex; align-items: center; gap: 0.4rem; transition: all 0.2s;
+    }
+    .btn-print:hover { background: rgba(56, 189, 248, 0.15); border-color: #38bdf8; }
+
+    /* Cards Grid Layout */
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 1.75rem; }
     
     .card {
-      background-color: #1e293b; border: 1px solid #334155; border-radius: 0.75rem;
-      overflow: hidden; display: flex; flex-direction: column; justify-content: space-between;
-      cursor: pointer; transition: border-color 0.2s ease, transform 0.2s ease;
+      background: var(--surface-glass); border: 1px solid var(--border-color);
+      border-radius: 1rem; backdrop-filter: blur(12px); overflow: hidden;
+      display: flex; flex-direction: column; justify-content: space-between;
+      cursor: pointer; transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
     }
-    .card:hover { border-color: #38bdf8; transform: translateY(-3px); }
-    
-    .card-img { width: 100%; height: 160px; object-fit: cover; background-color: #0f172a; display: block; }
-    .card-body { padding: 1.25rem; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; }
+    .card:hover { transform: translateY(-4px); border-color: var(--border-color-hover); background: var(--surface-glass-hover); }
 
-    .card-header { display: flex; gap: 0.4rem; align-items: center; flex-wrap: wrap; margin-bottom: 0.75rem; }
-    .badge-paper {
-      background-color: rgba(14, 165, 233, 0.2); color: #38bdf8;
-      border: 1px solid rgba(56, 189, 248, 0.3); font-size: 0.75rem;
-      font-weight: 700; padding: 0.2rem 0.4rem; border-radius: 0.375rem;
-    }
-    .badge-date {
-      background-color: #0f172a; color: #38bdf8; border: 1px solid #334155;
-      font-size: 0.75rem; font-weight: 600; padding: 0.2rem 0.4rem; border-radius: 0.25rem;
-    }
-    .badge-topic {
-      background-color: #334155; color: #cbd5e1; font-size: 0.75rem;
-      padding: 0.2rem 0.4rem; border-radius: 0.25rem;
-    }
+    .card-img { width: 100%; height: 160px; object-fit: cover; background: #0b0f19; display: block; border-bottom: 1px solid var(--border-color); }
+    .card-body { padding: 1.5rem; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; }
+
+    /* Badges & Topic Mapping */
+    .card-header { display: flex; gap: 0.4rem; align-items: center; flex-wrap: wrap; margin-bottom: 1rem; }
+    .badge { font-size: 0.75rem; font-weight: 700; padding: 0.25rem 0.55rem; border-radius: 0.375rem; text-transform: uppercase; }
     
-    .card-title { font-size: 1.15rem; font-weight: 600; color: #ffffff; margin-bottom: 0.85rem; line-height: 1.4; }
-    
-    .section-title { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.4rem; }
+    .badge-GS-1 { background: var(--gs1-bg); color: var(--gs1-color); border: 1px solid var(--gs1-border); }
+    .badge-GS-2 { background: var(--gs2-bg); color: var(--gs2-color); border: 1px solid var(--gs2-border); }
+    .badge-GS-3 { background: var(--gs3-bg); color: var(--gs3-color); border: 1px solid var(--gs3-border); }
+    .badge-GS-4 { background: var(--gs4-bg); color: var(--gs4-color); border: 1px solid var(--gs4-border); }
+
+    .badge-date { background: #090d16; color: var(--text-muted); border: 1px solid var(--border-color); font-size: 0.75rem; font-weight: 600; padding: 0.25rem 0.5rem; border-radius: 0.25rem; }
+    .badge-topic { background: #374151; color: #e5e7eb; font-size: 0.75rem; font-weight: 500; padding: 0.25rem 0.55rem; border-radius: 0.25rem; }
+
+    .card-title { font-size: 1.2rem; font-weight: 700; color: #ffffff; margin-bottom: 1rem; line-height: 1.4; }
+
+    /* Content Boxes: Prelims vs Mains */
+    .section-title { font-size: 0.725rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.4rem; }
     .prelims-title { color: #fbbf24; }
     .mains-title { color: #34d399; }
-    
-    .box { background-color: #0f172a; border: 1px solid #1e293b; padding: 0.75rem; border-radius: 0.5rem; font-size: 0.85rem; color: #cbd5e1; margin-bottom: 0.85rem; }
+
+    .box { background: rgba(11, 15, 25, 0.75); border: 1px solid rgba(55, 65, 81, 0.6); padding: 0.85rem 1rem; border-radius: 0.625rem; font-size: 0.85rem; color: #d1d5db; margin-bottom: 1rem; }
     .box ul { list-style-type: none; }
-    .box li { margin-bottom: 0.35rem; }
-    
-    .mains-box p { margin-bottom: 0.4rem; font-size: 0.85rem; color: #cbd5e1; }
-    .mains-box strong { color: #f8fafc; }
-    
-    .expand-hint { text-align: right; font-size: 0.75rem; color: #38bdf8; margin-top: 0.5rem; font-weight: 500; }
-    
-    /* Modal Styling */
+    .box li { margin-bottom: 0.4rem; line-height: 1.4; }
+    .box li:last-child { margin-bottom: 0; }
+
+    .mains-box p { margin-bottom: 0.45rem; font-size: 0.85rem; color: #d1d5db; line-height: 1.4; }
+    .mains-box p:last-child { margin-bottom: 0; }
+    .mains-box strong { color: #f9fafb; font-weight: 600; }
+
+    .expand-hint { text-align: right; font-size: 0.775rem; color: #38bdf8; margin-top: 0.5rem; font-weight: 600; }
+
+    /* Interactive Modal View */
     .modal-overlay {
-      position: fixed; inset: 0; background-color: rgba(0, 0, 0, 0.85);
+      position: fixed; inset: 0; background: rgba(3, 7, 18, 0.85); backdrop-filter: blur(8px);
       display: none; align-items: center; justify-content: center; padding: 1rem; z-index: 100;
     }
     .modal-overlay.active { display: flex; }
     .modal-body {
-      background-color: #1e293b; border: 1px solid #475569; border-radius: 1rem;
-      max-width: 700px; width: 100%; position: relative; max-height: 90vh; overflow-y: auto; overflow-x: hidden;
+      background: #111827; border: 1px solid var(--border-color); border-radius: 1.25rem;
+      max-width: 740px; width: 100%; position: relative; max-height: 85vh; overflow-y: auto; overflow-x: hidden;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
     }
-    .modal-img { width: 100%; height: 220px; object-fit: cover; display: block; }
+    .modal-img { width: 100%; height: 220px; object-fit: cover; display: block; border-bottom: 1px solid var(--border-color); }
     .modal-padding { padding: 1.75rem; }
-    .close-btn { position: absolute; top: 1rem; right: 1rem; background: rgba(0,0,0,0.6); border: none; color: #ffffff; width: 32px; height: 32px; border-radius: 50%; font-size: 1.25rem; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 10; }
+    .close-btn {
+      position: absolute; top: 1.25rem; right: 1.25rem; background: rgba(31, 41, 55, 0.8); border: 1px solid var(--border-color);
+      color: #ffffff; width: 36px; height: 36px; border-radius: 50%; font-size: 1.25rem; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; z-index: 10; transition: all 0.2s;
+    }
+    .close-btn:hover { background: #374151; color: #38bdf8; }
+
+    /* Print View Styling (@media print) */
+    @media print {
+      body { background: #ffffff !important; color: #000000 !important; padding: 0; }
+      .controls, .hero-title, .subtitle, .expand-hint, .btn-print, .close-btn { display: none !important; }
+      .container { max-width: 100% !important; margin: 0 !important; }
+      .grid { display: block !important; }
+      .card { background: #ffffff !important; border: 1px solid #ccc !important; color: #000000 !important; margin-bottom: 2rem !important; page-break-inside: avoid; box-shadow: none !important; }
+      .box { background: #f9f9f9 !important; border: 1px solid #ddd !important; color: #111111 !important; }
+      .card-title { color: #000000 !important; }
+      .badge-paper, .badge-date, .badge-topic { border: 1px solid #999 !important; color: #000000 !important; background: #eee !important; }
+    }
   </style>
 </head>
 <body>
   <div class="container">
     <header>
-      <h1>UPSC Syllabus-Aligned Current Affairs</h1>
-      <p class="subtitle">Comprehensive daily coverage: Geopolitics, Economy, Governance, Environment, & Ethics</p>
+      <h1 class="hero-title">UPSC CSE Syllabus Portal</h1>
+      <p class="subtitle">Categorized Daily Current Affairs with Factual Prelims Pointers & Structural Mains Perspectives</p>
     </header>
 
     <div class="controls">
-      <input type="text" id="search-input" onkeyup="handleSearch()" class="search-box" placeholder="Search topics (e.g., Geopolitics, UNCLOS, DPI, Ethics)..." />
+      <input type="text" id="search-input" onkeyup="handleSearch()" class="search-box" placeholder="Search topics, articles, treaties, reports (e.g., Geopolitics, UNCLOS, DPI, Ethics)..." />
       
       <div class="filter-bar">
         <button onclick="filterNews('ALL')" class="filter-btn active">All Papers</button>
@@ -113,11 +185,16 @@
       </div>
     </div>
 
+    <div class="utility-bar">
+      <button onclick="window.print()" class="btn-print">🖨️ Export Daily Notes / Save PDF</button>
+    </div>
+
     <div id="news-container" class="grid">
-      <div style="grid-column: 1/-1; text-align: center; color: #94a3b8; padding: 3rem 0;">Loading current affairs...</div>
+      <div style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 4rem 0;">Loading daily current affairs...</div>
     </div>
   </div>
 
+  <!-- Interactive Reader View Modal -->
   <div id="detail-modal" class="modal-overlay" onclick="closeModal(event)">
     <div class="modal-body" onclick="event.stopPropagation()">
       <button onclick="closeModal()" class="close-btn">&times;</button>
@@ -137,7 +214,7 @@
         allNews = await response.json();
         renderNews(allNews);
       } catch (error) {
-        container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: #f87171; padding: 3rem 0;">Error loading current affairs payload.</div>`;
+        container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: #f87171; padding: 4rem 0;">Unable to load current affairs payload. Ensure workflow script has run.</div>`;
       }
     }
 
@@ -146,17 +223,18 @@
       container.innerHTML = '';
 
       if (!items || items.length === 0) {
-        container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: #94a3b8; padding: 3rem 0;">No topics match your query.</div>`;
+        container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 4rem 0;">No topics match your filter or search query.</div>`;
         return;
       }
 
       items.forEach((item, index) => {
         const prelimsList = (item.prelims_pointers || []).map(p => `<li>• ${p}</li>`).join('');
         const itemDate = item.date || new Date().toISOString().split('T')[0];
+        const paperTag = item.paper || 'GS-1';
         
-        // Safety check for images: hide img tag entirely if item.image is missing/invalid
+        // Offline-Safe Image Error Handling (collapses container cleanly if image fails or missing)
         const imgHtml = item.image 
-          ? `<img src="${item.image}" class="card-img" alt="News Image" onerror="this.style.display='none'" />` 
+          ? `<img src="${item.image}" class="card-img" alt="Topic Image" onerror="this.style.display='none'" />` 
           : '';
 
         const card = document.createElement('div');
@@ -168,7 +246,7 @@
           <div class="card-body">
             <div>
               <div class="card-header">
-                <span class="badge-paper">${item.paper || 'GS'}</span>
+                <span class="badge badge-${paperTag}">${paperTag}</span>
                 <span class="badge-date">${itemDate}</span>
                 <span class="badge-topic">${item.topic || 'General'}</span>
               </div>
@@ -181,11 +259,11 @@
               <div class="section-title mains-title">Mains Perspective</div>
               <div class="box mains-box">
                 <p><strong>Context:</strong> ${item.mains_perspective.context || ''}</p>
-                <p><strong>Key Takeaways:</strong> ${item.mains_perspective.key_arguments || ''}</p>
+                <p><strong>Key Arguments:</strong> ${item.mains_perspective.key_arguments || ''}</p>
                 <p><strong>Way Forward:</strong> ${item.mains_perspective.way_forward || ''}</p>
               </div>` : ''}
             </div>
-            <div class="expand-hint">Click card to expand view &rarr;</div>
+            <div class="expand-hint">Click to open full answer note &rarr;</div>
           </div>
         `;
         container.appendChild(card);
@@ -197,31 +275,32 @@
       const modal = document.getElementById('detail-modal');
       const modalContent = document.getElementById('modal-content');
       const itemDate = item.date || new Date().toISOString().split('T')[0];
-      
+      const paperTag = item.paper || 'GS-1';
+
       const imgHtml = item.image 
         ? `<img src="${item.image}" class="modal-img" alt="Modal Header" onerror="this.style.display='none'" />` 
         : '';
 
-      const prelimsList = (item.prelims_pointers || []).map(p => `<li style="margin-bottom:0.5rem; color:#f1f5f9;">• ${p}</li>`).join('');
+      const prelimsList = (item.prelims_pointers || []).map(p => `<li style="margin-bottom:0.5rem; color:#f3f4f6;">• ${p}</li>`).join('');
 
       modalContent.innerHTML = `
         ${imgHtml}
         <div class="modal-padding">
           <div style="display:flex; gap:0.4rem; align-items:center; flex-wrap:wrap; margin-bottom:0.85rem;">
-            <span class="badge-paper">${item.paper}</span>
+            <span class="badge badge-${paperTag}">${paperTag}</span>
             <span class="badge-date">${itemDate}</span>
             <span class="badge-topic">${item.topic}</span>
           </div>
-          <h2 style="font-size:1.5rem; font-weight:700; color:#ffffff; margin-bottom:1.25rem; line-height:1.3;">${item.title}</h2>
+          <h2 style="font-size:1.6rem; font-weight:800; color:#ffffff; margin-bottom:1.25rem; line-height:1.35;">${item.title}</h2>
           
           <div class="section-title prelims-title" style="font-size:0.85rem; margin-bottom:0.5rem;">Prelims Pointers</div>
-          <div class="box" style="padding:1rem;"><ul style="list-style:none;">${prelimsList}</ul></div>
+          <div class="box" style="padding:1.15rem;"><ul style="list-style:none;">${prelimsList}</ul></div>
 
           ${item.mains_perspective ? `
-          <div class="section-title mains-title" style="font-size:0.85rem; margin-bottom:0.5rem;">Mains Perspective</div>
-          <div class="box mains-box" style="padding:1rem;">
-            <p style="margin-bottom:0.5rem;"><strong>Context:</strong> ${item.mains_perspective.context || ''}</p>
-            <p style="margin-bottom:0.5rem;"><strong>Key Takeaways:</strong> ${item.mains_perspective.key_arguments || ''}</p>
+          <div class="section-title mains-title" style="font-size:0.85rem; margin-bottom:0.5rem; margin-top:1.25rem;">Mains Perspective</div>
+          <div class="box mains-box" style="padding:1.15rem;">
+            <p style="margin-bottom:0.75rem;"><strong>Context:</strong> ${item.mains_perspective.context || ''}</p>
+            <p style="margin-bottom:0.75rem;"><strong>Key Arguments:</strong> ${item.mains_perspective.key_arguments || ''}</p>
             <p><strong>Way Forward:</strong> ${item.mains_perspective.way_forward || ''}</p>
           </div>` : ''}
         </div>
