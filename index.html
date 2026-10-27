@@ -1,176 +1,113 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>UPSC Current Affairs Digest</title>
-  <style>
-    :root {
-      --bg: #0f172a;
-      --card-bg: #1e293b;
-      --text: #f8fafc;
-      --subtext: #94a3b8;
-      --accent: #38bdf8;
-      --border: #334155;
-    }
-    body {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background-color: var(--bg);
-      color: var(--text);
-      margin: 0;
-      padding: 2rem 1rem;
-    }
-    .header {
-      max-width: 900px;
-      margin: 0 auto 2rem;
-      text-align: center;
-    }
-    .header h1 {
-      font-size: 2rem;
-      margin-bottom: 0.5rem;
-    }
-    .header p {
-      color: var(--subtext);
-    }
-    .filters {
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-      margin-bottom: 2rem;
-      flex-wrap: wrap;
-    }
-    .btn {
-      background: var(--card-bg);
-      color: var(--text);
-      border: 1px solid var(--border);
-      padding: 8px 16px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: 500;
-      transition: all 0.2s ease;
-    }
-    .btn:hover, .btn.active {
-      background: var(--accent);
-      color: #000;
-      border-color: var(--accent);
-    }
-    .grid {
-      max-width: 900px;
-      margin: 0 auto;
-      display: grid;
-      gap: 1.5rem;
-    }
-    .card {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 1.5rem;
-    }
-    .badge {
-      display: inline-block;
-      background: rgba(56, 189, 248, 0.15);
-      color: var(--accent);
-      padding: 4px 10px;
-      border-radius: 4px;
-      font-size: 0.85rem;
-      font-weight: 600;
-      margin-bottom: 0.75rem;
-    }
-    .card h2 {
-      margin: 0 0 1rem;
-      font-size: 1.25rem;
-      line-height: 1.4;
-    }
-    .section-title {
-      font-size: 0.8rem;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: var(--subtext);
-      margin-top: 1rem;
-      font-weight: 700;
-    }
-    ul {
-      margin: 0.5rem 0;
-      padding-left: 1.2rem;
-    }
-    li {
-      margin-bottom: 0.4rem;
-    }
-    p {
-      margin: 0.4rem 0;
-      line-height: 1.5;
-    }
-  </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UPSC Syllabus-Aligned Current Affairs</title>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
+<body class="bg-slate-900 text-slate-100 min-h-screen font-sans">
+  <div class="max-w-6xl mx-auto px-4 py-8">
+    <header class="text-center mb-8">
+      <h1 class="text-3xl md:text-4xl font-bold tracking-tight text-white mb-2">
+        UPSC Syllabus-Aligned Current Affairs
+      </h1>
+      <p class="text-slate-400 text-sm md:text-base">
+        Daily news categorized by General Studies papers with Prelims facts & Mains perspectives
+      </p>
+    </header>
 
-  <div class="header">
-    <h1>UPSC Syllabus-Aligned Current Affairs</h1>
-    <p>Daily news categorized by General Studies papers with Prelims facts & Mains perspectives</p>
+    <!-- Navigation Tabs -->
+    <div class="flex flex-wrap justify-center gap-2 mb-8" id="filter-buttons">
+      <button onclick="filterNews('ALL')" class="filter-btn bg-sky-500 text-white px-4 py-2 rounded-lg font-medium text-sm transition">All Papers</button>
+      <button onclick="filterNews('GS-1')" class="filter-btn bg-slate-800 hover:bg-slate-700 text-slate-300 px-4 py-2 rounded-lg font-medium text-sm transition">GS-1</button>
+      <button onclick="filterNews('GS-2')" class="filter-btn bg-slate-800 hover:bg-slate-700 text-slate-300 px-4 py-2 rounded-lg font-medium text-sm transition">GS-2</button>
+      <button onclick="filterNews('GS-3')" class="filter-btn bg-slate-800 hover:bg-slate-700 text-slate-300 px-4 py-2 rounded-lg font-medium text-sm transition">GS-3</button>
+      <button onclick="filterNews('GS-4')" class="filter-btn bg-slate-800 hover:bg-slate-700 text-slate-300 px-4 py-2 rounded-lg font-medium text-sm transition">GS-4</button>
+    </div>
+
+    <!-- Content Feed Container -->
+    <div id="news-container" class="grid gap-6 md:grid-cols-2">
+      <div class="col-span-full text-center py-12 text-slate-400">Loading daily current affairs...</div>
+    </div>
   </div>
-
-  <div class="filters">
-    <button class="btn active" onclick="filterNews('ALL', event)">All Papers</button>
-    <button class="btn" onclick="filterNews('GS-1', event)">GS-1</button>
-    <button class="btn" onclick="filterNews('GS-2', event)">GS-2</button>
-    <button class="btn" onclick="filterNews('GS-3', event)">GS-3</button>
-    <button class="btn" onclick="filterNews('GS-4', event)">GS-4</button>
-  </div>
-
-  <div id="news-grid" class="grid"></div>
 
   <script>
-    let articlesData = [];
+    let allNews = [];
 
-    async function loadNews() {
-      const container = document.getElementById('news-grid');
+    async function fetchNews() {
+      const container = document.getElementById('news-container');
       try {
-        const res = await fetch('current_affairs.json');
-        if (!res.ok) throw new Error("JSON payload not found");
-        articlesData = await res.json();
-        if(articlesData.length === 0) {
-          container.innerHTML = '<p style="text-align:center;">No current affairs items found yet.</p>';
+        const response = await fetch('./current_affairs.json?v=' + new Date().getTime());
+        if (!response.ok) throw new Error('JSON file not found');
+        allNews = await response.json();
+        
+        if (allNews.length === 0) {
+          container.innerHTML = `<div class="col-span-full text-center py-12 text-slate-400">No news items classified for today yet. Re-run the pipeline from GitHub Actions!</div>`;
           return;
         }
-        renderNews(articlesData);
-      } catch (err) {
-        container.innerHTML = '<p style="text-align:center; color:#94a3b8;">Loading latest updates or database initializing...</p>';
+        renderNews(allNews);
+      } catch (error) {
+        container.innerHTML = `<div class="col-span-full text-center py-12 text-rose-400">Error loading current affairs payload. Make sure current_affairs.json exists.</div>`;
       }
     }
 
-    function renderNews(articles) {
-      const container = document.getElementById('news-grid');
-      container.innerHTML = articles.map(art => `
-        <div class="card">
-          <span class="badge">${art.paper} • ${art.topic}</span>
-          <h2>${art.title}</h2>
-          
-          <div class="section-title">📌 Prelims Pointers</div>
-          <ul>
-            ${(art.prelims_pointers || []).map(p => `<li>${p}</li>`).join('')}
-          </ul>
-          
-          <div class="section-title">📝 Mains Perspective</div>
-          <p><strong>Context:</strong> ${art.mains_perspective?.context || ''}</p>
-          <p><strong>Key Arguments:</strong> ${art.mains_perspective?.key_arguments || ''}</p>
-          <p><strong>Way Forward / Recommendations:</strong> ${art.mains_perspective?.way_forward || ''}</p>
-        </div>
-      `).join('');
+    function renderNews(items) {
+      const container = document.getElementById('news-container');
+      container.innerHTML = '';
+
+      items.forEach(item => {
+        const prelimsList = (item.prelims_pointers || []).map(p => `<li class="mb-1">• ${p}</li>`).join('');
+        
+        const card = document.createElement('div');
+        card.className = "bg-slate-800 border border-slate-700 rounded-xl p-6 shadow-lg hover:border-slate-600 transition flex flex-col justify-between";
+        card.innerHTML = `
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <span class="bg-sky-500/20 text-sky-400 border border-sky-500/30 text-xs px-2.5 py-1 rounded-md font-semibold">${item.paper || 'GS'}</span>
+              <span class="text-xs text-slate-400 bg-slate-700/50 px-2 py-1 rounded">${item.topic || 'General'}</span>
+            </div>
+            <h2 class="text-xl font-semibold text-white mb-4">${item.title}</h2>
+            
+            <div class="mb-4">
+              <h3 class="text-xs uppercase font-bold tracking-wider text-amber-400 mb-2">Prelims Pointers</h3>
+              <ul class="text-sm text-slate-300 space-y-1 bg-slate-900/50 p-3 rounded-lg border border-slate-800">${prelimsList}</ul>
+            </div>
+
+            ${item.mains_perspective ? `
+            <div>
+              <h3 class="text-xs uppercase font-bold tracking-wider text-emerald-400 mb-2">Mains Perspective</h3>
+              <div class="bg-slate-900/50 p-3 rounded-lg border border-slate-800 space-y-2 text-xs text-slate-300">
+                <p><strong class="text-slate-200">Context:</strong> ${item.mains_perspective.context || ''}</p>
+                <p><strong class="text-slate-200">Key Takeaways:</strong> ${item.mains_perspective.key_arguments || ''}</p>
+                <p><strong class="text-slate-200">Way Forward:</strong> ${item.mains_perspective.way_forward || ''}</p>
+              </div>
+            </div>` : ''}
+          </div>
+        `;
+        container.appendChild(card);
+      });
     }
 
-    function filterNews(paper, event) {
-      document.querySelectorAll('.btn').forEach(b => b.classList.remove('active'));
-      event.target.classList.add('active');
-      
+    function filterNews(paper) {
+      const buttons = document.querySelectorAll('.filter-btn');
+      buttons.forEach(btn => {
+        if (btn.textContent.trim().includes(paper) || (paper === 'ALL' && btn.textContent.trim() === 'All Papers')) {
+          btn.className = 'filter-btn bg-sky-500 text-white px-4 py-2 rounded-lg font-medium text-sm transition';
+        } else {
+          btn.className = 'filter-btn bg-slate-800 hover:bg-slate-700 text-slate-300 px-4 py-2 rounded-lg font-medium text-sm transition';
+        }
+      });
+
       if (paper === 'ALL') {
-        renderNews(articlesData);
+        renderNews(allNews);
       } else {
-        const filtered = articlesData.filter(a => a.paper === paper);
+        const filtered = allNews.filter(item => item.paper === paper);
         renderNews(filtered);
       }
     }
 
-    loadNews();
+    fetchNews();
   </script>
 </body>
 </html>
