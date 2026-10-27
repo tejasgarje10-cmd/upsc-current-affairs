@@ -1,5 +1,3 @@
-import { GoogleGenAI } from '@google/genai';
-
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
@@ -11,7 +9,6 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: 'GEMINI_API_KEY is not configured in Vercel environment settings.' });
     }
 
-    const ai = new GoogleGenAI({ apiKey });
     const { action, question, paper, markerType, imageBase64, mimeType, searchTerm } = req.body;
 
     if (action === 'generateWikiArticle') {
@@ -41,12 +38,21 @@ export default async function handler(req, res) {
         }
       }`;
 
-      const response = await ai.models.generateContent({
-        model: 'gemini-2.5-flash',
-        contents: prompt,
+      // Call Gemini REST API directly to avoid any SDK version mismatch on Vercel
+      const geminiRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: prompt }] }]
+        })
       });
 
-      let text = response.text.trim();
+      const geminiData = await geminiRes.json();
+      if (!geminiRes.ok) {
+        throw new Error(geminiData.error?.message || 'Failed to communicate with Gemini API');
+      }
+
+      let text = geminiData.candidates[0].content.parts[0].text.trim();
       if (text.startsWith('```json')) {
         text = text.replace(/^```json/, '').replace(/```$/, '').trim();
       } else if (text.startsWith('```')) {
@@ -61,17 +67,31 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Missing required image or question parameters.' });
     }
 
+    // Vision Grader API Call via REST
     const evaluationPrompt = `You are an expert UPSC examiner. Evaluate this handwritten answer for: "${question}" (Paper: ${paper}, Type: ${markerType}). Provide structured feedback and an estimated score.`;
 
-    const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
-      contents: [
-        evaluationPrompt,
-        { inlineData: { data: imageBase64, mimeType: mimeType || 'image/jpeg' } }
-      ]
+    const geminiRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [
+          {
+            parts: [
+              { text: evaluationPrompt },
+              { inline_data: { mime_type: mimeType || 'image/jpeg', data: imageBase64 } }
+            ]
+          }
+        ]
+      })
     });
 
-    return res.status(200).json({ feedback: response.text });
+    const geminiData = await geminiRes.json();
+    if (!geminiRes.ok) {
+      throw new Error(geminiData.error?.message || 'Failed to evaluate image');
+    }
+
+    const feedbackText = geminiData.candidates[0].content.parts[0].text;
+    return res.status(200).json({ feedback: feedbackText });
 
   } catch (err) {
     console.error('API Error:', err);
