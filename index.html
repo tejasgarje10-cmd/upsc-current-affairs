@@ -51,7 +51,7 @@
     }
     .card:hover { border-color: #38bdf8; transform: translateY(-2px); }
     
-    .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; }
+    .card-header { display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; margin-bottom: 0.85rem; }
     .badge-paper {
       background-color: rgba(14, 165, 233, 0.2);
       color: #38bdf8;
@@ -61,7 +61,23 @@
       padding: 0.25rem 0.5rem;
       border-radius: 0.375rem;
     }
-    .badge-topic { background-color: #334155; color: #94a3b8; font-size: 0.75rem; padding: 0.25rem 0.5rem; border-radius: 0.25rem; }
+    .badge-date {
+      background-color: #0f172a;
+      color: #38bdf8;
+      border: 1px solid #334155;
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.25rem 0.5rem;
+      border-radius: 0.25rem;
+    }
+    .badge-topic {
+      background-color: #334155;
+      color: #cbd5e1;
+      font-size: 0.75rem;
+      padding: 0.25rem 0.5rem;
+      border-radius: 0.25rem;
+      line-height: 1.2;
+    }
     
     .card-title { font-size: 1.25rem; font-weight: 600; color: #ffffff; margin-bottom: 1rem; line-height: 1.4; }
     
@@ -147,6 +163,7 @@
 
       items.forEach((item, index) => {
         const prelimsList = (item.prelims_pointers || []).map(p => `<li>• ${p}</li>`).join('');
+        const itemDate = item.date || new Date().toISOString().split('T')[0];
         
         const card = document.createElement('div');
         card.className = "card";
@@ -156,10 +173,8 @@
           <div>
             <div class="card-header">
               <span class="badge-paper">${item.paper || 'GS'}</span>
-              <div>
-                <span class="badge-topic" style="margin-right: 0.25rem;">${item.date || 'Today'}</span>
-                <span class="badge-topic">${item.topic || 'General'}</span>
-              </div>
+              <span class="badge-date">${itemDate}</span>
+              <span class="badge-topic">${item.topic || 'General'}</span>
             </div>
             <h2 class="card-title">${item.title}</h2>
             
@@ -184,13 +199,14 @@
       const item = allNews[index];
       const modal = document.getElementById('detail-modal');
       const modalContent = document.getElementById('modal-content');
+      const itemDate = item.date || new Date().toISOString().split('T')[0];
 
       const prelimsList = (item.prelims_pointers || []).map(p => `<li style="margin-bottom:0.5rem; color:#f1f5f9;">• ${p}</li>`).join('');
 
       modalContent.innerHTML = `
-        <div style="display:flex; gap:0.5rem; align-items:center; margin-bottom:0.75rem;">
+        <div style="display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap; margin-bottom:0.85rem;">
           <span class="badge-paper">${item.paper}</span>
-          <span class="badge-topic">${item.date || 'Today'}</span>
+          <span class="badge-date">${itemDate}</span>
           <span class="badge-topic">${item.topic}</span>
         </div>
         <h2 style="font-size:1.5rem; font-weight:700; color:#ffffff; margin-bottom:1.25rem; line-height:1.3;">${item.title}</h2>
