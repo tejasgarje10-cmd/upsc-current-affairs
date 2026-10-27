@@ -6,7 +6,7 @@ on:
       - main
   schedule:
     - cron: '0 2 * * *'   # Runs automatically at 7:30 AM IST
-  workflow_dispatch:      # Allows manual trigger if needed
+  workflow_dispatch:      # Manual trigger
 
 jobs:
   run-pipeline:
@@ -14,6 +14,8 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -35,4 +37,4 @@ jobs:
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
           git add current_affairs.json
-          git diff-index --quiet HEAD || (git commit -m "Auto-update UPSC current affairs [skip ci]" && git push)
+          git diff-index --quiet HEAD || (git pull --rebase origin main && git commit -m "Auto-update UPSC current affairs [skip ci]" && git push origin main)
