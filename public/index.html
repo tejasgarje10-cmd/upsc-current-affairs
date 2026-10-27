@@ -159,7 +159,7 @@
 
     <div class="search-panel">
       <div class="search-row">
-        <input type="text" id="search-input" onkeyup="handleSearch()" class="search-box" placeholder="Search Wikipedia knowledge base (e.g., Federalism, AI, RBI, Temple, Ethics, LWE)..." />
+        <input type="text" id="search-input" onkeyup="handleSearch()" class="search-box" placeholder="Search knowledge base (e.g., Federalism, AI, RBI, Temple, Ethics, LWE)..." />
       </div>
       
       <!-- Paper Filter Row -->
@@ -248,181 +248,7 @@
   </div>
 
   <script>
-    // Massive Wiki Knowledge Base (Static Consolidation + Dynamic Current Affairs)
-    const WIKI_REPOSITORY = [
-      {
-        "title": "Maratha Military Landscapes & UNESCO World Heritage Conservation",
-        "paper": "GS-1",
-        "topic": "Art & Culture",
-        "static_linkage": "Art & Architecture - Forts",
-        "date": "2026-10",
-        "image": "https://images.unsplash.com/photo-1590050752117-238cb0fb12b1?w=800&auto=format&fit=crop&q=60",
-        "prelims_pointers": [
-          "Maratha Military Landscapes include hill, coastal, and sea forts showcasing medieval military engineering.",
-          "Regulated by the Ancient Monuments and Archaeological Sites and Remains (AMASR) Act."
-        ],
-        "mains_perspective": {
-          "context": "Balancing heritage tourism promotion with structural preservation against coastal weathering.",
-          "key_arguments": "Forts serve as testaments to indigenous defensive strategies and naval architecture under Chhatrapati Shivaji Maharaj.",
-          "way_forward": "Adopt scientific stone consolidation and involve local communities in heritage management."
-        }
-      },
-      {
-        "title": "Temple Architecture Styles: Nagara, Dravida & Vesara Evolution",
-        "paper": "GS-1",
-        "topic": "Art & Culture",
-        "static_linkage": "Indian Architecture & Sculpture",
-        "date": "2026-10",
-        "image": "https://images.unsplash.com/photo-1599578316616-e14589d970c6?w=800&auto=format&fit=crop&q=60",
-        "prelims_pointers": [
-          "Nagara style features beehive-shaped towers (Shikhara) common in northern India.",
-          "Dravida style is characterized by pyramidal towers (Vimana) and monumental gateways (Gopurams) in southern India."
-        ],
-        "mains_perspective": {
-          "context": "Understanding religious architecture as a reflection of socio-political patronage and regional integration.",
-          "key_arguments": "Temple complexes served not only as places of worship but as economic hubs, employers, and centers of classical arts.",
-          "way_forward": "Promote digital archiving of temple inscriptions and structural mapping to prevent archaeological degradation."
-        }
-      },
-      {
-        "title": "Indian Society: Regionalism, Communalism & Social Capital",
-        "paper": "GS-1",
-        "topic": "Indian Society",
-        "static_linkage": "Salient Features of Indian Society & Diversity",
-        "date": "2026-10",
-        "image": "https://images.unsplash.com/photo-1532375810709-75b1da00537c?w=800&auto=format&fit=crop&q=60",
-        "prelims_pointers": [
-          "India's unity in diversity is safeguarded under the Basic Structure doctrine of the Constitution.",
-          "Secularism in the Indian context implies 'Sarva Dharma Sambhava' (equal respect for all religions)."
-        ],
-        "mains_perspective": {
-          "context": "Rising instances of sub-national regionalism and identity politics challenging national cohesion.",
-          "key_arguments": "Uneven regional economic development and cultural alienation often fuel militant regionalism.",
-          "way_forward": "Strengthen institutional mechanisms like the Zonal Councils and promote equitable resource distribution to bridge regional disparities."
-        }
-      },
-      {
-        "title": "Cooperative Federalism vs. Aggressive Fiscal Centralization",
-        "paper": "GS-2",
-        "topic": "Polity & Federalism",
-        "static_linkage": "Centre-State Relations (Article 245-263)",
-        "date": "2026-10",
-        "image": "https://images.unsplash.com/photo-1541872703-74c5e44368f9?w=800&auto=format&fit=crop&q=60",
-        "prelims_pointers": [
-          "Inter-State Council operates under Article 263 as a recommendatory body.",
-          "GST Council is a constitutional body under Article 279A.",
-          "Sarkaria and Punchhi Commissions examined the strengthening of cooperative federalism."
-        ],
-        "mains_perspective": {
-          "context": "Rising friction between the Union and states over cess/surcharges, Governor's role, and legislative incursions.",
-          "key_arguments": "Excessive reliance on cesses dilutes the divisible pool of taxes under Finance Commission recommendations, starving states of fiscal autonomy.",
-          "way_forward": "Institutionalize regular meetings of the Inter-State Council and adhere strictly to Sarkaria Commission guidelines on gubernatorial discretion."
-        }
-      },
-      {
-        "title": "Secularism, Uniform Civil Code (UCC) & Constitutional Morality",
-        "paper": "GS-2",
-        "topic": "Polity & Federalism",
-        "static_linkage": "Article 25-28 & Article 44 (DPSP)",
-        "date": "2026-10",
-        "image": "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=800&auto=format&fit=crop&q=60",
-        "prelims_pointers": [
-          "Article 44 directs the State to secure a Uniform Civil Code throughout India.",
-          "Freedom of religion under Article 25 is subject to public order, morality, and health."
-        ],
-        "mains_perspective": {
-          "context": "Balancing the mandate of a unified legal code with the protection of cultural and religious pluralism in a diverse democracy.",
-          "key_arguments": "While UCC promotes gender justice and legal uniformity, forced implementation without broad-based consensus can fracture social capital.",
-          "way_forward": "Adopt a gradual, consultative reform approach—amending discriminatory practices within personal laws first before pushing for a monolithic code."
-        }
-      },
-      {
-        "title": "UNCLOS & Indo-Pacific Maritime Security Architecture",
-        "paper": "GS-2",
-        "topic": "International Relations",
-        "static_linkage": "India and Neighborhood- Bilateral Relations",
-        "date": "2026-10",
-        "image": "https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?w=800&auto=format&fit=crop&q=60",
-        "prelims_pointers": [
-          "UNCLOS establishes territorial waters (12 NM) and Exclusive Economic Zones (EEZ up to 200 NM).",
-          "India's SAGAR (Security and Growth for All in the Region) doctrine guides regional maritime cooperation."
-        ],
-        "mains_perspective": {
-          "context": "Assertive naval expansion and gray-zone tactics in critical sea lanes threatening freedom of navigation.",
-          "key_arguments": "Rules-based maritime order is essential for global supply chain security and energy transit.",
-          "way_forward": "Deepen intelligence sharing through Quad mechanisms and build indigenous naval shipbuilding capabilities in friendly littoral nations."
-        }
-      },
-      {
-        "title": "India's Three-Stage Nuclear Power Programme & Civil Liability",
-        "paper": "GS-3",
-        "topic": "Science & Tech",
-        "static_linkage": "Nuclear Energy Policy & Tech",
-        "date": "2026-10",
-        "image": "https://images.unsplash.com/photo-1563986768609-322da13575f3?w=800&auto=format&fit=crop&q=60",
-        "prelims_pointers": [
-          "Stage I uses PHWRs; Stage II uses Fast Breeder Reactors (FBR); Stage III utilizes Thorium-Uranium-233 cycle.",
-          "Civil Liability for Nuclear Damage Act (CLNDA), 2010 mandates operator liability while balancing supplier recourse."
-        ],
-        "mains_perspective": {
-          "context": "Expanding base-load clean energy capacity to meet net-zero targets while ensuring energy autonomy.",
-          "key_arguments": "India possesses world-class thorium reserves, making Stage III critical for long-term energy security, though commercial scaling remains technologically challenging.",
-          "way_forward": "Foster public-private research partnerships and streamline nuclear insurance frameworks to attract advanced reactor technology."
-        }
-      },
-      {
-        "title": "Inclusive Growth, K-Shaped Recovery & Agrarian Distress",
-        "paper": "GS-3",
-        "topic": "Economy & Growth",
-        "static_linkage": "Growth, Development and Employment",
-        "date": "2026-10",
-        "image": "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?w=800&auto=format&fit=crop&q=60",
-        "prelims_pointers": [
-          "MSME sector contributes nearly 30% to India's GDP and 40% to exports.",
-          "PM-KISAN provides income support of Rs 6,000 per year to landholding farmer families."
-        ],
-        "mains_perspective": {
-          "context": "Macroeconomic GDP growth numbers outpacing wage growth and rural consumption recovery.",
-          "key_arguments": "High corporate profitability coexists with stagnant rural wages and high youth unemployment, pointing to structural distortions.",
-          "way_forward": "Shift focus from capital-intensive manufacturing subsidies to labor-intensive sectors (textiles, food processing) and climate-resilient agriculture."
-        }
-      },
-      {
-        "title": "Internal Security Challenges: Left Wing Extremism (LWE) & Nexus",
-        "paper": "GS-3",
-        "topic": "Internal Security",
-        "static_linkage": "Security Challenges in Border Areas",
-        "date": "2026-10",
-        "image": "https://images.unsplash.com/photo-1557804506-669a67965ba0?w=800&auto=format&fit=crop&q=60",
-        "prelims_pointers": [
-          "Security Related Expenditure (SRE) scheme assists LWE-affected states.",
-          "Aspirational Districts Programme targets socio-economic backwardness in LWE corridors."
-        ],
-        "mains_perspective": {
-          "context": "Geographical shrinking of LWE influence accompanied by challenges in developmental governance in remote pockets.",
-          "key_arguments": "Kinetic military operations alone cannot resolve an ideological conflict rooted in land alienation and tribal marginalization.",
-          "way_forward": "Combine security dominance with aggressive infrastructure push (roads, mobile connectivity) and land rights regularization under FRA, 2006."
-        }
-      },
-      {
-        "title": "Bureaucratic Ethics, Lateral Entry & Whistleblower Protection",
-        "paper": "GS-4",
-        "topic": "Ethics & Governance",
-        "static_linkage": "Civil Services Accountability & Probity",
-        "date": "2026-10",
-        "image": "https://images.unsplash.com/photo-1521791136064-7986c2920216?w=800&auto=format&fit=crop&q=60",
-        "prelims_pointers": [
-          "Second ARC 4th Report focuses extensively on ethics in governance.",
-          "Whistleblowers Protection Act provides legal mechanisms to safeguard informants against victimization."
-        ],
-        "mains_perspective": {
-          "context": "Navigating the tension between political executive directives, professional neutrality, and adherence to constitutional conscience.",
-          "key_arguments": "Anonymity and neutrality are often compromised by systemic political pressure and lack of statutory job security.",
-          "way_forward": "Implement 2nd ARC recommendations: establish Civil Services Boards for transparent postings and operationalize robust whistleblower safeguards."
-        }
-      }
-    ];
-
+    let MASTER_REPOSITORY = [];
     let currentMode = 'DAILY';
     let currentPaperFilter = 'ALL';
     let currentSubtopicFilter = 'ALL';
@@ -522,6 +348,38 @@
       applyFilters();
     }
 
+    async function initApp() {
+      try {
+        const res = await fetch('./repository.json?t=' + Date.now());
+        const data = await res.json();
+        if (Array.isArray(data)) {
+          MASTER_REPOSITORY = data;
+        }
+      } catch (err) {
+        console.error("Could not load repository.json, using fallback data.");
+        MASTER_REPOSITORY = [
+          {
+            "title": "Maratha Military Landscapes & UNESCO World Heritage Conservation",
+            "paper": "GS-1",
+            "topic": "Art & Culture",
+            "static_linkage": "Art & Architecture - Forts",
+            "date": "2026-10",
+            "image": "https://images.unsplash.com/photo-1590050752117-238cb0fb12b1?w=800&auto=format&fit=crop&q=60",
+            "prelims_pointers": [
+              "Maratha Military Landscapes include hill, coastal, and sea forts showcasing medieval engineering.",
+              "Regulated by the AMASR Act."
+            ],
+            "mains_perspective": {
+              "context": "Balancing heritage tourism promotion with structural preservation.",
+              "key_arguments": "Forts serve as testaments to indigenous defensive strategies under Shivaji Maharaj.",
+              "way_forward": "Adopt scientific stone consolidation and community-based heritage management."
+            }
+          }
+        ];
+      }
+      applyFilters();
+    }
+
     function renderModules(items) {
       const bannerContainer = document.getElementById('ai-banner-container');
       const container = document.getElementById('news-container');
@@ -530,7 +388,7 @@
       document.getElementById('match-count').textContent = `${items.length} Wiki Articles`;
 
       if (!items || items.length === 0) {
-        container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 4rem 0;">No articles found matching this topic in the knowledge base. Try searching keywords like 'Nuclear', 'Federalism', 'Ethics', or 'Economy'.</div>`;
+        container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 4rem 0;">No articles found matching this topic in the knowledge base. Try searching keywords like 'Federalism', 'Ethics', or 'Economy'.</div>`;
         return;
       }
 
@@ -626,7 +484,7 @@
 
     function applyFilters() {
       const searchTerm = document.getElementById('search-input').value.toLowerCase().trim();
-      let activePool = WIKI_REPOSITORY;
+      let activePool = MASTER_REPOSITORY;
 
       if (currentMode === 'SAVED') {
         activePool = activePool.filter(item => savedBookmarks.includes(item.title));
@@ -668,8 +526,8 @@
       renderModules(activePool);
     }
 
-    // Initial load
-    applyFilters();
+    // Initialize application by fetching the external repository JSON
+    initApp();
   </script>
 </body>
 </html>
