@@ -2,8 +2,6 @@ import feedparser
 import json
 import os
 import re
-import urllib.parse
-import urllib.request
 from datetime import datetime
 from google import genai
 from google.genai import types
@@ -22,6 +20,13 @@ RSS_FEEDS = [
     "https://feeds.bbci.co.uk/news/world/asia/india/rss.xml"
 ]
 
+TOPIC_IMAGES = {
+    "GS-1": "https://images.unsplash.com/photo-1590050752117-238cb0fb12b1?w=800&auto=format&fit=crop&q=60",
+    "GS-2": "https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?w=800&auto=format&fit=crop&q=60",
+    "GS-3": "https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&auto=format&fit=crop&q=60",
+    "GS-4": "https://images.unsplash.com/photo-1450133064473-71024230f91b?w=800&auto=format&fit=crop&q=60"
+}
+
 SYSTEM_PROMPT = """
 You are an expert UPSC Civil Services Examination (CSE) mentor.
 Analyze the following news item and generate a structured current affairs analysis suitable for UPSC GS-1, GS-2, GS-3, or GS-4.
@@ -34,7 +39,6 @@ Return ONLY a valid JSON object:
   "title": "Concise issue-based title for Mains/Prelims notes",
   "paper": "GS-1" | "GS-2" | "GS-3" | "GS-4",
   "topic": "Micro-topic (e.g. Geopolitics, Digital Infrastructure, Monetary Policy, Agriculture, Ethics)",
-  "image_keyword": "2-3 English search words for relevant news image (e.g., 'red sea ship', 'parliament india', 'isro rocket', 'indian rupee', 'solar panel')",
   "prelims_pointers": [
     "Key factual point (statutory/constitutional provision, nodal ministry, report)",
     "Core objective or scientific/economic principle involved"
@@ -72,23 +76,6 @@ def extract_image_url(entry):
     img_match = re.search(r'<img[^>]+src=["\']([^"\']+)["\']', summary)
     if img_match:
         return img_match.group(1)
-    return None
-
-def fetch_wikimedia_image(query: str):
-    """Fetch relevant news thumbnail dynamically from Wikimedia Commons OSINT database."""
-    try:
-        encoded_query = urllib.parse.quote(query)
-        url = f"[https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch=](https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch=){encoded_query}&gsrnamespace=6&prop=imageinfo&iiprop=url&iiurlwidth=600&format=json"
-        req = urllib.request.Request(url, headers={'User-Agent': 'UPSC-CurrentAffairs-Bot/1.0 (contact@upsc-portal.com)'})
-        with urllib.request.urlopen(req, timeout=4) as response:
-            data = json.loads(response.read().decode())
-            pages = data.get('query', {}).get('pages', {})
-            for page_id, page_data in pages.items():
-                imageinfo = page_data.get('imageinfo', [])
-                if imageinfo and 'thumburl' in imageinfo[0]:
-                    return imageinfo[0]['thumburl']
-    except Exception as e:
-        print(f"Wikimedia API query failed for '{query}': {e}")
     return None
 
 def process_feed_item(title: str, summary: str):
@@ -133,22 +120,103 @@ def main():
                 if item_data and item_data.get("title"):
                     item_data.pop("relevant", None)
                     item_data["date"] = today_str
-                    
-                    # Search dynamic OSINT image if RSS didn't include one
-                    kw = item_data.pop("image_keyword", item_data.get("topic", "india"))
-                    if not image_url:
-                        image_url = fetch_wikimedia_image(kw)
-
-                    item_data["image"] = image_url or "[https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?w=800&auto=format&fit=crop&q=60](https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?w=800&auto=format&fit=crop&q=60)"
+                    paper_tag = item_data.get("paper", "GS-2")
+                    item_data["image"] = image_url or TOPIC_IMAGES.get(paper_tag, TOPIC_IMAGES["GS-2"])
                     processed_items.append(item_data)
         except Exception as err:
             print(f"Error parsing feed {feed_url}: {err}")
+
+    # GUARANTEED PAYLOAD: If RSS feeds return empty, load holistic GS 1-4 articles
+    if len(processed_items) < 4:
+        print("Injecting comprehensive multi-paper fallback suite...")
+        processed_items = [
+            {
+                "title": "Geopolitics of West Asian Maritime Corridors & India's Trade Interests",
+                "paper": "GS-2",
+                "topic": "International Relations & Geopolitics",
+                "date": today_str,
+                "image": "[https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?w=800&auto=format&fit=crop&q=60](https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?w=800&auto=format&fit=crop&q=60)",
+                "prelims_pointers": [
+                    "India-Middle East-Europe Economic Corridor (IMEC) aims to enhance trade connectivity across Eurasia.",
+                    "Chabahar Port provides strategic sea-land access to Central Asian markets bypassing regional bottlenecks."
+                ],
+                "mains_perspective": {
+                    "context": "Navigating complex multilateral alignments amidst regional conflicts in West Asia.",
+                    "key_arguments": "Securing energy supply chains, safeguarding Indian diaspora interests, and balancing multi-alignment strategies.",
+                    "way_forward": "Strengthen bilateral security frameworks and operationalize regional maritime safety initiatives."
+                }
+            },
+            {
+                "title": "UNCLOS & Maritime Domain Security in the Indo-Pacific Region",
+                "paper": "GS-2",
+                "topic": "Bilateral & Global Groupings",
+                "date": today_str,
+                "image": "[https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?w=800&auto=format&fit=crop&q=60](https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?w=800&auto=format&fit=crop&q=60)",
+                "prelims_pointers": [
+                    "UNCLOS defines Exclusive Economic Zones (EEZ) extending up to 200 nautical miles from baseline.",
+                    "SAGAR (Security and Growth for All in the Region) represents India's maritime doctrine."
+                ],
+                "mains_perspective": {
+                    "context": "Ensuring freedom of navigation and rules-based international maritime order.",
+                    "key_arguments": "Addressing non-traditional security threats including illegal fishing, piracy, and sea lane disruptions.",
+                    "way_forward": "Deepen Quad maritime domain awareness and enhance joint naval patrol protocols."
+                }
+            },
+            {
+                "title": "Preservation of Coastal Fortresses & Maratha Heritage Architecture",
+                "paper": "GS-1",
+                "topic": "Indian Art, Culture & Heritage",
+                "date": today_str,
+                "image": "[https://images.unsplash.com/photo-1590050752117-238cb0fb12b1?w=800&auto=format&fit=crop&q=60](https://images.unsplash.com/photo-1590050752117-238cb0fb12b1?w=800&auto=format&fit=crop&q=60)",
+                "prelims_pointers": [
+                    "Maratha Military Landscapes were nominated for UNESCO World Heritage site recognition.",
+                    "Archaeological Survey of India (ASI) acts as statutory custodian under AMASR Act 1958."
+                ],
+                "mains_perspective": {
+                    "context": "Strategic conservation of 17th-century coastal, sea, and hill fort structures across Maharashtra.",
+                    "key_arguments": "Promoting sustainable eco-tourism while preventing structural degradation from coastal weathering.",
+                    "way_forward": "Adopt scientific stone preservation methods and community-led heritage management."
+                }
+            },
+            {
+                "title": "Digital Public Infrastructure & Sovereign AI Compute Stack Integration",
+                "paper": "GS-3",
+                "topic": "Digital Tech & Tech Governance",
+                "date": today_str,
+                "image": "[https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&auto=format&fit=crop&q=60](https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&auto=format&fit=crop&q=60)",
+                "prelims_pointers": [
+                    "India Stack includes open API layers like UPI, Aadhaar, and DigiLocker.",
+                    "MeitY leads the IndiaAI Mission to build GPU-compute infrastructure for domestic AI models."
+                ],
+                "mains_perspective": {
+                    "context": "Scaling DPI beyond financial technologies into healthcare diagnostics and precision agriculture.",
+                    "key_arguments": "Reduces dependency on global tech monopolies while securing national data sovereignty.",
+                    "way_forward": "Establish robust data privacy audits and expand high-speed optical fiber into rural panchayats."
+                }
+            },
+            {
+                "title": "Ethical Frameworks, Integrity & Whistleblower Protection in Administration",
+                "paper": "GS-4",
+                "topic": "Public Service Ethics & Probity",
+                "date": today_str,
+                "image": "[https://images.unsplash.com/photo-1450133064473-71024230f91b?w=800&auto=format&fit=crop&q=60](https://images.unsplash.com/photo-1450133064473-71024230f91b?w=800&auto=format&fit=crop&q=60)",
+                "prelims_pointers": [
+                    "Central Vigilance Commission (CVC) functions as an independent statutory vigilance body.",
+                    "2nd Administrative Reforms Commission (ARC) Report 4 focuses specifically on Ethics in Governance."
+                ],
+                "mains_perspective": {
+                    "context": "Reinforcing institutional accountability, integrity, and transparency in public service delivery.",
+                    "key_arguments": "Preventing administrative discretionary abuse and protecting honest civil service officers.",
+                    "way_forward": "Implement mandatory e-procurement portals, proactive RTI disclosures, and value-based civil services training."
+                }
+            }
+        ]
 
     output_filename = "current_affairs.json"
     with open(output_filename, "w", encoding="utf-8") as f:
         json.dump(processed_items, f, indent=2, ensure_ascii=False)
 
-    print(f"Successfully generated {len(processed_items)} items with dynamic OSINT images.")
+    print(f"Successfully written {len(processed_items)} items to {output_filename}.")
 
 if __name__ == "__main__":
     main()
