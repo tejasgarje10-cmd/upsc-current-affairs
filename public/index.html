@@ -166,10 +166,10 @@
         <span class="filter-label">Syllabus Papers:</span>
         <div class="filter-pills" id="paper-pills">
           <button onclick="filterPaper('ALL')" class="pill active">All Papers</button>
-          <button onclick="filterPaper('GS-1')" class="pill">GS-1 (Culture, Society & History)</button>
-          <button onclick="filterPaper('GS-2')" class="pill">GS-2 (Polity, Governance & IR)</button>
-          <button onclick="filterPaper('GS-3')" class="pill">GS-3 (Economy, Tech & Security)</button>
-          <button onclick="filterPaper('GS-4')" class="pill">GS-4 (Ethics & Integrity)</button>
+          <button onclick="filterPaper('GS-1')" class="pill">GS-1</button>
+          <button onclick="filterPaper('GS-2')" class="pill">GS-2</button>
+          <button onclick="filterPaper('GS-3')" class="pill">GS-3</button>
+          <button onclick="filterPaper('GS-4')" class="pill">GS-4</button>
           <span id="match-count" class="search-stats"></span>
         </div>
       </div>
@@ -245,7 +245,6 @@
   </div>
 
   <script>
-    // Comprehensive Self-Contained Open-Source UPSC Repository
     const MASTER_REPOSITORY = [
       {
         "title": "Maratha Military Landscapes & UNESCO World Heritage Conservation",
@@ -549,7 +548,7 @@
       currentPaperFilter = paper;
       const pills = document.querySelectorAll('#paper-pills .pill');
       pills.forEach(btn => {
-        btn.classList.toggle('active', btn.textContent.includes(paper) || (paper === 'ALL' && btn.textContent.includes('All')));
+        btn.classList.toggle('active', btn.textContent.includes(paper));
       });
       applyFilters();
     }
@@ -584,9 +583,10 @@
           const topic = (item.topic || '').toLowerCase();
           const linkage = (item.static_linkage || '').toLowerCase();
           const title = (item.title || '').toLowerCase();
-          return topic.includes(currentSubtopicFilter.toLowerCase()) || 
-                 linkage.includes(currentSubtopicFilter.toLowerCase()) || 
-                 title.includes(currentSubtopicFilter.toLowerCase());
+          const filterTerm = currentSubtopicFilter.toLowerCase();
+          return topic.includes(filterTerm) || 
+                 linkage.includes(filterTerm) || 
+                 title.includes(filterTerm);
         });
       }
 
