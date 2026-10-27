@@ -5,6 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <title>NexusGS - UPSC Knowledge Wiki</title>
+  
+  <!-- Official Razorpay Checkout Script -->
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     
@@ -272,7 +276,7 @@
         
         <div style="background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 0.75rem; padding: 1rem; margin-bottom: 1.5rem;">
           <div style="font-size: 1.5rem; font-weight: 800; color: #fbbf24;">₹199 <span style="font-size: 0.8rem; font-weight: 400; color: var(--text-muted);">/ month</span></div>
-          <div style="font-size: 0.75rem; color: #34d399; margin-top: 0.3rem;">✓ Cancel anytime • Instant activation</div>
+          <div style="font-size: 0.75rem; color: #34d399; margin-top: 0.3rem;">✓ Cancel anytime • Instant activation via Razorpay</div>
         </div>
 
         <button onclick="simulateProUpgrade()" class="btn-pro" style="width: 100%; padding: 0.85rem; font-size: 1rem; margin-bottom: 0.75rem;">Unlock Pro Access Now</button>
@@ -359,11 +363,44 @@
       if (!e || e.target.id === 'pro-modal' || e.target.className === 'close-btn') document.getElementById('pro-modal').classList.remove('active');
     }
 
+    // Razorpay Integration Checkout Function
     function simulateProUpgrade() {
-      localStorage.setItem('nexusgs_is_pro', 'true');
-      closeProModal();
-      updateCreditDisplay();
-      alert('🎉 Success! Your NexusGS Pro pass is now active. Enjoy unlimited AI generation and answer grading.');
+      var options = {
+        "key": "YOUR_RAZORPAY_KEY_ID", // Replace with your live or test Razorpay Key ID (e.g., rzp_test_xxxxxx)
+        "amount": 19900, // Amount in paise (19900 paise = ₹199)
+        "currency": "INR",
+        "name": "NexusGS Pro",
+        "description": "Monthly Unlimited AI Study Pass",
+        "image": "./logo.png",
+        "handler": function (response){
+          localStorage.setItem('nexusgs_is_pro', 'true');
+          closeProModal();
+          updateCreditDisplay();
+          alert('🎉 Payment successful! Payment ID: ' + response.razorpay_payment_id + '\nYour NexusGS Pro pass is now active.');
+        },
+        "prefill": {
+          "email": currentUser ? currentUser.email : "aspirant@nexusgs.com",
+        },
+        "theme": {
+          "color": "#0284c7"
+        }
+      };
+      
+      // Fallback simulation mode if the user hasn't put their Razorpay Key ID yet
+      if (options.key === "YOUR_RAZORPAY_KEY_ID") {
+        if (confirm("Razorpay Key ID is not configured yet. Would you like to simulate a successful Pro upgrade for testing purposes?")) {
+          localStorage.setItem('nexusgs_is_pro', 'true');
+          closeProModal();
+          updateCreditDisplay();
+          alert('🎉 Success! (Simulated Mode) Your NexusGS Pro pass is active.');
+        } else {
+          alert('Please sign up for a free Razorpay account at razorpay.com, get your Key ID, and replace "YOUR_RAZORPAY_KEY_ID" in the code.');
+        }
+        return;
+      }
+
+      var rzp1 = new Razorpay(options);
+      rzp1.open();
     }
 
     function resetCreditsForTesting() {
