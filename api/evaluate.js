@@ -1,98 +1,97 @@
+import { GoogleGenAI } from '@google/genai';
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
   try {
+    const { action, searchTerm, question, paper, markerType, imageBase64, mimeType, isProUser } = req.body;
+
+    // Optional Server-Side Pro Verification
+    // If you want strict security, you can verify user subscription tokens here.
+    // For now, we ensure the request structure is safe and valid.
+
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) {
-      return res.status(500).json({ error: 'GEMINI_API_KEY is not configured in Vercel environment settings.' });
+      return res.status(500).json({ error: 'GEMINI_API_KEY is not configured on Vercel.' });
     }
 
-    const { action, question, paper, markerType, imageBase64, mimeType, searchTerm } = req.body;
+    const ai = new GoogleGenAI({ apiKey });
+    const modelName = 'gemini-2.0-flash';
 
+    // 1. Handle Dynamic Wiki Article Generation
     if (action === 'generateWikiArticle') {
-      if (!searchTerm) {
-        return res.status(400).json({ error: 'Search term is required' });
-      }
+      if (!searchTerm) return res.status(400).json({ error: 'Search term is required.' });
 
-      const prompt = `Act as an elite UPSC civil services expert. A student searched for "${searchTerm}" in the NexusGS Wikipedia repository. 
-      Generate a comprehensive study article for this exact topic tailored for UPSC.
-      
-      Return ONLY valid raw JSON matching this exact structure, with no markdown code blocks or extra text:
+      const prompt = `You are a senior UPSC Civil Services examination expert. Synthesize a comprehensive, Wikipedia-grade study article for the topic: "${searchTerm}".
+      Return ONLY a valid JSON object (no markdown formatting blocks like \`\`\`json) matching this exact schema:
       {
-        "title": "A precise, professional title for ${searchTerm}",
-        "paper": "GS-3",
-        "topic": "Economy & Growth",
-        "static_linkage": "Core constitutional article or statutory body",
-        "date": "2026-10",
-        "image": "https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&auto=format&fit=crop&q=60",
-        "prelims_pointers": [
-          "Key factual statement 1 with institutional backing",
-          "Key factual statement 2 with committee precedent"
-        ],
-        "mains_perspective": {
-          "context": "Socio-economic or administrative context of ${searchTerm}",
-          "key_arguments": "Multi-dimensional analysis exploring core arguments and challenges",
-          "way_forward": "Actionable policy measures or administrative recommendations"
+        "article": {
+          "title": "Precise UPSC-grade title",
+          "paper": "GS-2",
+          "date": "2026-10",
+          "topic": "Polity & Federalism",
+          "static_linkage": "Constitutional Framework & Evolution",
+          "prelims_pointers": ["Point 1 with exact factual detail", "Point 2 with constitutional/economic article or data reference", "Point 3"],
+          "mains_perspective": {
+            "context": "Comprehensive analytical context background for civil services mains.",
+            "key_arguments": "Multi-dimensional arguments covering social, economic, political, and administrative angles.",
+            "way_forward": "Actionable administrative and policy recommendations."
+          },
+          "image": "https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?w=800&auto=format&fit=crop&q=60"
         }
       }`;
 
-      const geminiRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=${apiKey}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: prompt }] }]
-        })
+      const response = await ai.models.generateContent({
+        model: modelName,
+        contents: prompt
       });
 
-      const geminiData = await geminiRes.json();
-      if (!geminiRes.ok) {
-        throw new Error(geminiData.error?.message || 'Failed to communicate with Gemini API');
-      }
+      let rawText = response.text.trim();
+      if (rawText.startsWith('```json')) rawText = rawText.replace(/^```json/, '').replace(/```$/, '').trim();
+      else if (rawText.startsWith('```')) rawText = rawText.replace(/^```/, '').replace(/```$/, '').trim();
 
-      let text = geminiData.candidates[0].content.parts[0].text.trim();
-      if (text.startsWith('```json')) {
-        text = text.replace(/^```json/, '').replace(/```$/, '').trim();
-      } else if (text.startsWith('```')) {
-        text = text.replace(/^```/, '').replace(/```$/, '').trim();
-      }
-
-      const articleData = JSON.parse(text);
-      return res.status(200).json({ article: articleData });
+      const parsed = JSON.parse(rawText);
+      return res.status(200).json(parsed);
     }
 
-    if (!imageBase64 || !question) {
-      return res.status(400).json({ error: 'Missing required image or question parameters.' });
+    // 2. Handle AI Vision Answer Sheet Grading
+    if (imageBase64) {
+      if (!question) return res.status(400).json({ error: 'Question prompt is required for evaluation.' });
+
+      const imagePart = {
+        inlineData: {
+          data: imageBase64,
+          mimeType: mimeType || 'image/jpeg'
+        }
+      };
+
+      const evalPrompt = `You are an expert UPSC Civil Services Mains Evaluator at a premier Delhi institute. 
+      Examine this handwritten student answer sheet for the following parameters:
+      - Paper: ${paper || 'GS-2'}
+      - Marker Type: ${markerType || '15-Marker (250 Words)'}
+      - Question: "${question}"
+
+      Provide rigorous, structured feedback:
+      1. Structure & Introduction (Demand of the question addressed?)
+      2. Body Content & Multidimensional Arguments (Political, Economic, Social, Ethical angles)
+      3. Handwriting & Presentation Legibility
+      4. Scope for Improvement & Model Keywords to Include
+      5. Estimated Score out of 10 or 15.`;
+
+      const response = await ai.models.generateContent({
+        model: modelName,
+        contents: [evalPrompt, imagePart]
+      });
+
+      return res.status(200).json({ feedback: response.text });
     }
 
-    const evaluationPrompt = `You are an expert UPSC examiner. Evaluate this handwritten answer for: "${question}" (Paper: ${paper}, Type: ${markerType}). Provide structured feedback and an estimated score.`;
-
-    const geminiRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=${apiKey}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contents: [
-          {
-            parts: [
-              { text: evaluationPrompt },
-              { inline_data: { mime_type: mimeType || 'image/jpeg', data: imageBase64 } }
-            ]
-          }
-        ]
-      })
-    });
-
-    const geminiData = await geminiRes.json();
-    if (!geminiRes.ok) {
-      throw new Error(geminiData.error?.message || 'Failed to evaluate image');
-    }
-
-    const feedbackText = geminiData.candidates[0].content.parts[0].text;
-    return res.status(200).json({ feedback: feedbackText });
+    return res.status(400).json({ error: 'Invalid request payload.' });
 
   } catch (err) {
-    console.error('API Error:', err);
-    return res.status(500).json({ error: err.message || 'Internal server error during AI synthesis.' });
+    console.error("Backend Evaluation Error:", err);
+    return res.status(500).json({ error: err.message || 'Internal server error during AI generation.' });
   }
 }
