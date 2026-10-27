@@ -126,7 +126,6 @@ def main():
         except Exception as err:
             print(f"Error parsing feed {feed_url}: {err}")
 
-    # GUARANTEED PAYLOAD: If RSS feeds return empty, load holistic GS 1-4 articles
     if len(processed_items) < 4:
         print("Injecting comprehensive multi-paper fallback suite...")
         processed_items = [
