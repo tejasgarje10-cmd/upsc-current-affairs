@@ -28,7 +28,6 @@
     }
     .container { max-width: 1240px; margin: 0 auto; }
     
-    /* Header Navbar */
     .app-navbar {
       display: flex; justify-content: space-between; align-items: center;
       padding: 1rem 1.5rem; background: var(--surface-glass); border: 1px solid var(--border-color);
@@ -57,7 +56,6 @@
     }
     .btn-pdf:hover { background: rgba(16, 185, 129, 0.25); border-color: #34d399; }
 
-    /* Control & Search Bar Section */
     .search-panel {
       background: var(--surface-glass); border: 1px solid var(--border-color);
       padding: 1.25rem; border-radius: 1rem; margin-bottom: 2rem; backdrop-filter: blur(12px);
@@ -80,7 +78,6 @@
 
     .search-stats { font-size: 0.8rem; color: #38bdf8; font-weight: 600; margin-left: auto; }
 
-    /* Featured Hero Section */
     .hero-card {
       display: grid; grid-template-columns: 1fr; gap: 1.5rem; background: var(--surface-glass);
       border: 1px solid rgba(56, 189, 248, 0.5); border-radius: 1.25rem; overflow: hidden;
@@ -92,7 +89,6 @@
     .hero-img { width: 100%; height: 100%; object-fit: cover; display: block; }
     .hero-body { padding: 1.75rem; display: flex; flex-direction: column; justify-content: space-between; }
 
-    /* Grid Layout */
     .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 1.75rem; }
     
     .card {
@@ -134,7 +130,6 @@
 
     .expand-hint { text-align: right; font-size: 0.775rem; color: #38bdf8; margin-top: 0.5rem; font-weight: 600; }
 
-    /* Modal Styling */
     .modal-overlay {
       position: fixed; inset: 0; background: rgba(3, 7, 18, 0.85); backdrop-filter: blur(8px);
       display: none; align-items: center; justify-content: center; padding: 1rem; z-index: 100;
@@ -162,7 +157,6 @@
 <body>
   <div class="container">
     
-    <!-- Executive Header Navbar -->
     <nav class="app-navbar">
       <div class="brand-group">
         <div class="brand-icon">CSE</div>
@@ -180,7 +174,6 @@
       </div>
     </nav>
 
-    <!-- Deep Search Controls -->
     <div class="search-panel">
       <div class="search-row">
         <input type="text" id="search-input" onkeyup="handleSearch()" class="search-box" placeholder="Type ANY keyword (e.g., UNCLOS, FRBM, Ethics, Speaker, ISRO, Agriculture, Monetary Policy)..." />
@@ -210,10 +203,77 @@
   </div>
 
   <script>
-    let dailyNews = [];
-    let staticRepo = [];
-    let combinedPool = [];
-    let currentMode = 'DAILY'; // 'DAILY', 'REPO', 'SAVED'
+    // BUILT-IN FALLBACK REPOSITORY GUARANTEES ZERO EMPTY SCREENS
+    const BUILTIN_FALLBACK = [
+      {
+        "title": "UNCLOS & Maritime Security Architecture in the Indo-Pacific",
+        "paper": "GS-2",
+        "topic": "International Relations & Geopolitics",
+        "static_linkage": "International Law & Maritime Security",
+        "image": "https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?w=800&auto=format&fit=crop&q=60",
+        "prelims_pointers": [
+          "UNCLOS defines Territorial Waters (12 NM), Contiguous Zone (24 NM), and Exclusive Economic Zone (200 NM).",
+          "International Seabed Authority (ISA) regulates mineral-related activities in international seabed areas.",
+          "India's SAGAR doctrine (Security and Growth for All in the Region) guides maritime diplomacy."
+        ],
+        "mains_perspective": {
+          "context": "Ensuring a rules-based order, freedom of navigation, and overflight in critical sea lines of communication.",
+          "key_arguments": "Rising maritime friction, non-traditional security threats (piracy, IUU fishing), and strategic bottlenecks.",
+          "way_forward": "Strengthen Quad Maritime Domain Awareness and operationalize joint bilateral naval exercises."
+        }
+      },
+      {
+        "title": "Fiscal Responsibility and Budget Management (FRBM) Act & Macroeconomic Stability",
+        "paper": "GS-3",
+        "topic": "Indian Economy & Fiscal Policy",
+        "static_linkage": "Ramesh Singh Economy Ch 8",
+        "image": "https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&auto=format&fit=crop&q=60",
+        "prelims_pointers": [
+          "NK Singh Committee recommended a Debt-to-GDP ratio target of 60% (40% Centre, 20% States).",
+          "Escape clause under FRBM allows deviation during national security, calamity, or structural collapse."
+        ],
+        "mains_perspective": {
+          "context": "Balancing growth-oriented capital spending with medium-term fiscal consolidation targets.",
+          "key_arguments": "High revenue expenditure, off-budget liabilities, and state-level fiscal deficits pressure public finances.",
+          "way_forward": "Establish an independent Fiscal Council to audit budget assumptions and enforce fiscal discipline."
+        }
+      },
+      {
+        "title": "2nd ARC Recommendations on Ethics in Governance & Probity",
+        "paper": "GS-4",
+        "topic": "Public Service Ethics & Probity",
+        "static_linkage": "Ethics in Administration & ARC 4th Report",
+        "image": "https://images.unsplash.com/photo-1450133064473-71024230f91b?w=800&auto=format&fit=crop&q=60",
+        "prelims_pointers": [
+          "2nd ARC 4th Report specifically addresses Ethics in Governance.",
+          "CVC Act 2003 grants statutory status to Central Vigilance Commission."
+        ],
+        "mains_perspective": {
+          "context": "Building transparent, accountable administrative systems to eliminate discretionary corruption.",
+          "key_arguments": "Administrative opacity, lack of whistleblower protection, and delayed departmental proceedings undermine integrity.",
+          "way_forward": "Implement mandatory e-governance audits, proactive RTI disclosures, and value-based civil service training."
+        }
+      },
+      {
+        "title": "Preservation of Coastal Fortresses & Maratha Heritage Architecture",
+        "paper": "GS-1",
+        "topic": "Indian Art, Culture & Heritage",
+        "static_linkage": "Nitin Singhania Art & Culture Ch 1",
+        "image": "https://images.unsplash.com/photo-1590050752117-238cb0fb12b1?w=800&auto=format&fit=crop&q=60",
+        "prelims_pointers": [
+          "Maratha Military Landscapes were nominated for UNESCO World Heritage site recognition.",
+          "Archaeological Survey of India (ASI) acts as statutory custodian under AMASR Act 1958."
+        ],
+        "mains_perspective": {
+          "context": "Strategic conservation of 17th-century coastal, sea, and hill fort structures across Western India.",
+          "key_arguments": "Promoting sustainable eco-tourism while preventing structural degradation from coastal weathering.",
+          "way_forward": "Adopt scientific stone preservation methods and community-led heritage management."
+        }
+      }
+    ];
+
+    let combinedPool = [...BUILTIN_FALLBACK];
+    let currentMode = 'DAILY';
     let currentPaperFilter = 'ALL';
     let savedBookmarks = JSON.parse(localStorage.getItem('upsc_bookmarks') || '[]');
 
@@ -240,22 +300,21 @@
       applyFilters();
     }
 
-    async function fetchPayloads() {
-      const container = document.getElementById('news-container');
+    async function initApp() {
       try {
         const [newsRes, repoRes] = await Promise.allSettled([
           fetch('./current_affairs.json?t=' + Date.now()).then(r => r.json()),
           fetch('./repository.json?t=' + Date.now()).then(r => r.json())
         ]);
 
-        dailyNews = newsRes.status === 'fulfilled' && Array.isArray(newsRes.value) ? newsRes.value : [];
-        staticRepo = repoRes.status === 'fulfilled' && Array.isArray(repoRes.value) ? repoRes.value : [];
+        const fetchedNews = newsRes.status === 'fulfilled' && Array.isArray(newsRes.value) ? newsRes.value : [];
+        const fetchedRepo = repoRes.status === 'fulfilled' && Array.isArray(repoRes.value) ? repoRes.value : [];
 
-        // Deduplicate and combine payloads safely
         const seen = new Set();
+        const merged = [...fetchedNews, ...fetchedRepo, ...BUILTIN_FALLBACK];
         combinedPool = [];
 
-        [...dailyNews, ...staticRepo].forEach(item => {
+        merged.forEach(item => {
           if (item && item.title) {
             const key = item.title.toLowerCase().trim();
             if (!seen.has(key)) {
@@ -264,11 +323,10 @@
             }
           }
         });
-
-        applyFilters();
-      } catch (error) {
-        container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: #f87171; padding: 4rem 0;">Unable to load data payload.</div>`;
+      } catch (err) {
+        console.log("Using built-in fallback dataset:", err);
       }
+      applyFilters();
     }
 
     function renderNews(items) {
@@ -436,12 +494,8 @@
     function applyFilters() {
       const searchTerm = document.getElementById('search-input').value.toLowerCase().trim();
       
-      let activePool = [];
-      if (currentMode === 'DAILY') {
-        activePool = dailyNews.length > 0 ? dailyNews : combinedPool;
-      } else if (currentMode === 'REPO') {
-        activePool = combinedPool;
-      } else if (currentMode === 'SAVED') {
+      let activePool = combinedPool;
+      if (currentMode === 'SAVED') {
         activePool = combinedPool.filter(item => savedBookmarks.includes(item.title));
       }
 
@@ -450,14 +504,11 @@
       }
 
       if (searchTerm.length > 0) {
-        if (currentMode === 'DAILY') activePool = combinedPool;
-
         activePool = activePool.filter(item => {
           const titleMatch = (item.title || '').toLowerCase().includes(searchTerm);
           const topicMatch = (item.topic || '').toLowerCase().includes(searchTerm);
           const paperMatch = (item.paper || '').toLowerCase().includes(searchTerm);
           const staticMatch = (item.static_linkage || '').toLowerCase().includes(searchTerm);
-          
           const prelimsMatch = item.prelims_pointers && item.prelims_pointers.some(p => p.toLowerCase().includes(searchTerm));
           
           let mainsMatch = false;
@@ -474,7 +525,7 @@
       renderNews(activePool);
     }
 
-    fetchPayloads();
+    initApp();
   </script>
 </body>
 </html>
