@@ -5,6 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <title>NexusGS - UPSC Knowledge Wiki</title>
+  
+  <!-- Clerk Frontend SDK -->
+  <script async crossorigin="anonymous" data-clerk-publishable-key="YOUR_CLERK_PUBLISHABLE_KEY" src="https://cdn.jsdelivr.net/npm/@clerk/clerk-js@latest/dist/clerk.browser.js"></script>
+
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     
@@ -154,6 +158,9 @@
         <button onclick="switchViewMode('REPO')" id="tab-repo" class="mode-tab">📚 Wiki Repository</button>
         <button onclick="switchViewMode('SAVED')" id="tab-saved" class="mode-tab">⭐ Saved</button>
         <button onclick="openEvaluator()" class="btn-eval">📸 AI Vision Grader</button>
+        
+        <!-- Clerk Authentication Container -->
+        <div id="auth-container"></div>
       </div>
     </nav>
 
@@ -253,6 +260,22 @@
     let currentPaperFilter = 'ALL';
     let currentSubtopicFilter = 'ALL';
     let savedBookmarks = JSON.parse(localStorage.getItem('upsc_bookmarks') || '[]');
+
+    // Initialize Clerk Authentication
+    window.addEventListener('load', async function () {
+      if (window.Clerk) {
+        await window.Clerk.load();
+        const authContainer = document.getElementById('auth-container');
+        
+        if (window.Clerk.user) {
+          // User is signed in, show User Button
+          window.Clerk.mountUserButton(authContainer);
+        } else {
+          // User is signed out, show Sign In button
+          authContainer.innerHTML = `<button onclick="window.Clerk.openSignIn()" class="mode-tab" style="background:#0284c7; color:#fff; border-color:#38bdf8;">Sign In</button>`;
+        }
+      }
+    });
 
     const fallbackImages = {
       'GS-1': 'https://images.unsplash.com/photo-1590050752117-238cb0fb12b1?w=800&auto=format&fit=crop&q=60',
