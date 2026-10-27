@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-  <title>NexusGS - UPSC Knowledge Wiki</title>
+  <title>NexusGS - UPSC Knowledge Wiki & Consolidated Repository</title>
   
   <!-- Official Razorpay Checkout Script -->
   <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
@@ -14,7 +14,7 @@
     
     :root {
       --bg-gradient: linear-gradient(135deg, #090d16 0%, #111827 50%, #0b0f19 100%);
-      --surface-glass: rgba(17, 24, 39, 0.85);
+      --surface-glass: rgba(17, 24, 39, 0.88);
       --border-color: rgba(55, 65, 81, 0.6);
       --text-main: #f3f4f6;
       --text-muted: #9ca3af;
@@ -36,6 +36,7 @@
       display: flex; justify-content: space-between; align-items: center;
       padding: 1rem 1.5rem; background: var(--surface-glass); border: 1px solid var(--border-color);
       border-radius: 1rem; backdrop-filter: blur(12px); margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
     }
     .brand-group { display: flex; align-items: center; gap: 0.75rem; }
     .brand-icon {
@@ -71,6 +72,7 @@
     .search-panel {
       background: var(--surface-glass); border: 1px solid var(--border-color);
       padding: 1.25rem; border-radius: 1rem; margin-bottom: 2rem; backdrop-filter: blur(12px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
     }
     .search-row { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1rem; }
     .search-box {
@@ -96,7 +98,7 @@
     .card {
       background: var(--surface-glass); border: 1px solid var(--border-color);
       border-radius: 1rem; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between;
-      cursor: pointer; transition: all 0.25s ease;
+      cursor: pointer; transition: all 0.25s ease; box-shadow: 0 8px 24px rgba(0,0,0,0.4);
     }
     .card:hover { transform: translateY(-4px); border-color: rgba(56, 189, 248, 0.6); }
 
@@ -133,6 +135,7 @@
     .modal-body {
       background: #111827; border: 1px solid var(--border-color); border-radius: 1.25rem;
       max-width: 800px; width: 100%; position: relative; max-height: 88vh; overflow-y: auto; overflow-x: hidden;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.7);
     }
     .modal-padding { padding: 2rem; }
     .close-btn {
@@ -144,26 +147,29 @@
       background: linear-gradient(135deg, #0284c7, #6366f1); color: #fff; border: none;
       padding: 0.75rem 1.5rem; border-radius: 0.625rem; font-weight: 700; cursor: pointer; font-size: 0.95rem; box-shadow: 0 4px 12px rgba(2, 132, 199, 0.4);
     }
+    .btn-ai:hover { filter: brightness(1.1); }
   </style>
 </head>
 <body>
   <div class="container">
     
+    <!-- Navbar -->
     <nav class="app-navbar">
       <div class="brand-group">
         <div class="brand-icon">
           <img src="./logo.png" alt="NexusGS" style="width:100%; height:100%; object-fit:contain;" onerror="this.onerror=null; this.parentNode.innerHTML='<svg width=\'22\' height=\'22\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'#38bdf8\' stroke-width=\'2.5\' stroke-linecap=\'round\' stroke-linejoin=\'round\'><path d=\'M16 3h5v5\'/><path d=\'M4 20L21 3\'/><path d=\'M21 16v5h-5\'/><path d=\'M15 15l6 6\'/><path d=\'M4 4l5 5\'/></svg>';" />
         </div>
         <div>
-          <div class="brand-title">NexusGS Wiki</div>
-          <div class="brand-sub">UPSC Static & Dynamic Knowledge Base</div>
+          <div class="brand-title">NexusGS Wiki & Repository</div>
+          <div class="brand-sub">Consolidated UPSC GS Static & Daily Current Affairs</div>
         </div>
       </div>
 
       <div class="nav-actions">
         <button onclick="switchViewMode('DAILY')" id="tab-daily" class="mode-tab active">📰 Feed</button>
-        <button onclick="switchViewMode('REPO')" id="tab-repo" class="mode-tab">📚 Wiki Repository</button>
+        <button onclick="switchViewMode('REPO')" id="tab-repo" class="mode-tab">📚 Consolidated Library</button>
         <button onclick="switchViewMode('SAVED')" id="tab-saved" class="mode-tab">⭐ Saved</button>
+        <button onclick="triggerDailyBatchGeneration()" class="btn-eval" style="background: rgba(56, 189, 248, 0.2); color: #38bdf8; border-color: rgba(56, 189, 248, 0.4);">🔄 Fetch Daily Batch</button>
         <button onclick="openEvaluator()" class="btn-eval">📸 AI Vision Grader</button>
         <button onclick="openProModal()" class="btn-pro">⚡ Upgrade to Pro</button>
         <div id="auth-nav-container">
@@ -172,9 +178,10 @@
       </div>
     </nav>
 
+    <!-- Search & Filter Panel -->
     <div class="search-panel">
       <div class="search-row">
-        <input type="text" id="search-input" onkeyup="handleSearch()" class="search-box" placeholder="Search knowledge base or type any UPSC topic..." />
+        <input type="text" id="search-input" onkeyup="handleSearch()" class="search-box" placeholder="Search consolidated repository or type any UPSC topic for instant AI synthesis..." />
       </div>
       
       <!-- Paper Filter Row -->
@@ -195,7 +202,7 @@
 
       <!-- Granular Subtopic Filter Row -->
       <div class="filter-section" style="margin-top: 0.75rem;">
-        <span class="filter-label">Wiki Subtopics:</span>
+        <span class="filter-label">Consolidated Subtopics:</span>
         <div class="filter-pills" id="subtopic-pills">
           <button onclick="filterSubtopic('ALL')" class="pill active">All Subtopics</button>
           <button onclick="filterSubtopic('Art & Culture')" class="pill">Art & Culture</button>
@@ -272,7 +279,7 @@
       <div class="modal-padding">
         <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">⚡</div>
         <h2 style="font-size: 1.5rem; font-weight: 800; color: #fff; margin-bottom: 0.5rem;">Upgrade to NexusGS Pro</h2>
-        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.5rem;">Unlock unlimited AI Wikipedia article generation, unlimited handwriting answer evaluations, and priority scoring.</p>
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.5rem;">Unlock unlimited AI Wikipedia article generation, bulk consolidated downloads, and unlimited handwriting answer evaluations.</p>
         
         <div style="background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 0.75rem; padding: 1rem; margin-bottom: 1.5rem;">
           <div style="font-size: 1.5rem; font-weight: 800; color: #fbbf24;">₹199 <span style="font-size: 0.8rem; font-weight: 400; color: var(--text-muted);">/ month</span></div>
@@ -291,7 +298,7 @@
       <button onclick="closeAuthModal()" class="close-btn">&times;</button>
       <div class="modal-padding" style="text-align: center;">
         <h2 style="font-size: 1.4rem; font-weight: 800; color: #fff; margin-bottom: 0.5rem;" id="auth-title">🔐 Sign In to NexusGS</h2>
-        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.5rem;">Access your saved wiki bookmarks and AI study tools across devices.</p>
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.5rem;">Access your saved wiki bookmarks and synchronized repositories across devices.</p>
         
         <div id="auth-form-container">
           <input type="email" id="auth-email" class="search-box" style="width: 100%; margin-bottom: 0.75rem;" placeholder="Enter your email..." />
@@ -303,6 +310,7 @@
     </div>
   </div>
 
+  <!-- Main Application Script -->
   <script>
     let MASTER_REPOSITORY = [];
     let currentMode = 'DAILY';
@@ -553,12 +561,42 @@
       applyFilters();
     }
 
+    // Automated Batch Generator for Daily High-Volume Current Affairs
+    async function triggerDailyBatchGeneration() {
+      if (!consumeCredit()) return;
+
+      const container = document.getElementById('news-container');
+      container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: #38bdf8; padding: 4rem 0;">✨ Synthesizing comprehensive high-volume daily current affairs batch across all GS papers...</div>`;
+
+      try {
+        const res = await fetch('/api/evaluate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'generateDailyBatch' })
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Failed to fetch daily batch');
+
+        if (Array.isArray(data.articles)) {
+          MASTER_REPOSITORY = [...data.articles, ...MASTER_REPOSITORY];
+          applyFilters();
+          alert(`Successfully synthesized and added ${data.articles.length} new current affairs articles!`);
+        }
+      } catch (err) {
+        container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: #f87171; padding: 4rem 0;">Error generating daily batch: ${err.message}</div>`;
+      }
+    }
+
     function applyFilters() {
       const searchTerm = document.getElementById('search-input').value.toLowerCase().trim();
       let activePool = MASTER_REPOSITORY;
 
       if (currentMode === 'SAVED') {
         activePool = activePool.filter(item => savedBookmarks.includes(item.title));
+      } else if (currentMode === 'REPO') {
+        // Consolidated Repository View mode logic
+        activePool = activePool; 
       }
       
       // Paper Filter
@@ -626,7 +664,7 @@
       const container = document.getElementById('news-container');
       bannerContainer.innerHTML = ''; 
       container.innerHTML = '';
-      document.getElementById('match-count').textContent = `${items.length} Wiki Articles`;
+      document.getElementById('match-count').textContent = `${items.length} Repository Articles`;
 
       if (!items || items.length === 0) {
         let extraAction = '';
@@ -671,7 +709,7 @@
             </div>
             <div style="display:flex; justify-content:space-between; align-items:center; margin-top:0.5rem;">
               <button onclick="toggleBookmark(event, '${(item.title || '').replace(/'/g, "\\'")}')" class="mode-tab" style="padding:0.3rem 0.6rem; font-size:0.75rem;">${isSaved ? '⭐ Saved' : '☆ Save'}</button>
-              <div class="expand-hint">Read Wiki Article &rarr;</div>
+              <div class="expand-hint">Read Consolidated Article &rarr;</div>
             </div>
           </div>
         `;
