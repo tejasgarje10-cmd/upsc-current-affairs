@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-  <title>UPSC CSE Syllabus Portal</title>
+  <title>UPSC CSE Daily Current Affairs & Repository</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     
@@ -24,40 +24,61 @@
     body {
       background: var(--bg-gradient); color: var(--text-main);
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      min-height: 100vh; padding: 2rem 1rem; line-height: 1.5;
+      min-height: 100vh; padding: 1.5rem 1rem; line-height: 1.5;
     }
     .container { max-width: 1240px; margin: 0 auto; }
     
-    header { text-align: center; margin-bottom: 2rem; }
-    .hero-title {
-      font-size: 2.35rem; font-weight: 800; letter-spacing: -0.02em;
-      background: linear-gradient(90deg, #38bdf8 0%, #818cf8 100%);
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 0.5rem;
+    /* Premium Dashboard Header */
+    .app-navbar {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 1rem 1.5rem; background: var(--surface-glass); border: 1px solid var(--border-color);
+      border-radius: 1rem; backdrop-filter: blur(12px); margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;
     }
-    .subtitle { color: var(--text-muted); font-size: 0.95rem; max-width: 640px; margin: 0 auto; }
+    .brand-group { display: flex; align-items: center; gap: 0.75rem; }
+    .brand-icon {
+      width: 40px; height: 40px; background: linear-gradient(135deg, #0284c7, #6366f1);
+      border-radius: 0.625rem; display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 1.1rem; color: #fff; box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3);
+    }
+    .brand-title { font-size: 1.25rem; font-weight: 800; color: #ffffff; letter-spacing: -0.01em; }
+    .brand-sub { font-size: 0.75rem; color: #38bdf8; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
 
-    .controls { display: flex; flex-direction: column; align-items: center; gap: 1rem; margin-bottom: 2rem; }
+    .nav-actions { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; }
+    .mode-tab {
+      background: rgba(31, 41, 55, 0.7); color: var(--text-muted); border: 1px solid var(--border-color);
+      padding: 0.5rem 1rem; border-radius: 0.5rem; cursor: pointer; font-weight: 600; font-size: 0.85rem; transition: all 0.2s;
+    }
+    .mode-tab:hover { background: #374151; color: #fff; }
+    .mode-tab.active { background: #0284c7; color: #fff; border-color: #38bdf8; box-shadow: 0 0 10px rgba(2, 132, 199, 0.3); }
+
+    .btn-pdf {
+      background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.35);
+      padding: 0.5rem 1rem; border-radius: 0.5rem; cursor: pointer; font-size: 0.85rem; font-weight: 600; transition: all 0.2s;
+    }
+    .btn-pdf:hover { background: rgba(16, 185, 129, 0.25); border-color: #34d399; }
+
+    /* Control & Search Bar Section */
+    .search-panel {
+      background: var(--surface-glass); border: 1px solid var(--border-color);
+      padding: 1.25rem; border-radius: 1rem; margin-bottom: 2rem; backdrop-filter: blur(12px);
+    }
+    .search-row { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1rem; }
     .search-box {
-      width: 100%; max-width: 540px; padding: 0.85rem 1.25rem; border-radius: 9999px;
-      border: 1px solid var(--border-color); background: rgba(17, 24, 39, 0.85);
+      flex: 1; min-width: 280px; padding: 0.75rem 1.25rem; border-radius: 0.625rem;
+      border: 1px solid var(--border-color); background: rgba(11, 15, 25, 0.8);
       color: #ffffff; font-size: 0.95rem; outline: none; transition: border-color 0.2s;
     }
     .search-box:focus { border-color: #38bdf8; box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2); }
 
-    .filter-bar { display: flex; justify-content: center; gap: 0.5rem; flex-wrap: wrap; }
-    .filter-btn {
-      background: rgba(31, 41, 55, 0.7); color: var(--text-muted); border: 1px solid var(--border-color);
-      padding: 0.5rem 1.15rem; border-radius: 9999px; cursor: pointer; font-weight: 600; font-size: 0.85rem; transition: all 0.2s;
+    .filter-pills { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+    .pill {
+      background: rgba(31, 41, 55, 0.6); color: var(--text-muted); border: 1px solid var(--border-color);
+      padding: 0.4rem 0.9rem; border-radius: 0.375rem; cursor: pointer; font-weight: 600; font-size: 0.8rem; transition: all 0.2s;
     }
-    .filter-btn:hover { background: #374151; color: #ffffff; }
-    .filter-btn.active { background: #0284c7; color: #ffffff; border-color: #38bdf8; }
+    .pill:hover { background: #374151; color: #fff; }
+    .pill.active { background: #0284c7; color: #fff; border-color: #38bdf8; }
 
-    .utility-bar { display: flex; justify-content: flex-end; margin-bottom: 1.5rem; }
-    .btn-print {
-      background: rgba(31, 41, 55, 0.8); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.4);
-      padding: 0.45rem 0.9rem; border-radius: 0.5rem; cursor: pointer; font-size: 0.8rem; font-weight: 600;
-    }
-
+    /* Featured Hero Section */
     .hero-card {
       display: grid; grid-template-columns: 1fr; gap: 1.5rem; background: var(--surface-glass);
       border: 1px solid rgba(56, 189, 248, 0.5); border-radius: 1.25rem; overflow: hidden;
@@ -69,6 +90,7 @@
     .hero-img { width: 100%; height: 100%; object-fit: cover; display: block; }
     .hero-body { padding: 1.75rem; display: flex; flex-direction: column; justify-content: space-between; }
 
+    /* Main Grid Layout */
     .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 1.75rem; }
     
     .card {
@@ -109,6 +131,7 @@
 
     .expand-hint { text-align: right; font-size: 0.775rem; color: #38bdf8; margin-top: 0.5rem; font-weight: 600; }
 
+    /* Modal Styling */
     .modal-overlay {
       position: fixed; inset: 0; background: rgba(3, 7, 18, 0.85); backdrop-filter: blur(8px);
       display: none; align-items: center; justify-content: center; padding: 1rem; z-index: 100;
@@ -124,33 +147,52 @@
       color: #ffffff; width: 36px; height: 36px; border-radius: 50%; font-size: 1.25rem; cursor: pointer;
       display: flex; align-items: center; justify-content: center; z-index: 10;
     }
+
+    @media print {
+      body { background: #ffffff !important; color: #000000 !important; }
+      .search-panel, .app-navbar, .expand-hint, .close-btn { display: none !important; }
+      .grid, .hero-card { display: block !important; }
+      .card { background: #ffffff !important; border: 1px solid #ccc !important; color: #000000 !important; margin-bottom: 2rem !important; }
+    }
   </style>
 </head>
 <body>
   <div class="container">
-    <header>
-      <h1 class="hero-title">UPSC CSE Syllabus Portal</h1>
-      <p class="subtitle">Categorized Daily Current Affairs with Factual Prelims Pointers & Structural Mains Perspectives</p>
-    </header>
+    
+    <!-- Header Navbar -->
+    <nav class="app-navbar">
+      <div class="brand-group">
+        <div class="brand-icon">IAS</div>
+        <div>
+          <div class="brand-title">UPSC Daily Pulse</div>
+          <div class="brand-sub">Syllabus-Aligned Current Affairs</div>
+        </div>
+      </div>
 
-    <div class="controls">
-      <input type="text" id="search-input" onkeyup="handleSearch()" class="search-box" placeholder="Search topics, treaties, reports (e.g., Geopolitics, UNCLOS, DPI, Ethics)..." />
+      <div class="nav-actions">
+        <button onclick="switchViewMode('DAILY')" id="tab-daily" class="mode-tab active">📰 Today's Daily Feed</button>
+        <button onclick="switchViewMode('REPO')" id="tab-repo" class="mode-tab">📚 Repository Search</button>
+        <button onclick="switchViewMode('SAVED')" id="tab-saved" class="mode-tab">⭐ Saved Notes</button>
+        <button onclick="window.print()" class="btn-pdf">🖨️ Export PDF</button>
+      </div>
+    </nav>
+
+    <!-- Search & Filter Controls -->
+    <div class="search-panel">
+      <div class="search-row">
+        <input type="text" id="search-input" onkeyup="handleSearch()" class="search-box" placeholder="Search daily news, treaties, reports (e.g., Geopolitics, UNCLOS, DPI, Ethics)..." />
+      </div>
       
-      <div class="filter-bar">
-        <button onclick="filterNews('ALL')" class="filter-btn active">All Papers</button>
-        <button onclick="filterNews('GS-1')" class="filter-btn">GS-1</button>
-        <button onclick="filterNews('GS-2')" class="filter-btn">GS-2</button>
-        <button onclick="filterNews('GS-3')" class="filter-btn">GS-3</button>
-        <button onclick="filterNews('GS-4')" class="filter-btn">GS-4</button>
+      <div class="filter-pills">
+        <button onclick="filterPaper('ALL')" class="pill active">All Syllabus</button>
+        <button onclick="filterPaper('GS-1')" class="pill">GS-1 Culture & History</button>
+        <button onclick="filterPaper('GS-2')" class="pill">GS-2 Polity & IR</button>
+        <button onclick="filterPaper('GS-3')" class="pill">GS-3 Economy & Tech</button>
+        <button onclick="filterPaper('GS-4')" class="pill">GS-4 Ethics & Integrity</button>
       </div>
     </div>
 
-    <div class="utility-bar">
-      <button onclick="window.print()" class="btn-print">🖨️ Export Notes / Save PDF</button>
-    </div>
-
     <div id="hero-container"></div>
-
     <div id="news-container" class="grid">
       <div style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 4rem 0;">Loading daily current affairs...</div>
     </div>
@@ -165,7 +207,9 @@
 
   <script>
     let allNews = [];
+    let currentMode = 'DAILY'; // 'DAILY', 'REPO', 'SAVED'
     let currentPaperFilter = 'ALL';
+    let savedBookmarks = JSON.parse(localStorage.getItem('upsc_bookmarks') || '[]');
 
     const fallbackImages = {
       'GS-1': 'https://images.unsplash.com/photo-1590050752117-238cb0fb12b1?w=800&auto=format&fit=crop&q=60',
@@ -175,15 +219,26 @@
     };
 
     function handleImgError(imgElement, paperTag) {
-      imgElement.onerror = null; // Prevents infinite loop
+      imgElement.onerror = null;
       imgElement.src = fallbackImages[paperTag] || fallbackImages['GS-2'];
+    }
+
+    function toggleBookmark(e, title) {
+      e.stopPropagation();
+      if (savedBookmarks.includes(title)) {
+        savedBookmarks = savedBookmarks.filter(t => t !== title);
+      } else {
+        savedBookmarks.push(title);
+      }
+      localStorage.setItem('upsc_bookmarks', JSON.stringify(savedBookmarks));
+      applyFilters();
     }
 
     async function fetchNews() {
       const container = document.getElementById('news-container');
       try {
         const response = await fetch('./current_affairs.json?t=' + Date.now());
-        if (!response.ok) throw new Error('JSON file missing');
+        if (!response.ok) throw new Error('JSON missing');
         allNews = await response.json();
         renderNews(allNews);
       } catch (error) {
@@ -198,28 +253,28 @@
       container.innerHTML = '';
 
       if (!items || items.length === 0) {
-        container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 4rem 0;">No topics match your filter.</div>`;
+        container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 4rem 0;">No items match your selected filter.</div>`;
         return;
       }
 
-      if (currentPaperFilter === 'ALL' && items.length > 0) {
+      // 1. Featured Lead Card in Daily Feed Mode
+      if (currentMode === 'DAILY' && currentPaperFilter === 'ALL' && items.length > 0) {
         const lead = items[0];
         const paperTag = lead.paper || 'GS-2';
         const itemDate = lead.date || new Date().toISOString().split('T')[0];
         const prelimsList = (lead.prelims_pointers || []).map(p => `<li>• ${p}</li>`).join('');
-        const imgSrc = lead.image || fallbackImages[paperTag];
 
         const hero = document.createElement('div');
         hero.className = "hero-card";
         hero.onclick = () => openModal(0);
         hero.innerHTML = `
           <div class="hero-img-container">
-            <img src="${imgSrc}" class="hero-img" alt="Lead News" onerror="handleImgError(this, '${paperTag}')" />
+            <img src="${lead.image || fallbackImages[paperTag]}" class="hero-img" alt="Lead News" onerror="handleImgError(this, '${paperTag}')" />
           </div>
           <div class="hero-body">
             <div>
               <div class="card-header">
-                <span class="badge badge-${paperTag}">Featured • ${paperTag}</span>
+                <span class="badge badge-${paperTag}">Top Story • ${paperTag}</span>
                 <span class="badge-date">${itemDate}</span>
                 <span class="badge-topic">${lead.topic || 'Geopolitics'}</span>
               </div>
@@ -233,14 +288,14 @@
         heroContainer.appendChild(hero);
       }
 
-      const gridItems = (currentPaperFilter === 'ALL') ? items.slice(1) : items;
+      const gridItems = (currentMode === 'DAILY' && currentPaperFilter === 'ALL') ? items.slice(1) : items;
 
-      gridItems.forEach((item, index) => {
-        const originalIndex = items.indexOf(item);
+      gridItems.forEach((item) => {
+        const originalIndex = allNews.indexOf(item);
         const prelimsList = (item.prelims_pointers || []).map(p => `<li>• ${p}</li>`).join('');
         const itemDate = item.date || new Date().toISOString().split('T')[0];
         const paperTag = item.paper || 'GS-1';
-        const imgSrc = item.image || fallbackImages[paperTag];
+        const isSaved = savedBookmarks.includes(item.title);
 
         const card = document.createElement('div');
         card.className = "card";
@@ -248,7 +303,7 @@
         
         card.innerHTML = `
           <div class="card-img-wrapper">
-            <img src="${imgSrc}" class="card-img" alt="News Image" onerror="handleImgError(this, '${paperTag}')" />
+            <img src="${item.image || fallbackImages[paperTag]}" class="card-img" alt="News Image" onerror="handleImgError(this, '${paperTag}')" />
           </div>
           <div class="card-body">
             <div>
@@ -270,7 +325,10 @@
                 <p><strong>Way Forward:</strong> ${item.mains_perspective.way_forward || ''}</p>
               </div>` : ''}
             </div>
-            <div class="expand-hint">Click to open full answer note &rarr;</div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:0.5rem;">
+              <button onclick="toggleBookmark(event, '${item.title.replace(/'/g, "\\'")}')" class="mode-tab" style="padding:0.3rem 0.6rem; font-size:0.75rem;">${isSaved ? '⭐ Saved' : '☆ Save'}</button>
+              <div class="expand-hint">Click to expand &rarr;</div>
+            </div>
           </div>
         `;
         container.appendChild(card);
@@ -319,11 +377,19 @@
       }
     }
 
-    function filterNews(paper) {
+    function switchViewMode(mode) {
+      currentMode = mode;
+      document.getElementById('tab-daily').classList.toggle('active', mode === 'DAILY');
+      document.getElementById('tab-repo').classList.toggle('active', mode === 'REPO');
+      document.getElementById('tab-saved').classList.toggle('active', mode === 'SAVED');
+      applyFilters();
+    }
+
+    function filterPaper(paper) {
       currentPaperFilter = paper;
-      const buttons = document.querySelectorAll('.filter-btn');
+      const buttons = document.querySelectorAll('.pill');
       buttons.forEach(btn => {
-        if (btn.textContent.trim() === paper || (paper === 'ALL' && btn.textContent.trim() === 'All Papers')) {
+        if (btn.textContent.includes(paper) || (paper === 'ALL' && btn.textContent.includes('All Syllabus'))) {
           btn.classList.add('active');
         } else {
           btn.classList.remove('active');
@@ -337,6 +403,10 @@
     function applyFilters() {
       const searchTerm = document.getElementById('search-input').value.toLowerCase();
       let filtered = allNews;
+
+      if (currentMode === 'SAVED') {
+        filtered = filtered.filter(item => savedBookmarks.includes(item.title));
+      }
 
       if (currentPaperFilter !== 'ALL') {
         filtered = filtered.filter(item => item.paper === currentPaperFilter);
