@@ -1,72 +1,87 @@
-const { GoogleGenAI } = require('@google/genai');
+import { GoogleGenAI } from '@google/genai';
 
-module.exports = async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+const ai = new GoogleGenAI();
 
-  if (req.method === 'OPTIONS') {
-    return res.status(200).end();
-  }
-
+export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
   try {
-    const { question, paper, markerType, imageBase64, mimeType } = req.body;
-    
-    const apiKey = process.env.GEMINI_API_KEY;
-    if (!apiKey) {
-      return res.status(500).json({ error: 'Server configuration error: GEMINI_API_KEY is missing in Vercel Environment Variables.' });
-    }
+    const { action, question, paper, markerType, imageBase64, mimeType, searchTerm } = req.body;
 
-    const ai = new GoogleGenAI({ apiKey });
-
-    // Dynamically set total marks based on whether it's a 10-marker or 15-marker
-    const totalMarks = markerType && markerType.includes('15') ? 15 : 10;
-    const wordLimit = markerType && markerType.includes('15') ? '250 words' : '150 words';
-
-    const prompt = `Act as a strict UPSC Civil Services Mains examiner. Evaluate the provided handwritten answer photo for ${paper} (${markerType}).
-    Question: "${question}"
-
-    Provide your evaluation in clean HTML format:
-    1. Overall Score out of ${totalMarks} (e.g., X / ${totalMarks}) with a brief examiner verdict. Check word count adherence (${wordLimit}) and structural depth.
-    2. Handwriting & Presentation Review (spacing, structure, margins, sub-headings).
-    3. Content & Breadth (dimensional coverage, committee reports, Supreme Court judgments, keywords used vs missing).
-    4. Scope for Improvement & Model Conclusion suggestion.`;
-
-    let cleanBase64 = imageBase64;
-    if (imageBase64 && imageBase64.includes(',')) {
-      cleanBase64 = imageBase64.split(',')[1];
-    }
-
-    const contents = [
-      { text: prompt },
-      { 
-        inlineData: { 
-          mimeType: mimeType || 'image/jpeg', 
-          data: cleanBase64 
-        } 
+    // Handle Dynamic Wiki Article Generation
+    if (action === 'generateWikiArticle') {
+      if (!searchTerm) {
+        return res.status(400).json({ error: 'Search term is required' });
       }
-    ];
 
-    let response;
-    try {
-      response = await ai.models.generateContent({
-        model: 'gemini-3.8-flash',
-        contents: contents,
+      const prompt = `Act as an elite UPSC civil services expert and master curriculum author. A student searched for the topic "${searchTerm}" in the NexusGS open-source Wikipedia repository. 
+      Generate a comprehensive, publication-grade study article for this exact topic tailored for UPSC Civil Services (GS-1, GS-2, GS-3, or GS-4).
+      
+      Return ONLY valid raw JSON matching this exact structure, with no extra markdown formatting blocks:
+      {
+        "title": "A precise, professional title for ${searchTerm}",
+        "paper": "GS-2",
+        "topic": "General Syllabus Subtopic",
+        "static_linkage": "Core constitutional article, statutory body, or theoretical framework",
+        "date": "2026-10",
+        "image": "https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&auto=format&fit=crop&q=60",
+        "prelims_pointers": [
+          "Key factual statement 1 with constitutional or institutional backing",
+          "Key factual statement 2 with historical or committee precedent"
+        ],
+        "mains_perspective": {
+          "context": "Socio-economic, geopolitical, or administrative context of ${searchTerm}",
+          "key_arguments": "Multi-dimensional analysis exploring core arguments, challenges, and stakeholder impacts",
+          "way_forward": "Actionable policy measures, administrative reforms, or committee recommendations"
+        }
+      }`;
+
+      const response = await ai.models.generateContent({
+        model: 'gemini-2.5-flash',
+        contents: prompt,
       });
-    } catch (primaryErr) {
-      response = await ai.models.generateContent({
-        model: 'gemini-3.6-flash',
-        contents: contents,
-      });
+
+      let text = response.text.trim();
+      if (text.startsWith('```json')) {
+        text = text.replace(/^```json/, '').replace(/```$/, '').trim();
+      } else if (text.startsWith('```')) {
+        text = text.replace(/^```/, '').replace(/```$/, '').trim();
+      }
+
+      const articleData = JSON.parse(text);
+      return res.status(200).json({ article: articleData });
     }
+
+    // Default Action: Handwritten Answer Evaluation (Vision Grader)
+    if (!imageBase64 || !question) {
+      return res.status(400).json({ error: 'Missing required image or question parameters.' });
+    }
+
+    const evaluationPrompt = `You are an expert UPSC civil services examiner. Evaluate this handwritten answer sheet for the following prompt:
+    Question: "${question}"
+    Paper: ${paper}
+    Marker Type: ${markerType}
+    
+    Provide rigorous, constructive feedback following standard UPSC evaluation parameters (Introduction, Core Body structure, Multidimensional Analysis, Keywords/Committees used, and Conclusion/Way Forward), along with an estimated score out of 10 or 15. Format your output cleanly with HTML tags or clear headings.`;
+
+    const imagePart = {
+      inlineData: {
+        data: imageBase64,
+        mimeType: mimeType || 'image/jpeg'
+      }
+    };
+
+    const response = await ai.models.generateContent({
+      model: 'gemini-2.5-flash',
+      contents: [evaluationPrompt, imagePart]
+    });
 
     return res.status(200).json({ feedback: response.text });
-  } catch (error) {
-    console.error("Gemini Vision Error:", error);
-    return res.status(500).json({ error: error.message || 'Failed to evaluate answer. Please try again.' });
+
+  } catch (err) {
+    console.error('API Error:', err);
+    return res.status(500).json({ error: err.message || 'Internal server error.' });
   }
-};
+}
