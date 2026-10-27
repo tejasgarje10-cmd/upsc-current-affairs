@@ -2,6 +2,8 @@ import feedparser
 import json
 import os
 import re
+import urllib.parse
+import urllib.request
 from datetime import datetime
 from google import genai
 from google.genai import types
@@ -20,13 +22,6 @@ RSS_FEEDS = [
     "https://feeds.bbci.co.uk/news/world/asia/india/rss.xml"
 ]
 
-DEFAULT_IMAGES = {
-    "GS-1": "https://images.unsplash.com/photo-1590050752117-238cb0fb12b1?w=800&auto=format&fit=crop&q=60",
-    "GS-2": "https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?w=800&auto=format&fit=crop&q=60",
-    "GS-3": "https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&auto=format&fit=crop&q=60",
-    "GS-4": "https://images.unsplash.com/photo-1450133064473-71024230f91b?w=800&auto=format&fit=crop&q=60"
-}
-
 SYSTEM_PROMPT = """
 You are an expert UPSC Civil Services Examination (CSE) mentor.
 Analyze the following news item and generate a structured current affairs analysis suitable for UPSC GS-1, GS-2, GS-3, or GS-4.
@@ -39,6 +34,7 @@ Return ONLY a valid JSON object:
   "title": "Concise issue-based title for Mains/Prelims notes",
   "paper": "GS-1" | "GS-2" | "GS-3" | "GS-4",
   "topic": "Micro-topic (e.g. Geopolitics, Digital Infrastructure, Monetary Policy, Agriculture, Ethics)",
+  "image_keyword": "2-3 English search words for relevant news image (e.g., 'red sea ship', 'parliament india', 'isro rocket', 'indian rupee', 'solar panel')",
   "prelims_pointers": [
     "Key factual point (statutory/constitutional provision, nodal ministry, report)",
     "Core objective or scientific/economic principle involved"
@@ -76,6 +72,23 @@ def extract_image_url(entry):
     img_match = re.search(r'<img[^>]+src=["\']([^"\']+)["\']', summary)
     if img_match:
         return img_match.group(1)
+    return None
+
+def fetch_wikimedia_image(query: str):
+    """Fetch relevant news thumbnail dynamically from Wikimedia Commons OSINT database."""
+    try:
+        encoded_query = urllib.parse.quote(query)
+        url = f"[https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch=](https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch=){encoded_query}&gsrnamespace=6&prop=imageinfo&iiprop=url&iiurlwidth=600&format=json"
+        req = urllib.request.Request(url, headers={'User-Agent': 'UPSC-CurrentAffairs-Bot/1.0 (contact@upsc-portal.com)'})
+        with urllib.request.urlopen(req, timeout=4) as response:
+            data = json.loads(response.read().decode())
+            pages = data.get('query', {}).get('pages', {})
+            for page_id, page_data in pages.items():
+                imageinfo = page_data.get('imageinfo', [])
+                if imageinfo and 'thumburl' in imageinfo[0]:
+                    return imageinfo[0]['thumburl']
+    except Exception as e:
+        print(f"Wikimedia API query failed for '{query}': {e}")
     return None
 
 def process_feed_item(title: str, summary: str):
@@ -120,8 +133,13 @@ def main():
                 if item_data and item_data.get("title"):
                     item_data.pop("relevant", None)
                     item_data["date"] = today_str
-                    paper = item_data.get("paper", "GS-1")
-                    item_data["image"] = image_url or DEFAULT_IMAGES.get(paper, DEFAULT_IMAGES["GS-1"])
+                    
+                    # Search dynamic OSINT image if RSS didn't include one
+                    kw = item_data.pop("image_keyword", item_data.get("topic", "india"))
+                    if not image_url:
+                        image_url = fetch_wikimedia_image(kw)
+
+                    item_data["image"] = image_url or "[https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?w=800&auto=format&fit=crop&q=60](https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?w=800&auto=format&fit=crop&q=60)"
                     processed_items.append(item_data)
         except Exception as err:
             print(f"Error parsing feed {feed_url}: {err}")
@@ -130,7 +148,7 @@ def main():
     with open(output_filename, "w", encoding="utf-8") as f:
         json.dump(processed_items, f, indent=2, ensure_ascii=False)
 
-    print(f"Successfully generated {len(processed_items)} items.")
+    print(f"Successfully generated {len(processed_items)} items with dynamic OSINT images.")
 
 if __name__ == "__main__":
     main()
