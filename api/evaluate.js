@@ -1,7 +1,6 @@
 const { GoogleGenAI } = require('@google/genai');
 
 module.exports = async function handler(req, res) {
-  // Enable CORS headers so your frontend can talk smoothly to the backend
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -33,14 +32,13 @@ module.exports = async function handler(req, res) {
     3. Content & Breadth (dimensional coverage, committee reports, keywords used vs missing).
     4. Scope for Improvement & Model Conclusion suggestion.`;
 
-    // Clean base64 string if data URL prefix exists
     let cleanBase64 = imageBase64;
     if (imageBase64 && imageBase64.includes(',')) {
       cleanBase64 = imageBase64.split(',')[1];
     }
 
     const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
+      model: 'gemini-3.8-flash',
       contents: [
         { text: prompt },
         { 
