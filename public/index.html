@@ -69,10 +69,12 @@
     }
     .search-box:focus { border-color: #38bdf8; box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2); }
 
+    .filter-section { margin-bottom: 0.75rem; }
+    .filter-label { font-size: 0.7rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 0.3rem; display: block; }
     .filter-pills { display: flex; gap: 0.4rem; flex-wrap: wrap; align-items: center; }
     .pill {
       background: rgba(31, 41, 55, 0.6); color: var(--text-muted); border: 1px solid var(--border-color);
-      padding: 0.4rem 0.9rem; border-radius: 0.375rem; cursor: pointer; font-weight: 600; font-size: 0.8rem; transition: all 0.2s;
+      padding: 0.35rem 0.8rem; border-radius: 0.375rem; cursor: pointer; font-weight: 600; font-size: 0.775rem; transition: all 0.2s;
     }
     .pill:hover { background: #374151; color: #fff; }
     .pill.active { background: #0284c7; color: #fff; border-color: #38bdf8; }
@@ -138,7 +140,6 @@
     <nav class="app-navbar">
       <div class="brand-group">
         <div class="brand-icon">
-          <!-- Loads uploaded logo.png with automatic fallback if missing -->
           <img src="./logo.png" alt="NexusGS" style="width:100%; height:100%; object-fit:contain;" onerror="this.onerror=null; this.parentNode.innerHTML='<svg width=\'22\' height=\'22\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'#38bdf8\' stroke-width=\'2.5\' stroke-linecap=\'round\' stroke-linejoin=\'round\'><path d=\'M16 3h5v5\'/><path d=\'M4 20L21 3\'/><path d=\'M21 16v5h-5\'/><path d=\'M15 15l6 6\'/><path d=\'M4 4l5 5\'/></svg>';" />
         </div>
         <div>
@@ -157,22 +158,40 @@
 
     <div class="search-panel">
       <div class="search-row">
-        <input type="text" id="search-input" onkeyup="handleSearch()" class="search-box" placeholder="Search keywords across static linkages, committees, nuclear, federalism..." />
+        <input type="text" id="search-input" onkeyup="handleSearch()" class="search-box" placeholder="Search open-source repository (e.g. nuclear, inflation, ethics, security)..." />
       </div>
       
-      <div class="filter-pills">
-        <button onclick="filterPaper('ALL')" class="pill active">All Syllabus</button>
-        <button onclick="filterPaper('GS-1')" class="pill">GS-1 Culture</button>
-        <button onclick="filterPaper('GS-2')" class="pill">GS-2 Polity & IR</button>
-        <button onclick="filterPaper('GS-3')" class="pill">GS-3 Economy & Tech</button>
-        <button onclick="filterPaper('GS-4')" class="pill">GS-4 Ethics</button>
-        <span id="match-count" class="search-stats"></span>
+      <!-- Paper Filter Row -->
+      <div class="filter-section">
+        <span class="filter-label">Syllabus Papers:</span>
+        <div class="filter-pills" id="paper-pills">
+          <button onclick="filterPaper('ALL')" class="pill active">All Papers</button>
+          <button onclick="filterPaper('GS-1')" class="pill">GS-1 (Culture, Society & History)</button>
+          <button onclick="filterPaper('GS-2')" class="pill">GS-2 (Polity, Governance & IR)</button>
+          <button onclick="filterPaper('GS-3')" class="pill">GS-3 (Economy, Tech & Security)</button>
+          <button onclick="filterPaper('GS-4')" class="pill">GS-4 (Ethics & Integrity)</button>
+          <span id="match-count" class="search-stats"></span>
+        </div>
+      </div>
+
+      <!-- Granular Subtopic Filter Row -->
+      <div class="filter-section" style="margin-top: 0.75rem;">
+        <span class="filter-label">Subtopic Master Guides:</span>
+        <div class="filter-pills" id="subtopic-pills">
+          <button onclick="filterSubtopic('ALL')" class="pill active">All Subtopics</button>
+          <button onclick="filterSubtopic('Culture')" class="pill">Art & Culture</button>
+          <button onclick="filterSubtopic('Polity')" class="pill">Polity & Federalism</button>
+          <button onclick="filterSubtopic('Economy')" class="pill">Economy & Growth</button>
+          <button onclick="filterSubtopic('Science')" class="pill">Science & Tech</button>
+          <button onclick="filterSubtopic('Security')" class="pill">Internal Security</button>
+          <button onclick="filterSubtopic('Ethics')" class="pill">Ethics & Governance</button>
+        </div>
       </div>
     </div>
 
     <div id="ai-banner-container"></div>
     <div id="news-container" class="grid">
-      <div style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 4rem 0;">Loading workspace repository...</div>
+      <div style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 4rem 0;">Synchronizing open-source repository...</div>
     </div>
   </div>
 
@@ -228,115 +247,10 @@
   </div>
 
   <script>
-    const CORE_REPOSITORY = [
-      {
-        "title": "India's Three-Stage Nuclear Power Programme & Civil Liability",
-        "paper": "GS-3",
-        "topic": "Science & Tech - Energy Security",
-        "static_linkage": "Nuclear Energy Policy",
-        "date": "2026-10",
-        "image": "https://images.unsplash.com/photo-1563986768609-322da13575f3?w=800&auto=format&fit=crop&q=60",
-        "prelims_pointers": [
-          "Stage I uses PHWRs; Stage II uses Fast Breeder Reactors (FBR); Stage III utilizes Thorium-Uranium-233 cycle.",
-          "Civil Liability for Nuclear Damage Act (CLNDA), 2010 mandates operator liability while balancing supplier recourse."
-        ],
-        "mains_perspective": {
-          "context": "Expanding base-load clean energy capacity to meet net-zero targets while ensuring energy autonomy.",
-          "key_arguments": "India possesses world-class thorium reserves, making Stage III critical for long-term energy security, though commercial scaling remains technologically challenging.",
-          "way_forward": "Foster public-private research partnerships and streamline nuclear insurance frameworks to attract advanced reactor technology."
-        }
-      },
-      {
-        "title": "Cooperative Federalism vs. Aggressive Fiscal Centralization",
-        "paper": "GS-2",
-        "topic": "Indian Polity & Federal Structure",
-        "static_linkage": "Centre-State Relations (Article 245-263)",
-        "date": "2026-10",
-        "image": "https://images.unsplash.com/photo-1541872703-74c5e44368f9?w=800&auto=format&fit=crop&q=60",
-        "prelims_pointers": [
-          "Inter-State Council operates under Article 263 as a recommendatory body.",
-          "GST Council is a constitutional body under Article 279A.",
-          "Sarkaria and Punchhi Commissions examined the strengthening of cooperative federalism."
-        ],
-        "mains_perspective": {
-          "context": "Rising friction between the Union and states over cess/surcharges, Governor's role, and legislative incursions.",
-          "key_arguments": "Excessive reliance on cesses dilutes the divisible pool of taxes under Finance Commission recommendations, starving states of fiscal autonomy.",
-          "way_forward": "Institutionalize regular meetings of the Inter-State Council and adhere strictly to Sarkaria Commission guidelines on gubernatorial discretion."
-        }
-      },
-      {
-        "title": "Secularism, Uniform Civil Code (UCC) & Constitutional Morality",
-        "paper": "GS-2",
-        "topic": "Indian Constitution & Polity",
-        "static_linkage": "Article 25-28 & Article 44 (DPSP)",
-        "date": "2026-10",
-        "image": "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=800&auto=format&fit=crop&q=60",
-        "prelims_pointers": [
-          "Article 44 directs the State to secure a Uniform Civil Code throughout India.",
-          "Freedom of religion under Article 25 is subject to public order, morality, and health."
-        ],
-        "mains_perspective": {
-          "context": "Balancing the mandate of a unified legal code with the protection of cultural and religious pluralism in a diverse democracy.",
-          "key_arguments": "While UCC promotes gender justice and legal uniformity, forced implementation without broad-based consensus can fracture social capital.",
-          "way_forward": "Adopt a gradual, consultative reform approach—amending discriminatory practices within personal laws first before pushing for a monolithic code."
-        }
-      },
-      {
-        "title": "Inclusive Growth, K-Shaped Recovery & Agrarian Distress",
-        "paper": "GS-3",
-        "topic": "Indian Economy & Inclusive Growth",
-        "static_linkage": "Growth, Development and Employment",
-        "date": "2026-10",
-        "image": "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?w=800&auto=format&fit=crop&q=60",
-        "prelims_pointers": [
-          "MSME sector contributes nearly 30% to India's GDP and 40% to exports.",
-          "PM-KISAN provides income support of Rs 6,000 per year to landholding farmer families."
-        ],
-        "mains_perspective": {
-          "context": "Macroeconomic GDP growth numbers outpacing wage growth and rural consumption recovery.",
-          "key_arguments": "High corporate profitability coexists with stagnant rural wages and high youth unemployment, pointing to structural distortions.",
-          "way_forward": "Shift focus from capital-intensive manufacturing subsidies to labor-intensive sectors (textiles, food processing) and climate-resilient agriculture."
-        }
-      },
-      {
-        "title": "AI Ethics, Algorithmic Bias & Deepfakes Regulation",
-        "paper": "GS-3",
-        "topic": "Science & Tech - Emerging Tech",
-        "static_linkage": "IT Act & National AI Strategy",
-        "date": "2026-10",
-        "image": "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&auto=format&fit=crop&q=60",
-        "prelims_pointers": [
-          "IndiaAI Mission focuses on computing infrastructure and sovereign AI models.",
-          "IT Rules, 2021 mandate social media intermediaries to take down synthetic content within stipulated hours."
-        ],
-        "mains_perspective": {
-          "context": "Explosive growth of generative AI posing severe threats to electoral integrity, privacy, and national security.",
-          "key_arguments": "Unchecked algorithmic bias exacerbates social discrimination while deepfakes undermine public trust in democratic institutions.",
-          "way_forward": "Enact a robust Digital India Act with mandatory watermarking for synthetic media and algorithmic transparency audits."
-        }
-      },
-      {
-        "title": "Bureaucratic Ethics, Lateral Entry & Whistleblower Protection",
-        "paper": "GS-4",
-        "topic": "Ethics in Public Administration",
-        "static_linkage": "Civil Services Accountability & Probity",
-        "date": "2026-10",
-        "image": "https://images.unsplash.com/photo-1521791136064-7986c2920216?w=800&auto=format&fit=crop&q=60",
-        "prelims_pointers": [
-          "Second ARC 4th Report focuses extensively on ethics in governance.",
-          "Whistleblowers Protection Act provides legal mechanisms to safeguard informants against victimization."
-        ],
-        "mains_perspective": {
-          "context": "Navigating the tension between political executive directives, professional neutrality, and adherence to constitutional conscience.",
-          "key_arguments": "Anonymity and neutrality are often compromised by systemic political pressure and lack of statutory job security.",
-          "way_forward": "Implement 2nd ARC recommendations: establish Civil Services Boards for transparent postings and operationalize robust whistleblower safeguards."
-        }
-      }
-    ];
-
-    let combinedPool = [...CORE_REPOSITORY];
+    let masterPool = [];
     let currentMode = 'DAILY';
     let currentPaperFilter = 'ALL';
+    let currentSubtopicFilter = 'ALL';
     let savedBookmarks = JSON.parse(localStorage.getItem('upsc_bookmarks') || '[]');
 
     const fallbackImages = {
@@ -405,19 +319,11 @@
         const res = await fetch('/api/evaluate', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            question,
-            paper,
-            markerType,
-            imageBase64: base64Data,
-            mimeType: 'image/jpeg'
-          })
+          body: JSON.stringify({ question, paper, markerType, imageBase64: base64Data, mimeType: 'image/jpeg' })
         });
 
         const data = await res.json();
-        if (!res.ok) {
-          throw new Error(data.error || `Server error code: ${res.status}`);
-        }
+        if (!res.ok) throw new Error(data.error || `Server error: ${res.status}`);
 
         resultDiv.innerHTML = `<div class="box" style="margin-top:1rem; max-height:300px; overflow-y:auto; padding:1rem; color:#f3f4f6;">${data.feedback}</div>`;
       } catch (err) {
@@ -438,26 +344,38 @@
           fetch('./current_affairs.json?t=' + Date.now()).then(r => r.json()),
           fetch('./repository.json?t=' + Date.now()).then(r => r.json())
         ]);
-        const merged = [...(newsRes.value || []), ...(repoRes.value || []), ...CORE_REPOSITORY];
-        const seen = new Set(); combinedPool = [];
+        
+        const rawNews = newsRes.status === 'fulfilled' && Array.isArray(newsRes.value) ? newsRes.value : [];
+        const rawRepo = repoRes.status === 'fulfilled' && Array.isArray(repoRes.value) ? repoRes.value : [];
+
+        const merged = [...rawNews, ...rawRepo];
+        const seen = new Set();
+        masterPool = [];
+        
         merged.forEach(item => {
           if (item && item.title) {
             const key = item.title.toLowerCase().trim();
-            if (!seen.has(key)) { seen.add(key); combinedPool.push(item); }
+            if (!seen.has(key)) {
+              seen.add(key);
+              masterPool.push(item);
+            }
           }
         });
-      } catch (err) {}
+      } catch (err) {
+        console.error("Failed to load json repositories:", err);
+      }
       applyFilters();
     }
 
-    function renderNews(items) {
+    function renderModules(items) {
       const bannerContainer = document.getElementById('ai-banner-container');
       const container = document.getElementById('news-container');
-      bannerContainer.innerHTML = ''; container.innerHTML = '';
+      bannerContainer.innerHTML = ''; 
+      container.innerHTML = '';
       document.getElementById('match-count').textContent = `${items.length} Modules`;
 
       if (!items || items.length === 0) {
-        container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 4rem 0;">No matching modules found in repository. Try searching for terms like 'Nuclear', 'Federalism', 'AI', or 'UCC'.</div>`;
+        container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 4rem 0;">No matching modules found in open-source repository. Try searching for terms like 'Nuclear', 'Federalism', 'Ethics', or 'Economy'.</div>`;
         return;
       }
 
@@ -491,7 +409,7 @@
             </div>
             <div style="display:flex; justify-content:space-between; align-items:center; margin-top:0.5rem;">
               <button onclick="toggleBookmark(event, '${(item.title || '').replace(/'/g, "\\'")}')" class="mode-tab" style="padding:0.3rem 0.6rem; font-size:0.75rem;">${isSaved ? '⭐ Saved' : '☆ Save'}</button>
-              <div class="expand-hint">Expand &rarr;</div>
+              <div class="expand-hint">Complete Guide &rarr;</div>
             </div>
           </div>
         `;
@@ -534,33 +452,71 @@
       document.getElementById('tab-saved').classList.toggle('active', mode === 'SAVED');
       applyFilters();
     }
+
     function filterPaper(paper) {
       currentPaperFilter = paper;
-      document.querySelectorAll('.pill').forEach(btn => btn.classList.toggle('active', btn.textContent.includes(paper) || (paper === 'ALL' && btn.textContent.includes('All'))));
+      const pills = document.querySelectorAll('#paper-pills .pill');
+      pills.forEach(btn => {
+        btn.classList.toggle('active', btn.textContent.includes(paper) || (paper === 'ALL' && btn.textContent.includes('All')));
+      });
       applyFilters();
     }
+
+    function filterSubtopic(subtopic) {
+      currentSubtopicFilter = subtopic;
+      const pills = document.querySelectorAll('#subtopic-pills .pill');
+      pills.forEach(btn => {
+        btn.classList.toggle('active', btn.textContent.toLowerCase().includes(subtopic.toLowerCase()) || (subtopic === 'ALL' && btn.textContent.includes('All')));
+      });
+      applyFilters();
+    }
+
     function handleSearch() { applyFilters(); }
 
     function applyFilters() {
       const searchTerm = document.getElementById('search-input').value.toLowerCase().trim();
-      let activePool = combinedPool;
+      let activePool = masterPool;
 
       if (currentMode === 'SAVED') {
         activePool = activePool.filter(item => savedBookmarks.includes(item.title));
       }
+      
+      // Paper Filter
       if (currentPaperFilter !== 'ALL') {
         activePool = activePool.filter(item => item.paper === currentPaperFilter);
       }
+
+      // Subtopic Filter
+      if (currentSubtopicFilter !== 'ALL') {
+        activePool = activePool.filter(item => {
+          const topic = (item.topic || '').toLowerCase();
+          const linkage = (item.static_linkage || '').toLowerCase();
+          const title = (item.title || '').toLowerCase();
+          return topic.includes(currentSubtopicFilter.toLowerCase()) || 
+                 linkage.includes(currentSubtopicFilter.toLowerCase()) || 
+                 title.includes(currentSubtopicFilter.toLowerCase());
+        });
+      }
+
+      // Open-Source Keyword Search
       if (searchTerm.length > 0) {
         activePool = activePool.filter(item => {
           const title = (item.title || '').toLowerCase();
           const topic = (item.topic || '').toLowerCase();
           const linkage = (item.static_linkage || '').toLowerCase();
           const context = (item.mains_perspective && item.mains_perspective.context || '').toLowerCase();
-          return title.includes(searchTerm) || topic.includes(searchTerm) || linkage.includes(searchTerm) || context.includes(searchTerm);
+          const args = (item.mains_perspective && item.mains_perspective.key_arguments || '').toLowerCase();
+          const prelims = (item.prelims_pointers || []).join(' ').toLowerCase();
+          
+          return title.includes(searchTerm) || 
+                 topic.includes(searchTerm) || 
+                 linkage.includes(searchTerm) || 
+                 context.includes(searchTerm) || 
+                 args.includes(searchTerm) || 
+                 prelims.includes(searchTerm);
         });
       }
-      renderNews(activePool);
+      renderModules(activePool);
     }
 
     initApp();
