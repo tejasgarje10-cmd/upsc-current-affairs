@@ -1,105 +1,38 @@
 [
   {
-    "title": "Maratha Military Landscapes & UNESCO World Heritage Conservation",
-    "paper": "GS-1",
-    "topic": "Art & Culture",
-    "static_linkage": "Art & Architecture - Forts",
-    "date": "2026-10",
-    "image": "https://images.unsplash.com/photo-1590050752117-238cb0fb12b1?w=800&auto=format&fit=crop&q=60",
-    "prelims_pointers": [
-      "Maratha Military Landscapes include hill, coastal, and sea forts showcasing medieval engineering.",
-      "Regulated by the AMASR Act."
-    ],
-    "mains_perspective": {
-      "context": "Balancing heritage tourism promotion with structural preservation.",
-      "key_arguments": "Forts serve as testaments to indigenous defensive strategies under Shivaji Maharaj.",
-      "way_forward": "Adopt scientific stone consolidation and community-based heritage management."
-    }
-  },
-  {
-    "title": "Temple Architecture Styles: Nagara, Dravida & Vesara Evolution",
-    "paper": "GS-1",
-    "topic": "Art & Culture",
-    "static_linkage": "Indian Architecture & Sculpture",
-    "date": "2026-10",
-    "image": "https://images.unsplash.com/photo-1599578316616-e14589d970c6?w=800&auto=format&fit=crop&q=60",
-    "prelims_pointers": [
-      "Nagara style features beehive-shaped towers (Shikhara) common in northern India.",
-      "Dravida style is characterized by pyramidal towers (Vimana) and monumental gateways (Gopurams) in southern India."
-    ],
-    "mains_perspective": {
-      "context": "Understanding religious architecture as a reflection of socio-political patronage.",
-      "key_arguments": "Temple complexes served not only as places of worship but as economic hubs and employers.",
-      "way_forward": "Promote digital archiving of temple inscriptions to prevent archaeological degradation."
-    }
-  },
-  {
-    "title": "Cooperative Federalism vs. Aggressive Fiscal Centralization",
+    "title": "Judicial Overreach vs. Separation of Powers in Tribunal Appointments",
     "paper": "GS-2",
+    "date": "2026-10",
     "topic": "Polity & Federalism",
-    "static_linkage": "Centre-State Relations (Article 245-263)",
-    "date": "2026-10",
-    "image": "https://images.unsplash.com/photo-1541872703-74c5e44368f9?w=800&auto=format&fit=crop&q=60",
+    "static_linkage": "Article 50 & Basic Structure Doctrine",
     "prelims_pointers": [
-      "Inter-State Council operates under Article 263 as a recommendatory body.",
-      "GST Council is a constitutional body under Article 279A.",
-      "Sarkaria and Punchhi Commissions examined the strengthening of cooperative federalism."
+      "Tribunals were added to the Constitution by the 42nd Constitutional Amendment Act, 1976 (Article 323A and 323B).",
+      "Supreme Court has repeatedly struck down provisions of the Tribunals Reforms Act for violating judicial independence.",
+      "Article 50 directs the State to separate the judiciary from the executive in public services."
     ],
     "mains_perspective": {
-      "context": "Rising friction between the Union and states over cess/surcharges and Governor's role.",
-      "key_arguments": "Excessive reliance on cesses dilutes the divisible pool of taxes under Finance Commission recommendations.",
-      "way_forward": "Institutionalize regular meetings of the Inter-State Council and adhere strictly to Sarkaria Commission guidelines."
-    }
+      "context": "Recent controversies regarding executive appointments and vacancies in appellate tribunals highlight friction between judicial oversight and executive discretion.",
+      "key_arguments": "Pro-judiciary arguments emphasize institutional integrity and specialized justice. Counter-arguments point to democratic accountability and judicial encroachment into policy domains.",
+      "way_forward": "Establish an independent National Tribunals Commission to streamline appointments and insulate administrative bodies from bureaucratic delays."
+    },
+    "image": "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=800&auto=format&fit=crop&q=60"
   },
   {
-    "title": "India's Three-Stage Nuclear Power Programme & Civil Liability",
+    "title": "Climate Finance and the New Collective Quantified Goal (NCQG)",
     "paper": "GS-3",
-    "topic": "Science & Tech",
-    "static_linkage": "Nuclear Energy Policy & Tech",
     "date": "2026-10",
-    "image": "https://images.unsplash.com/photo-1563986768609-322da13575f3?w=800&auto=format&fit=crop&q=60",
-    "prelims_pointers": [
-      "Stage I uses PHWRs; Stage II uses Fast Breeder Reactors (FBR); Stage III utilizes Thorium-Uranium-233 cycle.",
-      "Civil Liability for Nuclear Damage Act (CLNDA), 2010 mandates operator liability."
-    ],
-    "mains_perspective": {
-      "context": "Expanding base-load clean energy capacity to meet net-zero targets.",
-      "key_arguments": "India possesses world-class thorium reserves, making Stage III critical for long-term energy security.",
-      "way_forward": "Foster public-private research partnerships and streamline nuclear insurance frameworks."
-    }
-  },
-  {
-    "title": "Inclusive Growth, K-Shaped Recovery & Agrarian Distress",
-    "paper": "GS-3",
     "topic": "Economy & Growth",
-    "static_linkage": "Growth, Development and Employment",
-    "date": "2026-10",
-    "image": "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?w=800&auto=format&fit=crop&q=60",
+    "static_linkage": "Sustainable Development & Global Commons",
     "prelims_pointers": [
-      "MSME sector contributes nearly 30% to India's GDP and 40% to exports.",
-      "PM-KISAN provides income support of Rs 6,000 per year to landholding farmer families."
+      "NCQG is established under the Paris Agreement to set a new financial floor above the previous $100 billion/year target.",
+      "Principle of Common But Differentiated Responsibilities and Respective Capabilities (CBDR-RC) guides UNFCCC negotiations.",
+      "India's updated Nationally Determined Contributions (NDCs) focus on non-fossil energy capacity."
     ],
     "mains_perspective": {
-      "context": "Macroeconomic GDP growth numbers outpacing wage growth and rural consumption recovery.",
-      "key_arguments": "High corporate profitability coexists with stagnant rural wages and high youth unemployment.",
-      "way_forward": "Shift focus from capital-intensive manufacturing subsidies to labor-intensive sectors."
-    }
-  },
-  {
-    "title": "Bureaucratic Ethics, Lateral Entry & Whistleblower Protection",
-    "paper": "GS-4",
-    "topic": "Ethics & Governance",
-    "static_linkage": "Civil Services Accountability & Probity",
-    "date": "2026-10",
-    "image": "https://images.unsplash.com/photo-1521791136064-7986c2920216?w=800&auto=format&fit=crop&q=60",
-    "prelims_pointers": [
-      "Second ARC 4th Report focuses extensively on ethics in governance.",
-      "Whistleblowers Protection Act provides legal mechanisms to safeguard informants."
-    ],
-    "mains_perspective": {
-      "context": "Navigating the tension between political executive directives and professional neutrality.",
-      "key_arguments": "Anonymity and neutrality are often compromised by systemic political pressure.",
-      "way_forward": "Implement 2nd ARC recommendations and establish Civil Services Boards for transparent postings."
-    }
+      "context": "Developing nations face massive capital constraints in meeting net-zero transitions without jeopardizing poverty eradication mandates.",
+      "key_arguments": "Developed nations must provide public, grant-based climate finance rather than high-interest loans that exacerbate sovereign debt burdens.",
+      "way_forward": "Leverage blended finance models, green bonds, and technology transfer mechanisms while holding historic emitters accountable."
+    },
+    "image": "https://images.unsplash.com/photo-1466611653911-95081537e5b7?w=800&auto=format&fit=crop&q=60"
   }
 ]
