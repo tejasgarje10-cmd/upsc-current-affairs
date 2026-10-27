@@ -38,7 +38,6 @@ export default async function handler(req, res) {
         }
       }`;
 
-      // Call Gemini REST API directly to avoid any SDK version mismatch on Vercel
       const geminiRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -67,7 +66,6 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Missing required image or question parameters.' });
     }
 
-    // Vision Grader API Call via REST
     const evaluationPrompt = `You are an expert UPSC examiner. Evaluate this handwritten answer for: "${question}" (Paper: ${paper}, Type: ${markerType}). Provide structured feedback and an estimated score.`;
 
     const geminiRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
@@ -87,7 +85,7 @@ export default async function handler(req, res) {
 
     const geminiData = await geminiRes.json();
     if (!geminiRes.ok) {
-      throw new Error(geminiData.error?.message || 'Failed to evaluate image');
+      throw new Error(gemionData.error?.message || 'Failed to evaluate image');
     }
 
     const feedbackText = geminiData.candidates[0].content.parts[0].text;
