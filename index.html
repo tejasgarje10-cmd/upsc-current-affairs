@@ -248,18 +248,20 @@
           fetch('./repository.json?t=' + Date.now()).then(r => r.json())
         ]);
 
-        dailyNews = newsRes.status === 'fulfilled' ? newsRes.value : [];
-        staticRepo = repoRes.status === 'fulfilled' ? repoRes.value : [];
+        dailyNews = newsRes.status === 'fulfilled' && Array.isArray(newsRes.value) ? newsRes.value : [];
+        staticRepo = repoRes.status === 'fulfilled' && Array.isArray(repoRes.value) ? repoRes.value : [];
 
-        // Deduplicate and combine payloads
+        // Deduplicate and combine payloads safely
         const seen = new Set();
         combinedPool = [];
 
         [...dailyNews, ...staticRepo].forEach(item => {
-          const key = (item.title || '').toLowerCase().strip();
-          if (!seen.has(key)) {
-            seen.add(key);
-            combinedPool.push(item);
+          if (item && item.title) {
+            const key = item.title.toLowerCase().trim();
+            if (!seen.has(key)) {
+              seen.add(key);
+              combinedPool.push(item);
+            }
           }
         });
 
@@ -434,7 +436,6 @@
     function applyFilters() {
       const searchTerm = document.getElementById('search-input').value.toLowerCase().trim();
       
-      // Determine active target pool
       let activePool = [];
       if (currentMode === 'DAILY') {
         activePool = dailyNews.length > 0 ? dailyNews : combinedPool;
@@ -444,14 +445,11 @@
         activePool = combinedPool.filter(item => savedBookmarks.includes(item.title));
       }
 
-      // Filter by paper
       if (currentPaperFilter !== 'ALL') {
         activePool = activePool.filter(item => item.paper === currentPaperFilter);
       }
 
-      // Universal Multi-Field Search
       if (searchTerm.length > 0) {
-        // Automatically search full pool when searching in Daily mode
         if (currentMode === 'DAILY') activePool = combinedPool;
 
         activePool = activePool.filter(item => {
