@@ -4,38 +4,119 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>UPSC Syllabus-Aligned Current Affairs</title>
-  <script src="[https://cdn.tailwindcss.com](https://cdn.tailwindcss.com)"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: #0f172a;
+      color: #f1f5f9;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      min-height: 100vh;
+      padding: 2rem 1rem;
+    }
+    .container { max-width: 1100px; margin: 0 auto; }
+    header { text-align: center; margin-bottom: 2rem; }
+    h1 { font-size: 2.25rem; font-weight: 700; margin-bottom: 0.5rem; color: #ffffff; }
+    .subtitle { color: #94a3b8; font-size: 0.95rem; }
+    
+    .filter-bar { display: flex; justify-content: center; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 2rem; }
+    .filter-btn {
+      background-color: #1e293b;
+      color: #cbd5e1;
+      border: 1px solid #334155;
+      padding: 0.5rem 1rem;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      font-weight: 500;
+      font-size: 0.875rem;
+      transition: all 0.2s ease;
+    }
+    .filter-btn:hover, .filter-btn.active {
+      background-color: #0284c7;
+      color: #ffffff;
+      border-color: #38bdf8;
+    }
+    
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem; }
+    
+    .card {
+      background-color: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 0.75rem;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      cursor: pointer;
+      transition: border-color 0.2s ease, transform 0.2s ease;
+    }
+    .card:hover { border-color: #38bdf8; transform: translateY(-2px); }
+    
+    .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; }
+    .badge-paper {
+      background-color: rgba(14, 165, 233, 0.2);
+      color: #38bdf8;
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 0.25rem 0.5rem;
+      border-radius: 0.375rem;
+    }
+    .badge-topic { background-color: #334155; color: #94a3b8; font-size: 0.75rem; padding: 0.25rem 0.5rem; border-radius: 0.25rem; }
+    
+    .card-title { font-size: 1.25rem; font-weight: 600; color: #ffffff; margin-bottom: 1rem; line-height: 1.4; }
+    
+    .section-title { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem; }
+    .prelims-title { color: #fbbf24; }
+    .mains-title { color: #34d399; }
+    
+    .box { background-color: #0f172a; border: 1px solid #1e293b; padding: 0.75rem; border-radius: 0.5rem; font-size: 0.85rem; color: #cbd5e1; margin-bottom: 1rem; }
+    .box ul { list-style-type: none; }
+    .box li { margin-bottom: 0.35rem; }
+    .box li:last-child { margin-bottom: 0; }
+    
+    .mains-box p { margin-bottom: 0.4rem; font-size: 0.85rem; color: #cbd5e1; }
+    .mains-box p:last-child { margin-bottom: 0; }
+    .mains-box strong { color: #f8fafc; }
+    
+    .expand-hint { text-align: right; font-size: 0.75rem; color: #38bdf8; margin-top: 0.5rem; font-weight: 500; }
+    
+    /* Modal Styling */
+    .modal-overlay {
+      position: fixed; inset: 0; background-color: rgba(0, 0, 0, 0.8);
+      display: none; align-items: center; justify-content: center; padding: 1rem; z-index: 100;
+    }
+    .modal-overlay.active { display: flex; }
+    .modal-body {
+      background-color: #1e293b; border: 1px solid #475569; border-radius: 1rem;
+      max-width: 650px; width: 100%; padding: 1.75rem; position: relative; max-height: 90vh; overflow-y: auto;
+    }
+    .close-btn { position: absolute; top: 1rem; right: 1rem; background: none; border: none; color: #94a3b8; font-size: 1.5rem; cursor: pointer; }
+    .close-btn:hover { color: #ffffff; }
+  </style>
 </head>
-<body class="bg-slate-900 text-slate-100 min-h-screen font-sans">
-  <div class="max-w-6xl mx-auto px-4 py-8">
-    <header class="text-center mb-8">
-      <h1 class="text-3xl md:text-4xl font-bold tracking-tight text-white mb-2">
-        UPSC Syllabus-Aligned Current Affairs
-      </h1>
-      <p class="text-slate-400 text-sm md:text-base">
-        Daily news categorized by General Studies papers with Prelims facts & Mains perspectives
-      </p>
+<body>
+  <div class="container">
+    <header>
+      <h1>UPSC Syllabus-Aligned Current Affairs</h1>
+      <p class="subtitle">Daily news categorized by General Studies papers with Prelims facts & Mains perspectives</p>
     </header>
 
-    <!-- Navigation Filter Buttons -->
-    <div class="flex flex-wrap justify-center gap-2 mb-8" id="filter-buttons">
-      <button onclick="filterNews('ALL')" class="filter-btn bg-sky-500 text-white px-4 py-2 rounded-lg font-medium text-sm transition">All Papers</button>
-      <button onclick="filterNews('GS-1')" class="filter-btn bg-slate-800 hover:bg-slate-700 text-slate-300 px-4 py-2 rounded-lg font-medium text-sm transition">GS-1</button>
-      <button onclick="filterNews('GS-2')" class="filter-btn bg-slate-800 hover:bg-slate-700 text-slate-300 px-4 py-2 rounded-lg font-medium text-sm transition">GS-2</button>
-      <button onclick="filterNews('GS-3')" class="filter-btn bg-slate-800 hover:bg-slate-700 text-slate-300 px-4 py-2 rounded-lg font-medium text-sm transition">GS-3</button>
-      <button onclick="filterNews('GS-4')" class="filter-btn bg-slate-800 hover:bg-slate-700 text-slate-300 px-4 py-2 rounded-lg font-medium text-sm transition">GS-4</button>
+    <div class="filter-bar">
+      <button onclick="filterNews('ALL')" class="filter-btn active">All Papers</button>
+      <button onclick="filterNews('GS-1')" class="filter-btn">GS-1</button>
+      <button onclick="filterNews('GS-2')" class="filter-btn">GS-2</button>
+      <button onclick="filterNews('GS-3')" class="filter-btn">GS-3</button>
+      <button onclick="filterNews('GS-4')" class="filter-btn">GS-4</button>
     </div>
 
-    <!-- Content Cards Container -->
-    <div id="news-container" class="grid gap-6 md:grid-cols-2">
-      <div class="col-span-full text-center py-12 text-slate-400">Loading daily current affairs...</div>
+    <div id="news-container" class="grid">
+      <div style="grid-column: 1/-1; text-align: center; color: #94a3b8; padding: 3rem 0;">Loading daily current affairs...</div>
     </div>
   </div>
 
-  <!-- Detail Modal for Expanded View -->
-  <div id="detail-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50 overflow-y-auto">
-    <div class="bg-slate-800 border border-slate-700 rounded-2xl max-w-2xl w-full p-6 relative shadow-2xl">
-      <button onclick="closeModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-2xl font-bold">&times;</button>
+  <div id="detail-modal" class="modal-overlay" onclick="closeModal(event)">
+    <div class="modal-body" onclick="event.stopPropagation()">
+      <button onclick="closeModal()" class="close-btn">&times;</button>
       <div id="modal-content"></div>
     </div>
   </div>
@@ -51,7 +132,7 @@
         allNews = await response.json();
         renderNews(allNews);
       } catch (error) {
-        container.innerHTML = `<div class="col-span-full text-center py-12 text-rose-400">Error loading current affairs payload.</div>`;
+        container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: #f87171; padding: 3rem 0;">Error loading current affairs payload.</div>`;
       }
     }
 
@@ -59,44 +140,38 @@
       const container = document.getElementById('news-container');
       container.innerHTML = '';
 
-      if (items.length === 0) {
-        container.innerHTML = `<div class="col-span-full text-center py-12 text-slate-400">No items available for this filter.</div>`;
+      if (!items || items.length === 0) {
+        container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: #94a3b8; padding: 3rem 0;">No items available for this filter.</div>`;
         return;
       }
 
       items.forEach((item, index) => {
-        const prelimsList = (item.prelims_pointers || []).map(p => `<li class="mb-1">• ${p}</li>`).join('');
+        const prelimsList = (item.prelims_pointers || []).map(p => `<li>• ${p}</li>`).join('');
         
         const card = document.createElement('div');
-        card.className = "bg-slate-800 border border-slate-700 hover:border-sky-500/50 cursor-pointer rounded-xl p-6 shadow-lg transition flex flex-col justify-between";
+        card.className = "card";
         card.onclick = () => openModal(index);
         
         card.innerHTML = `
           <div>
-            <div class="flex items-center justify-between mb-3">
-              <span class="bg-sky-500/20 text-sky-400 border border-sky-500/30 text-xs px-2.5 py-1 rounded-md font-semibold">${item.paper || 'GS'}</span>
-              <span class="text-xs text-slate-400 bg-slate-700/50 px-2 py-1 rounded">${item.topic || 'General'}</span>
+            <div class="card-header">
+              <span class="badge-paper">${item.paper || 'GS'}</span>
+              <span class="badge-topic">${item.topic || 'General'}</span>
             </div>
-            <h2 class="text-xl font-semibold text-white mb-4 hover:text-sky-400 transition">${item.title}</h2>
+            <h2 class="card-title">${item.title}</h2>
             
-            <div class="mb-4">
-              <h3 class="text-xs uppercase font-bold tracking-wider text-amber-400 mb-2">Prelims Pointers</h3>
-              <ul class="text-sm text-slate-300 space-y-1 bg-slate-900/50 p-3 rounded-lg border border-slate-800">${prelimsList}</ul>
-            </div>
+            <div class="section-title prelims-title">Prelims Pointers</div>
+            <div class="box"><ul>${prelimsList}</ul></div>
 
             ${item.mains_perspective ? `
-            <div>
-              <h3 class="text-xs uppercase font-bold tracking-wider text-emerald-400 mb-2">Mains Perspective</h3>
-              <div class="bg-slate-900/50 p-3 rounded-lg border border-slate-800 space-y-2 text-xs text-slate-300">
-                <p><strong class="text-slate-200">Context:</strong> ${item.mains_perspective.context || ''}</p>
-                <p><strong class="text-slate-200">Key Takeaways:</strong> ${item.mains_perspective.key_arguments || ''}</p>
-                <p><strong class="text-slate-200">Way Forward:</strong> ${item.mains_perspective.way_forward || ''}</p>
-              </div>
+            <div class="section-title mains-title">Mains Perspective</div>
+            <div class="box mains-box">
+              <p><strong>Context:</strong> ${item.mains_perspective.context || ''}</p>
+              <p><strong>Key Takeaways:</strong> ${item.mains_perspective.key_arguments || ''}</p>
+              <p><strong>Way Forward:</strong> ${item.mains_perspective.way_forward || ''}</p>
             </div>` : ''}
           </div>
-          <div class="mt-4 text-right">
-            <span class="text-xs text-sky-400 font-medium">Click card to expand view &rarr;</span>
-          </div>
+          <div class="expand-hint">Click card to expand view &rarr;</div>
         `;
         container.appendChild(card);
       });
@@ -107,44 +182,42 @@
       const modal = document.getElementById('detail-modal');
       const modalContent = document.getElementById('modal-content');
 
-      const prelimsList = (item.prelims_pointers || []).map(p => `<li class="mb-2 text-slate-200">• ${p}</li>`).join('');
+      const prelimsList = (item.prelims_pointers || []).map(p => `<li style="margin-bottom:0.5rem; color:#f1f5f9;">• ${p}</li>`).join('');
 
       modalContent.innerHTML = `
-        <div class="flex items-center gap-2 mb-3">
-          <span class="bg-sky-500/20 text-sky-400 border border-sky-500/30 text-xs px-3 py-1 rounded-md font-semibold">${item.paper}</span>
-          <span class="text-xs text-slate-400 bg-slate-700 px-2.5 py-1 rounded">${item.topic}</span>
+        <div style="display:flex; gap:0.5rem; align-items:center; margin-bottom:0.75rem;">
+          <span class="badge-paper">${item.paper}</span>
+          <span class="badge-topic">${item.topic}</span>
         </div>
-        <h2 class="text-2xl font-bold text-white mb-6">${item.title}</h2>
+        <h2 style="font-size:1.5rem; font-weight:700; color:#ffffff; margin-bottom:1.25rem; line-height:1.3;">${item.title}</h2>
         
-        <div class="mb-6">
-          <h3 class="text-sm uppercase font-bold tracking-wider text-amber-400 mb-3">Prelims Pointers</h3>
-          <ul class="text-sm bg-slate-900 p-4 rounded-xl border border-slate-700/60">${prelimsList}</ul>
-        </div>
+        <div class="section-title prelims-title" style="font-size:0.85rem; margin-bottom:0.5rem;">Prelims Pointers</div>
+        <div class="box" style="padding:1rem;"><ul style="list-style:none;">${prelimsList}</ul></div>
 
         ${item.mains_perspective ? `
-        <div>
-          <h3 class="text-sm uppercase font-bold tracking-wider text-emerald-400 mb-3">Mains Perspective</h3>
-          <div class="bg-slate-900 p-4 rounded-xl border border-slate-700/60 space-y-3 text-sm text-slate-300">
-            <p><strong class="text-white">Context:</strong> ${item.mains_perspective.context || ''}</p>
-            <p><strong class="text-white">Key Takeaways:</strong> ${item.mains_perspective.key_arguments || ''}</p>
-            <p><strong class="text-white">Way Forward:</strong> ${item.mains_perspective.way_forward || ''}</p>
-          </div>
+        <div class="section-title mains-title" style="font-size:0.85rem; margin-bottom:0.5rem;">Mains Perspective</div>
+        <div class="box mains-box" style="padding:1rem;">
+          <p style="margin-bottom:0.5rem;"><strong>Context:</strong> ${item.mains_perspective.context || ''}</p>
+          <p style="margin-bottom:0.5rem;"><strong>Key Takeaways:</strong> ${item.mains_perspective.key_arguments || ''}</p>
+          <p><strong>Way Forward:</strong> ${item.mains_perspective.way_forward || ''}</p>
         </div>` : ''}
       `;
-      modal.classList.remove('hidden');
+      modal.classList.add('active');
     }
 
-    function closeModal() {
-      document.getElementById('detail-modal').classList.add('hidden');
+    function closeModal(e) {
+      if (!e || e.target.id === 'detail-modal' || e.target.className === 'close-btn') {
+        document.getElementById('detail-modal').classList.remove('active');
+      }
     }
 
     function filterNews(paper) {
       const buttons = document.querySelectorAll('.filter-btn');
       buttons.forEach(btn => {
-        if (btn.textContent.trim().includes(paper) || (paper === 'ALL' && btn.textContent.trim() === 'All Papers')) {
-          btn.className = 'filter-btn bg-sky-500 text-white px-4 py-2 rounded-lg font-medium text-sm transition';
+        if (btn.textContent.trim() === paper || (paper === 'ALL' && btn.textContent.trim() === 'All Papers')) {
+          btn.classList.add('active');
         } else {
-          btn.className = 'filter-btn bg-slate-800 hover:bg-slate-700 text-slate-300 px-4 py-2 rounded-lg font-medium text-sm transition';
+          btn.classList.remove('active');
         }
       });
 
