@@ -5,10 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <title>NexusGS - UPSC Knowledge Wiki</title>
-  
-  <!-- Clerk Frontend SDK -->
-  <script async crossorigin="anonymous" src="https://cdn.jsdelivr.net/npm/@clerk/clerk-js@latest/dist/clerk.browser.js"></script>
-
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     
@@ -159,8 +155,10 @@
         <button onclick="switchViewMode('SAVED')" id="tab-saved" class="mode-tab">⭐ Saved</button>
         <button onclick="openEvaluator()" class="btn-eval">📸 AI Vision Grader</button>
         
-        <!-- Clerk Authentication Container -->
-        <div id="auth-container"></div>
+        <!-- Native User Authentication Button -->
+        <div id="auth-nav-container">
+          <button onclick="openAuthModal()" class="mode-tab" style="background:#0284c7; color:#fff; border-color:#38bdf8;">👤 Sign In</button>
+        </div>
       </div>
     </nav>
 
@@ -254,33 +252,75 @@
     </div>
   </div>
 
+  <!-- Native Auth Modal -->
+  <div id="auth-modal" class="modal-overlay" onclick="closeAuthModal(event)">
+    <div class="modal-body" onclick="event.stopPropagation()" style="max-width: 420px;">
+      <button onclick="closeAuthModal()" class="close-btn">&times;</button>
+      <div class="modal-padding" style="text-align: center;">
+        <h2 style="font-size: 1.4rem; font-weight: 800; color: #fff; margin-bottom: 0.5rem;" id="auth-title">🔐 Sign In to NexusGS</h2>
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.5rem;">Access your saved wiki bookmarks and AI study tools across devices.</p>
+        
+        <div id="auth-form-container">
+          <input type="email" id="auth-email" class="search-box" style="width: 100%; margin-bottom: 0.75rem;" placeholder="Enter your email..." />
+          <input type="password" id="auth-pass" class="search-box" style="width: 100%; margin-bottom: 1.25rem;" placeholder="Enter password..." />
+          <button onclick="handleNativeAuth()" class="btn-ai" style="width: 100%; margin-bottom: 1rem;">Sign In / Register</button>
+        </div>
+        <div id="auth-msg" style="font-size: 0.85rem; margin-top: 0.5rem;"></div>
+      </div>
+    </div>
+  </div>
+
   <script>
     let MASTER_REPOSITORY = [];
     let currentMode = 'DAILY';
     let currentPaperFilter = 'ALL';
     let currentSubtopicFilter = 'ALL';
     let savedBookmarks = JSON.parse(localStorage.getItem('upsc_bookmarks') || '[]');
+    let currentUser = JSON.parse(localStorage.getItem('nexusgs_user') || 'null');
 
-    // Properly initialize Clerk with your Publishable Key
-    window.addEventListener('load', async function () {
-      try {
-        if (window.Clerk) {
-          await window.Clerk.load({
-            publishableKey: 'pk_test_bmVhdC1tYW4tMzI4Mi5jbGVyay5hY2NvdW50cy5kZXYk'
-          });
-          
-          const authContainer = document.getElementById('auth-container');
-          
-          if (window.Clerk.user) {
-            window.Clerk.mountUserButton(authContainer);
-          } else {
-            authContainer.innerHTML = `<button onclick="window.Clerk.openSignIn()" class="mode-tab" style="background:#0284c7; color:#fff; border-color:#38bdf8; cursor:pointer;">Sign In</button>`;
-          }
-        }
-      } catch (err) {
-        console.error("Clerk initialization error:", err);
-      }
+    window.addEventListener('load', () => {
+      updateAuthUI();
+      initApp();
     });
+
+    function updateAuthUI() {
+      const container = document.getElementById('auth-nav-container');
+      if (currentUser) {
+        container.innerHTML = `<button onclick="handleSignOut()" class="mode-tab" style="background:rgba(16, 185, 129, 0.2); color:#34d399; border-color:rgba(16, 185, 129, 0.4);">👤 ${currentUser.email.split('@')[0]} (Sign Out)</button>`;
+      } else {
+        container.innerHTML = `<button onclick="openAuthModal()" class="mode-tab" style="background:#0284c7; color:#fff; border-color:#38bdf8;">👤 Sign In</button>`;
+      }
+    }
+
+    function openAuthModal() { document.getElementById('auth-modal').classList.add('active'); }
+    function closeAuthModal(e) {
+      if (!e || e.target.id === 'auth-modal' || e.target.className === 'close-btn') document.getElementById('auth-modal').classList.remove('active');
+    }
+
+    function handleNativeAuth() {
+      const email = document.getElementById('auth-email').value.trim();
+      const pass = document.getElementById('auth-pass').value.trim();
+      const msg = document.getElementById('auth-msg');
+
+      if (!email || !pass) {
+        msg.innerHTML = `<span style="color:#f87171;">Please enter both email and password.</span>`;
+        return;
+      }
+
+      currentUser = { email };
+      localStorage.setItem('nexusgs_user', JSON.stringify(currentUser));
+      msg.innerHTML = `<span style="color:#34d399;">Successfully signed in!</span>`;
+      setTimeout(() => {
+        closeAuthModal();
+        updateAuthUI();
+      }, 800);
+    }
+
+    function handleSignOut() {
+      localStorage.removeItem('nexusgs_user');
+      currentUser = null;
+      updateAuthUI();
+    }
 
     const fallbackImages = {
       'GS-1': 'https://images.unsplash.com/photo-1590050752117-238cb0fb12b1?w=800&auto=format&fit=crop&q=60',
@@ -564,9 +604,6 @@
     }
 
     function handleSearch() { applyFilters(); }
-
-    // Initialize application
-    initApp();
   </script>
 </body>
 </html>
