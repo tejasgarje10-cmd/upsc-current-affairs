@@ -100,7 +100,8 @@
     .badge-GS-3 { background: var(--gs3-bg); color: var(--gs3-color); border: 1px solid var(--gs3-border); }
     .badge-GS-4 { background: var(--gs4-bg); color: var(--gs4-color); border: 1px solid var(--gs4-border); }
     .badge-date { background: #090d16; color: var(--text-muted); border: 1px solid var(--border-color); font-size: 0.75rem; font-weight: 600; padding: 0.25rem 0.5rem; border-radius: 0.25rem; }
-    .badge-topic { background: #374151; color: #e5e7eb; font-size: 0.75rem; font-weight: 500; padding: 0.25rem 0.55rem; border-radius: 0.25rem; }
+    .badge-topic { background: #374151; color: #e5e7eb; font-size: 0.75rem; font-weight: 500; padding: 0.25rem 0.55rem; border-radius: 0.25rem; cursor: pointer; }
+    .badge-topic:hover { background: #0284c7; color: #fff; }
 
     .card-title { font-size: 1.15rem; font-weight: 700; color: #ffffff; margin-bottom: 0.85rem; line-height: 1.4; }
     .section-title { font-size: 0.725rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.4rem; }
@@ -158,7 +159,7 @@
 
     <div class="search-panel">
       <div class="search-row">
-        <input type="text" id="search-input" onkeyup="handleSearch()" class="search-box" placeholder="Search open-source repository (e.g. nuclear, inflation, ethics, security)..." />
+        <input type="text" id="search-input" onkeyup="handleSearch()" class="search-box" placeholder="Search open-source repository (e.g. nuclear, federalism, ethics, economy)..." />
       </div>
       
       <!-- Paper Filter Row -->
@@ -176,15 +177,15 @@
 
       <!-- Granular Subtopic Filter Row -->
       <div class="filter-section" style="margin-top: 0.75rem;">
-        <span class="filter-label">Subtopic Master Guides:</span>
+        <span class="filter-label">Subtopic Master Portals:</span>
         <div class="filter-pills" id="subtopic-pills">
           <button onclick="filterSubtopic('ALL')" class="pill active">All Subtopics</button>
-          <button onclick="filterSubtopic('Culture')" class="pill">Art & Culture</button>
-          <button onclick="filterSubtopic('Polity')" class="pill">Polity & Federalism</button>
-          <button onclick="filterSubtopic('Economy')" class="pill">Economy & Growth</button>
-          <button onclick="filterSubtopic('Science')" class="pill">Science & Tech</button>
-          <button onclick="filterSubtopic('Security')" class="pill">Internal Security</button>
-          <button onclick="filterSubtopic('Ethics')" class="pill">Ethics & Governance</button>
+          <button onclick="filterSubtopic('Art & Culture')" class="pill">Art & Culture</button>
+          <button onclick="filterSubtopic('Polity & Federalism')" class="pill">Polity & Federalism</button>
+          <button onclick="filterSubtopic('Economy & Growth')" class="pill">Economy & Growth</button>
+          <button onclick="filterSubtopic('Science & Tech')" class="pill">Science & Tech</button>
+          <button onclick="filterSubtopic('Internal Security')" class="pill">Internal Security</button>
+          <button onclick="filterSubtopic('Ethics & Governance')" class="pill">Ethics & Governance</button>
         </div>
       </div>
     </div>
@@ -245,6 +246,7 @@
   </div>
 
   <script>
+    // Comprehensive Multi-Article Master Repository Covering All Subtopics
     const MASTER_REPOSITORY = [
       {
         "title": "Maratha Military Landscapes & UNESCO World Heritage Conservation",
@@ -261,6 +263,23 @@
           "context": "Balancing heritage tourism promotion with structural preservation against coastal weathering.",
           "key_arguments": "Forts serve as testaments to indigenous defensive strategies and naval architecture under Chhatrapati Shivaji Maharaj.",
           "way_forward": "Adopt scientific stone consolidation and involve local communities in heritage management."
+        }
+      },
+      {
+        "title": "Temple Architecture Styles: Nagara, Dravida & Vesara Evolution",
+        "paper": "GS-1",
+        "topic": "Art & Culture",
+        "static_linkage": "Indian Architecture & Sculpture",
+        "date": "2026-10",
+        "image": "https://images.unsplash.com/photo-1599578316616-e14589d970c6?w=800&auto=format&fit=crop&q=60",
+        "prelims_pointers": [
+          "Nagara style features beehive-shaped towers (Shikhara) common in northern India.",
+          "Dravida style is characterized by pyramidal towers (Vimana) and monumental gateways (Gopurams) in southern India."
+        ],
+        "mains_perspective": {
+          "context": "Understanding religious architecture as a reflection of socio-political patronage and regional integration.",
+          "key_arguments": "Temple complexes served not only as places of worship but as economic hubs, employers, and centers of classical arts.",
+          "way_forward": "Promote digital archiving of temple inscriptions and structural mapping to prevent archaeological degradation."
         }
       },
       {
@@ -458,6 +477,15 @@
       applyFilters();
     }
 
+    function triggerSubtopicFilter(subtopicName) {
+      currentSubtopicFilter = subtopicName;
+      const pills = document.querySelectorAll('#subtopic-pills .pill');
+      pills.forEach(btn => {
+        btn.classList.toggle('active', btn.textContent.toLowerCase().includes(subtopicName.toLowerCase()) || (subtopicName === 'ALL' && btn.textContent.includes('All')));
+      });
+      applyFilters();
+    }
+
     function renderModules(items) {
       const bannerContainer = document.getElementById('ai-banner-container');
       const container = document.getElementById('news-container');
@@ -474,6 +502,7 @@
         const prelimsList = (item.prelims_pointers || []).map(p => `<li>• ${p}</li>`).join('');
         const paperTag = item.paper || 'GS-2';
         const isSaved = savedBookmarks.includes(item.title);
+        const topicName = item.topic || 'General';
 
         const card = document.createElement('div');
         card.className = "card";
@@ -485,7 +514,7 @@
               <div class="card-header">
                 <span class="badge badge-${paperTag}">${paperTag}</span>
                 <span class="badge-date">${item.date || '2026-10'}</span>
-                <span class="badge-topic">${item.topic || item.static_linkage || 'General'}</span>
+                <span class="badge-topic" onclick="event.stopPropagation(); triggerSubtopicFilter('${topicName}')" title="Click to view all articles in this subtopic">${topicName}</span>
               </div>
               <h2 class="card-title">${item.title}</h2>
               <div class="section-title prelims-title">Prelims Pointers</div>
@@ -518,7 +547,7 @@
           <div style="display:flex; gap:0.4rem; align-items:center; flex-wrap:wrap; margin-bottom:0.75rem;">
             <span class="badge badge-${paperTag}">${paperTag}</span>
             <span class="badge-date">${item.date || '2026-10'}</span>
-            <span class="badge-topic">${item.topic || item.static_linkage || ''}</span>
+            <span class="badge-topic" onclick="event.stopPropagation(); closeModal(); triggerSubtopicFilter('${item.topic || ''}')">${item.topic || item.static_linkage || ''}</span>
           </div>
           <h2 style="font-size:1.5rem; font-weight:800; color:#fff; margin-bottom:1rem;">${item.title}</h2>
           <div class="section-title prelims-title">Prelims Pointers</div>
@@ -554,12 +583,7 @@
     }
 
     function filterSubtopic(subtopic) {
-      currentSubtopicFilter = subtopic;
-      const pills = document.querySelectorAll('#subtopic-pills .pill');
-      pills.forEach(btn => {
-        btn.classList.toggle('active', btn.textContent.toLowerCase().includes(subtopic.toLowerCase()) || (subtopic === 'ALL' && btn.textContent.includes('All')));
-      });
-      applyFilters();
+      triggerSubtopicFilter(subtopic);
     }
 
     function handleSearch() { applyFilters(); }
@@ -582,11 +606,8 @@
         activePool = activePool.filter(item => {
           const topic = (item.topic || '').toLowerCase();
           const linkage = (item.static_linkage || '').toLowerCase();
-          const title = (item.title || '').toLowerCase();
           const filterTerm = currentSubtopicFilter.toLowerCase();
-          return topic.includes(filterTerm) || 
-                 linkage.includes(filterTerm) || 
-                 title.includes(filterTerm);
+          return topic.includes(filterTerm) || linkage.includes(filterTerm);
         });
       }
 
