@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>UPSC Syllabus-Aligned Daily Portal</title>
+  <title>UPSC Syllabus-Aligned Current Affairs</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -18,7 +18,6 @@
     h1 { font-size: 2.25rem; font-weight: 700; margin-bottom: 0.5rem; color: #ffffff; }
     .subtitle { color: #94a3b8; font-size: 0.95rem; }
     
-    /* Search & Filter Controls */
     .controls { display: flex; flex-direction: column; align-items: center; gap: 1rem; margin-bottom: 2rem; }
     .search-box {
       width: 100%; max-width: 500px; padding: 0.75rem 1rem;
@@ -47,7 +46,7 @@
     }
     .card:hover { border-color: #38bdf8; transform: translateY(-3px); }
     
-    .card-img { width: 100%; height: 160px; object-fit: cover; background-color: #0f172a; }
+    .card-img { width: 100%; height: 160px; object-fit: cover; background-color: #0f172a; display: block; }
     .card-body { padding: 1.25rem; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; }
 
     .card-header { display: flex; gap: 0.4rem; align-items: center; flex-wrap: wrap; margin-bottom: 0.75rem; }
@@ -88,11 +87,11 @@
     .modal-overlay.active { display: flex; }
     .modal-body {
       background-color: #1e293b; border: 1px solid #475569; border-radius: 1rem;
-      max-width: 700px; width: 100%; position: relative; max-height: 90vh; overflow-y: auto;
+      max-width: 700px; width: 100%; position: relative; max-height: 90vh; overflow-y: auto; overflow-x: hidden;
     }
-    .modal-img { width: 100%; height: 220px; object-fit: cover; }
+    .modal-img { width: 100%; height: 220px; object-fit: cover; display: block; }
     .modal-padding { padding: 1.75rem; }
-    .close-btn { position: absolute; top: 1rem; right: 1rem; background: rgba(0,0,0,0.6); border: none; color: #ffffff; width: 32px; height: 32px; border-radius: 50%; font-size: 1.25rem; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .close-btn { position: absolute; top: 1rem; right: 1rem; background: rgba(0,0,0,0.6); border: none; color: #ffffff; width: 32px; height: 32px; border-radius: 50%; font-size: 1.25rem; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 10; }
   </style>
 </head>
 <body>
@@ -115,7 +114,7 @@
     </div>
 
     <div id="news-container" class="grid">
-      <div style="grid-column: 1/-1; text-align: center; color: #94a3b8; padding: 3rem 0;">Loading comprehensive current affairs...</div>
+      <div style="grid-column: 1/-1; text-align: center; color: #94a3b8; padding: 3rem 0;">Loading current affairs...</div>
     </div>
   </div>
 
@@ -154,14 +153,18 @@
       items.forEach((item, index) => {
         const prelimsList = (item.prelims_pointers || []).map(p => `<li>• ${p}</li>`).join('');
         const itemDate = item.date || new Date().toISOString().split('T')[0];
-        const imageUrl = item.image || "[https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?w=800&auto=format&fit=crop&q=60](https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?w=800&auto=format&fit=crop&q=60)";
+        
+        // Safety check for images: hide img tag entirely if item.image is missing/invalid
+        const imgHtml = item.image 
+          ? `<img src="${item.image}" class="card-img" alt="News Image" onerror="this.style.display='none'" />` 
+          : '';
 
         const card = document.createElement('div');
         card.className = "card";
         card.onclick = () => openModal(index);
         
         card.innerHTML = `
-          <img src="${imageUrl}" class="card-img" alt="News Image" onerror="this.src='[https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?w=800&auto=format&fit=crop&q=60](https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?w=800&auto=format&fit=crop&q=60)'" />
+          ${imgHtml}
           <div class="card-body">
             <div>
               <div class="card-header">
@@ -194,12 +197,15 @@
       const modal = document.getElementById('detail-modal');
       const modalContent = document.getElementById('modal-content');
       const itemDate = item.date || new Date().toISOString().split('T')[0];
-      const imageUrl = item.image || "[https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?w=800&auto=format&fit=crop&q=60](https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?w=800&auto=format&fit=crop&q=60)";
+      
+      const imgHtml = item.image 
+        ? `<img src="${item.image}" class="modal-img" alt="Modal Header" onerror="this.style.display='none'" />` 
+        : '';
 
       const prelimsList = (item.prelims_pointers || []).map(p => `<li style="margin-bottom:0.5rem; color:#f1f5f9;">• ${p}</li>`).join('');
 
       modalContent.innerHTML = `
-        <img src="${imageUrl}" class="modal-img" alt="Modal Header" onerror="this.src='[https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?w=800&auto=format&fit=crop&q=60](https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?w=800&auto=format&fit=crop&q=60)'" />
+        ${imgHtml}
         <div class="modal-padding">
           <div style="display:flex; gap:0.4rem; align-items:center; flex-wrap:wrap; margin-bottom:0.85rem;">
             <span class="badge-paper">${item.paper}</span>
