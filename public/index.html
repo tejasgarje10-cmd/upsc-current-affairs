@@ -1,533 +1,124 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-  <title>NexusGS - UPSC Knowledge Wiki</title>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+function applyFilters() {
+    const searchTerm = document.getElementById('search-input').value.toLowerCase().trim();
+    let activePool = MASTER_REPOSITORY;
+
+    if (currentMode === 'SAVED') {
+      activePool = activePool.filter(item => savedBookmarks.includes(item.title));
+    }
     
-    :root {
-      --bg-gradient: linear-gradient(135deg, #090d16 0%, #111827 50%, #0b0f19 100%);
-      --surface-glass: rgba(17, 24, 39, 0.85);
-      --border-color: rgba(55, 65, 81, 0.6);
-      --text-main: #f3f4f6;
-      --text-muted: #9ca3af;
-      
-      --gs1-color: #f59e0b; --gs1-bg: rgba(245, 158, 11, 0.18); --gs1-border: rgba(245, 158, 11, 0.4);
-      --gs2-color: #3b82f6; --gs2-bg: rgba(59, 130, 246, 0.18); --gs2-border: rgba(59, 130, 246, 0.4);
-      --gs3-color: #10b981; --gs3-bg: rgba(16, 185, 129, 0.18); --gs3-border: rgba(16, 185, 129, 0.4);
-      --gs4-color: #a855f7; --gs4-bg: rgba(168, 85, 247, 0.18); --gs4-border: rgba(168, 85, 247, 0.4);
+    // Paper Filter
+    if (currentPaperFilter !== 'ALL') {
+      activePool = activePool.filter(item => item.paper === currentPaperFilter);
     }
 
-    body {
-      background: var(--bg-gradient); color: var(--text-main);
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      min-height: 100vh; padding: 1.5rem 1rem; line-height: 1.5;
+    // Subtopic Filter
+    if (currentSubtopicFilter !== 'ALL') {
+      activePool = activePool.filter(item => {
+        const topic = (item.topic || '').toLowerCase();
+        const linkage = (item.static_linkage || '').toLowerCase();
+        const filterTerm = currentSubtopicFilter.toLowerCase();
+        return topic.includes(filterTerm) || linkage.includes(filterTerm);
+      });
     }
-    .container { max-width: 1280px; margin: 0 auto; }
-    
-    .app-navbar {
-      display: flex; justify-content: space-between; align-items: center;
-      padding: 1rem 1.5rem; background: var(--surface-glass); border: 1px solid var(--border-color);
-      border-radius: 1rem; backdrop-filter: blur(12px); margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;
-    }
-    .brand-group { display: flex; align-items: center; gap: 0.75rem; }
-    .brand-icon {
-      width: 42px; height: 42px; border-radius: 0.625rem; overflow: hidden;
-      background: rgba(11, 15, 25, 0.9); border: 1px solid var(--border-color);
-      display: flex; align-items: center; justify-content: center;
-      box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3);
-    }
-    .brand-title { font-size: 1.3rem; font-weight: 800; color: #ffffff; letter-spacing: -0.01em; }
-    .brand-sub { font-size: 0.75rem; color: #38bdf8; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
 
-    .nav-actions { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; }
-    .mode-tab {
-      background: rgba(31, 41, 55, 0.7); color: var(--text-muted); border: 1px solid var(--border-color);
-      padding: 0.5rem 1rem; border-radius: 0.5rem; cursor: pointer; font-weight: 600; font-size: 0.85rem; transition: all 0.2s;
-    }
-    .mode-tab:hover { background: #374151; color: #fff; }
-    .mode-tab.active { background: #0284c7; color: #fff; border-color: #38bdf8; box-shadow: 0 0 10px rgba(2, 132, 199, 0.3); }
-
-    .btn-eval {
-      background: rgba(168, 85, 247, 0.2); color: #e879f9; border: 1px solid rgba(168, 85, 247, 0.4);
-      padding: 0.5rem 1rem; border-radius: 0.5rem; cursor: pointer; font-size: 0.85rem; font-weight: 600;
-    }
-    .btn-eval:hover { background: rgba(168, 85, 247, 0.35); }
-
-    .search-panel {
-      background: var(--surface-glass); border: 1px solid var(--border-color);
-      padding: 1.25rem; border-radius: 1rem; margin-bottom: 2rem; backdrop-filter: blur(12px);
-    }
-    .search-row { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1rem; }
-    .search-box {
-      flex: 1; min-width: 280px; padding: 0.85rem 1.25rem; border-radius: 0.625rem;
-      border: 1px solid var(--border-color); background: rgba(11, 15, 25, 0.85);
-      color: #ffffff; font-size: 0.95rem; outline: none; transition: border-color 0.2s;
-    }
-    .search-box:focus { border-color: #38bdf8; box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2); }
-
-    .filter-section { margin-bottom: 0.75rem; }
-    .filter-label { font-size: 0.7rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 0.3rem; display: block; }
-    .filter-pills { display: flex; gap: 0.4rem; flex-wrap: wrap; align-items: center; }
-    .pill {
-      background: rgba(31, 41, 55, 0.6); color: var(--text-muted); border: 1px solid var(--border-color);
-      padding: 0.35rem 0.8rem; border-radius: 0.375rem; cursor: pointer; font-weight: 600; font-size: 0.775rem; transition: all 0.2s;
-    }
-    .pill:hover { background: #374151; color: #fff; }
-    .pill.active { background: #0284c7; color: #fff; border-color: #38bdf8; }
-
-    .search-stats { font-size: 0.8rem; color: #38bdf8; font-weight: 600; margin-left: auto; }
-
-    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 1.75rem; }
-    .card {
-      background: var(--surface-glass); border: 1px solid var(--border-color);
-      border-radius: 1rem; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between;
-      cursor: pointer; transition: all 0.25s ease;
-    }
-    .card:hover { transform: translateY(-4px); border-color: rgba(56, 189, 248, 0.6); }
-
-    .card-img-wrapper { width: 100%; height: 180px; overflow: hidden; background: #0b0f19; }
-    .card-img { width: 100%; height: 100%; object-fit: cover; display: block; }
-    .card-body { padding: 1.25rem; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; }
-
-    .card-header { display: flex; gap: 0.4rem; align-items: center; flex-wrap: wrap; margin-bottom: 0.75rem; }
-    .badge { font-size: 0.75rem; font-weight: 700; padding: 0.25rem 0.55rem; border-radius: 0.375rem; text-transform: uppercase; }
-    .badge-GS-1 { background: var(--gs1-bg); color: var(--gs1-color); border: 1px solid var(--gs1-border); }
-    .badge-GS-2 { background: var(--gs2-bg); color: var(--gs2-color); border: 1px solid var(--gs2-border); }
-    .badge-GS-3 { background: var(--gs3-bg); color: var(--gs3-color); border: 1px solid var(--gs3-border); }
-    .badge-GS-4 { background: var(--gs4-bg); color: var(--gs4-color); border: 1px solid var(--gs4-border); }
-    .badge-date { background: #090d16; color: var(--text-muted); border: 1px solid var(--border-color); font-size: 0.75rem; font-weight: 600; padding: 0.25rem 0.5rem; border-radius: 0.25rem; }
-    .badge-topic { background: #374151; color: #e5e7eb; font-size: 0.75rem; font-weight: 500; padding: 0.25rem 0.55rem; border-radius: 0.25rem; cursor: pointer; }
-    .badge-topic:hover { background: #0284c7; color: #fff; }
-
-    .card-title { font-size: 1.15rem; font-weight: 700; color: #ffffff; margin-bottom: 0.85rem; line-height: 1.4; }
-    .section-title { font-size: 0.725rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.4rem; }
-    .prelims-title { color: #fbbf24; }
-    .mains-title { color: #34d399; }
-    .box { background: rgba(11, 15, 25, 0.75); border: 1px solid rgba(55, 65, 81, 0.6); padding: 0.75rem 0.85rem; border-radius: 0.5rem; font-size: 0.85rem; color: #d1d5db; margin-bottom: 0.85rem; }
-    .box ul { list-style-type: none; }
-    .box li { margin-bottom: 0.35rem; line-height: 1.4; }
-    .mains-box p { margin-bottom: 0.4rem; font-size: 0.85rem; color: #d1d5db; }
-    .mains-box strong { color: #f9fafb; font-weight: 600; }
-    .expand-hint { text-align: right; font-size: 0.775rem; color: #38bdf8; margin-top: 0.5rem; font-weight: 600; }
-
-    .modal-overlay {
-      position: fixed; inset: 0; background: rgba(3, 7, 18, 0.88); backdrop-filter: blur(8px);
-      display: none; align-items: center; justify-content: center; padding: 1rem; z-index: 100;
-    }
-    .modal-overlay.active { display: flex; }
-    .modal-body {
-      background: #111827; border: 1px solid var(--border-color); border-radius: 1.25rem;
-      max-width: 800px; width: 100%; position: relative; max-height: 88vh; overflow-y: auto; overflow-x: hidden;
-    }
-    .modal-padding { padding: 2rem; }
-    .close-btn {
-      position: absolute; top: 1.25rem; right: 1.25rem; background: rgba(31, 41, 55, 0.9); border: 1px solid var(--border-color);
-      color: #ffffff; width: 36px; height: 36px; border-radius: 50%; font-size: 1.25rem; cursor: pointer;
-      display: flex; align-items: center; justify-content: center; z-index: 10;
-    }
-    .btn-ai {
-      background: linear-gradient(135deg, #0284c7, #6366f1); color: #fff; border: none;
-      padding: 0.75rem 1.5rem; border-radius: 0.625rem; font-weight: 700; cursor: pointer; font-size: 0.95rem; box-shadow: 0 4px 12px rgba(2, 132, 199, 0.4);
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    
-    <nav class="app-navbar">
-      <div class="brand-group">
-        <div class="brand-icon">
-          <img src="./logo.png" alt="NexusGS" style="width:100%; height:100%; object-fit:contain;" onerror="this.onerror=null; this.parentNode.innerHTML='<svg width=\'22\' height=\'22\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'#38bdf8\' stroke-width=\'2.5\' stroke-linecap=\'round\' stroke-linejoin=\'round\'><path d=\'M16 3h5v5\'/><path d=\'M4 20L21 3\'/><path d=\'M21 16v5h-5\'/><path d=\'M15 15l6 6\'/><path d=\'M4 4l5 5\'/></svg>';" />
-        </div>
-        <div>
-          <div class="brand-title">NexusGS Wiki</div>
-          <div class="brand-sub">UPSC Static & Dynamic Knowledge Base</div>
-        </div>
-      </div>
-
-      <div class="nav-actions">
-        <button onclick="switchViewMode('DAILY')" id="tab-daily" class="mode-tab active">📰 Feed</button>
-        <button onclick="switchViewMode('REPO')" id="tab-repo" class="mode-tab">📚 Wiki Repository</button>
-        <button onclick="switchViewMode('SAVED')" id="tab-saved" class="mode-tab">⭐ Saved</button>
-        <button onclick="openEvaluator()" class="btn-eval">📸 AI Vision Grader</button>
-      </div>
-    </nav>
-
-    <div class="search-panel">
-      <div class="search-row">
-        <input type="text" id="search-input" onkeyup="handleSearch()" class="search-box" placeholder="Search knowledge base (e.g., Federalism, AI, RBI, Temple, Ethics, LWE)..." />
-      </div>
-      
-      <!-- Paper Filter Row -->
-      <div class="filter-section">
-        <span class="filter-label">Syllabus Papers:</span>
-        <div class="filter-pills" id="paper-pills">
-          <button onclick="filterPaper('ALL')" class="pill active">All Papers</button>
-          <button onclick="filterPaper('GS-1')" class="pill">GS-1</button>
-          <button onclick="filterPaper('GS-2')" class="pill">GS-2</button>
-          <button onclick="filterPaper('GS-3')" class="pill">GS-3</button>
-          <button onclick="filterPaper('GS-4')" class="pill">GS-4</button>
-          <span id="match-count" class="search-stats"></span>
-        </div>
-      </div>
-
-      <!-- Granular Subtopic Filter Row -->
-      <div class="filter-section" style="margin-top: 0.75rem;">
-        <span class="filter-label">Wiki Subtopics:</span>
-        <div class="filter-pills" id="subtopic-pills">
-          <button onclick="filterSubtopic('ALL')" class="pill active">All Subtopics</button>
-          <button onclick="filterSubtopic('Art & Culture')" class="pill">Art & Culture</button>
-          <button onclick="filterSubtopic('Indian Society')" class="pill">Indian Society</button>
-          <button onclick="filterSubtopic('Polity & Federalism')" class="pill">Polity & Federalism</button>
-          <button onclick="filterSubtopic('International Relations')" class="pill">International Relations</button>
-          <button onclick="filterSubtopic('Economy & Growth')" class="pill">Economy & Growth</button>
-          <button onclick="filterSubtopic('Science & Tech')" class="pill">Science & Tech</button>
-          <button onclick="filterSubtopic('Internal Security')" class="pill">Internal Security</button>
-          <button onclick="filterSubtopic('Ethics & Governance')" class="pill">Ethics & Governance</button>
-        </div>
-      </div>
-    </div>
-
-    <div id="ai-banner-container"></div>
-    <div id="news-container" class="grid"></div>
-  </div>
-
-  <!-- Detail Modal -->
-  <div id="detail-modal" class="modal-overlay" onclick="closeModal(event)">
-    <div class="modal-body" onclick="event.stopPropagation()">
-      <button onclick="closeModal()" class="close-btn">&times;</button>
-      <div id="modal-content"></div>
-    </div>
-  </div>
-
-  <!-- AI Vision Answer Evaluator Modal -->
-  <div id="evaluator-modal" class="modal-overlay" onclick="closeEvaluator(event)">
-    <div class="modal-body" onclick="event.stopPropagation()" style="max-width: 640px;">
-      <button onclick="closeEvaluator()" class="close-btn">&times;</button>
-      <div class="modal-padding">
-        <h2 style="font-size: 1.4rem; font-weight: 800; color: #fff; margin-bottom: 0.5rem;">📸 AI Vision Answer Grader</h2>
-        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">Upload a photo of your handwritten answer sheet (10-marker or 15-marker). Gemini Vision will read your handwriting and grade it instantly!</p>
+    // Keyword Search
+    if (searchTerm.length > 0) {
+      activePool = activePool.filter(item => {
+        const title = (item.title || '').toLowerCase();
+        const topic = (item.topic || '').toLowerCase();
+        const linkage = (item.static_linkage || '').toLowerCase();
+        const context = (item.mains_perspective && item.mains_perspective.context || '').toLowerCase();
+        const args = (item.mains_perspective && item.mains_perspective.key_arguments || '').toLowerCase();
+        const prelims = (item.prelims_pointers || []).join(' ').toLowerCase();
         
-        <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
-          <div style="flex: 1;">
-            <label style="font-size: 0.75rem; font-weight: 700; color: #38bdf8; text-transform: uppercase;">Paper:</label>
-            <select id="eval-paper" class="search-box" style="width: 100%; margin-top: 0.3rem;">
-              <option value="GS-1">GS-1</option>
-              <option value="GS-2" selected>GS-2</option>
-              <option value="GS-3">GS-3</option>
-              <option value="GS-4">GS-4</option>
-            </select>
-          </div>
-          <div style="flex: 1;">
-            <label style="font-size: 0.75rem; font-weight: 700; color: #38bdf8; text-transform: uppercase;">Marker Type:</label>
-            <select id="eval-type" class="search-box" style="width: 100%; margin-top: 0.3rem;">
-              <option value="10-Marker (150 Words)">10-Marker (150 Words)</option>
-              <option value="15-Marker (250 Words)" selected>15-Marker (250 Words)</option>
-            </select>
-          </div>
-        </div>
-
-        <div style="margin-bottom: 1rem;">
-          <label style="font-size: 0.75rem; font-weight: 700; color: #38bdf8; text-transform: uppercase;">Question Prompt:</label>
-          <input type="text" id="eval-question" class="search-box" style="width: 100%; margin-top: 0.3rem;" placeholder="e.g., Examine the role of UNCLOS in maritime security..." />
-        </div>
-
-        <div style="margin-bottom: 1.25rem;">
-          <label style="font-size: 0.75rem; font-weight: 700; color: #38bdf8; text-transform: uppercase;">Upload Answer Sheet Photo:</label>
-          <input type="file" id="eval-image" accept="image/*" class="search-box" style="width: 100%; margin-top: 0.3rem; padding: 0.6rem;" />
-        </div>
-
-        <button onclick="evaluateHandwrittenAnswer()" class="btn-ai" style="width: 100%;">Grade Handwritten Answer with Vision AI</button>
-        <div id="eval-result" style="margin-top: 1.25rem;"></div>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    let MASTER_REPOSITORY = [];
-    let currentMode = 'DAILY';
-    let currentPaperFilter = 'ALL';
-    let currentSubtopicFilter = 'ALL';
-    let savedBookmarks = JSON.parse(localStorage.getItem('upsc_bookmarks') || '[]');
-
-    const fallbackImages = {
-      'GS-1': 'https://images.unsplash.com/photo-1590050752117-238cb0fb12b1?w=800&auto=format&fit=crop&q=60',
-      'GS-2': 'https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?w=800&auto=format&fit=crop&q=60',
-      'GS-3': 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&auto=format&fit=crop&q=60',
-      'GS-4': 'https://images.unsplash.com/photo-1450133064473-71024230f91b?w=800&auto=format&fit=crop&q=60'
-    };
-
-    function handleImgError(imgElement, paperTag) {
-      imgElement.onerror = null;
-      imgElement.src = fallbackImages[paperTag] || fallbackImages['GS-2'];
-    }
-
-    function openEvaluator() { document.getElementById('evaluator-modal').classList.add('active'); }
-    function closeEvaluator(e) {
-      if (!e || e.target.id === 'evaluator-modal' || e.target.className === 'close-btn') document.getElementById('evaluator-modal').classList.remove('active');
-    }
-
-    function compressImageAndConvertToBase64(file) {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = (event) => {
-          const img = new Image();
-          img.src = event.target.result;
-          img.onload = () => {
-            const canvas = document.createElement('canvas');
-            let width = img.width;
-            let height = img.height;
-            const MAX_WIDTH = 1200;
-            const MAX_HEIGHT = 1200;
-            if (width > height) {
-              if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
-            } else {
-              if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; }
-            }
-            canvas.width = width;
-            canvas.height = height;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(img, 0, 0, width, height);
-            const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
-            resolve(dataUrl.split(',')[1]);
-          };
-          img.onerror = (error) => reject(error);
-        };
-        reader.onerror = (error) => reject(error);
+        return title.includes(searchTerm) || 
+               topic.includes(searchTerm) || 
+               linkage.includes(searchTerm) || 
+               context.includes(searchTerm) || 
+               args.includes(searchTerm) || 
+               prelims.includes(searchTerm);
       });
     }
+    renderModules(activePool, searchTerm);
+  }
 
-    async function evaluateHandwrittenAnswer() {
-      const paper = document.getElementById('eval-paper').value;
-      const markerType = document.getElementById('eval-type').value;
-      const question = document.getElementById('eval-question').value.trim();
-      const fileInput = document.getElementById('eval-image');
-      const resultDiv = document.getElementById('eval-result');
+  async function generateDynamicWikiArticle(searchTerm) {
+    const container = document.getElementById('news-container');
+    container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: #38bdf8; padding: 4rem 0;">✨ Gemini AI is synthesizing a Wikipedia-grade study article for <strong>"${searchTerm}"</strong>...</div>`;
 
-      if (!question) { alert('Please enter the question prompt.'); return; }
-      if (fileInput.files.length === 0) { alert('Please upload a photo of your handwritten answer sheet.'); return; }
-
-      resultDiv.innerHTML = `<div style="color:#38bdf8; text-align:center; padding:1rem;">Compressing image & contacting AI Grader...</div>`;
-
-      try {
-        const base64Data = await compressImageAndConvertToBase64(fileInput.files[0]);
-
-        const res = await fetch('/api/evaluate', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ question, paper, markerType, imageBase64: base64Data, mimeType: 'image/jpeg' })
-        });
-
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error || `Server error: ${res.status}`);
-
-        resultDiv.innerHTML = `<div class="box" style="margin-top:1rem; max-height:300px; overflow-y:auto; padding:1rem; color:#f3f4f6;">${data.feedback}</div>`;
-      } catch (err) {
-        resultDiv.innerHTML = `<div style="color:#f87171; text-align:center; padding:0.5rem;"><strong>Error:</strong> ${err.message || 'Network request failed.'}</div>`;
-      }
-    }
-
-    function toggleBookmark(e, title) {
-      e.stopPropagation();
-      savedBookmarks = savedBookmarks.includes(title) ? savedBookmarks.filter(t => t !== title) : [...savedBookmarks, title];
-      localStorage.setItem('upsc_bookmarks', JSON.stringify(savedBookmarks));
-      applyFilters();
-    }
-
-    function triggerSubtopicFilter(subtopicName) {
-      currentSubtopicFilter = subtopicName;
-      const pills = document.querySelectorAll('#subtopic-pills .pill');
-      pills.forEach(btn => {
-        btn.classList.toggle('active', btn.textContent.toLowerCase().includes(subtopicName.toLowerCase()) || (subtopicName === 'ALL' && btn.textContent.includes('All')));
+    try {
+      const res = await fetch('/api/evaluate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'generateWikiArticle', searchTerm })
       });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to generate article');
+
+      // Add newly generated article to repository pool and open it instantly
+      MASTER_REPOSITORY.unshift(data.article);
       applyFilters();
+      openModal(data.article);
+    } catch (err) {
+      container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: #f87171; padding: 4rem 0;">Error generating article: ${err.message}</div>`;
     }
+  }
 
-    async function initApp() {
-      try {
-        const res = await fetch('./repository.json?t=' + Date.now());
-        const data = await res.json();
-        if (Array.isArray(data)) {
-          MASTER_REPOSITORY = data;
-        }
-      } catch (err) {
-        console.error("Could not load repository.json, using fallback data.");
-        MASTER_REPOSITORY = [
-          {
-            "title": "Maratha Military Landscapes & UNESCO World Heritage Conservation",
-            "paper": "GS-1",
-            "topic": "Art & Culture",
-            "static_linkage": "Art & Architecture - Forts",
-            "date": "2026-10",
-            "image": "https://images.unsplash.com/photo-1590050752117-238cb0fb12b1?w=800&auto=format&fit=crop&q=60",
-            "prelims_pointers": [
-              "Maratha Military Landscapes include hill, coastal, and sea forts showcasing medieval engineering.",
-              "Regulated by the AMASR Act."
-            ],
-            "mains_perspective": {
-              "context": "Balancing heritage tourism promotion with structural preservation.",
-              "key_arguments": "Forts serve as testaments to indigenous defensive strategies under Shivaji Maharaj.",
-              "way_forward": "Adopt scientific stone consolidation and community-based heritage management."
-            }
-          }
-        ];
+  function renderModules(items, searchTerm = '') {
+    const bannerContainer = document.getElementById('ai-banner-container');
+    const container = document.getElementById('news-container');
+    bannerContainer.innerHTML = ''; 
+    container.innerHTML = '';
+    document.getElementById('match-count').textContent = `${items.length} Wiki Articles`;
+
+    if (!items || items.length === 0) {
+      let extraAction = '';
+      if (searchTerm.length > 2) {
+        extraAction = `<div style="margin-top: 1.5rem;"><button onclick="generateDynamicWikiArticle('${searchTerm.replace(/'/g, "\\'")}')" class="btn-ai">✨ Generate Wikipedia Article for "${searchTerm}"</button></div>`;
       }
-      applyFilters();
+      container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 3rem 0;">
+        <div>No existing articles found for "${searchTerm}".</div>
+        ${extraAction}
+      </div>`;
+      return;
     }
 
-    function renderModules(items) {
-      const bannerContainer = document.getElementById('ai-banner-container');
-      const container = document.getElementById('news-container');
-      bannerContainer.innerHTML = ''; 
-      container.innerHTML = '';
-      document.getElementById('match-count').textContent = `${items.length} Wiki Articles`;
-
-      if (!items || items.length === 0) {
-        container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 4rem 0;">No articles found matching this topic in the knowledge base. Try searching keywords like 'Federalism', 'Ethics', or 'Economy'.</div>`;
-        return;
-      }
-
-      items.forEach((item) => {
-        const prelimsList = (item.prelims_pointers || []).map(p => `<li>• ${p}</li>`).join('');
-        const paperTag = item.paper || 'GS-2';
-        const isSaved = savedBookmarks.includes(item.title);
-        const topicName = item.topic || 'General';
-
-        const card = document.createElement('div');
-        card.className = "card";
-        card.onclick = () => openModal(item);
-        card.innerHTML = `
-          <div class="card-img-wrapper"><img src="${item.image || fallbackImages[paperTag]}" class="card-img" onerror="handleImgError(this, '${paperTag}')" /></div>
-          <div class="card-body">
-            <div>
-              <div class="card-header">
-                <span class="badge badge-${paperTag}">${paperTag}</span>
-                <span class="badge-date">${item.date || '2026-10'}</span>
-                <span class="badge-topic" onclick="event.stopPropagation(); triggerSubtopicFilter('${topicName}')" title="Click to view wiki portal for this topic">${topicName}</span>
-              </div>
-              <h2 class="card-title">${item.title}</h2>
-              <div class="section-title prelims-title">Prelims Pointers</div>
-              <div class="box"><ul>${prelimsList}</ul></div>
-              ${item.mains_perspective ? `
-              <div class="section-title mains-title">Mains Perspective</div>
-              <div class="box mains-box">
-                <p><strong>Context:</strong> ${item.mains_perspective.context || ''}</p>
-                <p><strong>Key Arguments:</strong> ${item.mains_perspective.key_arguments || ''}</p>
-                <p><strong>Way Forward:</strong> ${item.mains_perspective.way_forward || ''}</p>
-              </div>` : ''}
-            </div>
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:0.5rem;">
-              <button onclick="toggleBookmark(event, '${(item.title || '').replace(/'/g, "\\'")}')" class="mode-tab" style="padding:0.3rem 0.6rem; font-size:0.75rem;">${isSaved ? '⭐ Saved' : '☆ Save'}</button>
-              <div class="expand-hint">Read Wiki Article &rarr;</div>
-            </div>
-          </div>
-        `;
-        container.appendChild(card);
-      });
-    }
-
-    function openModal(item) {
-      const modal = document.getElementById('detail-modal');
+    items.forEach((item) => {
+      const prelimsList = (item.prelims_pointers || []).map(p => `<li>• ${p}</li>`).join('');
       const paperTag = item.paper || 'GS-2';
-      const prelimsList = (item.prelims_pointers || []).map(p => `<li style="margin-bottom:0.5rem;">• ${p}</li>`).join('');
-      document.getElementById('modal-content').innerHTML = `
-        <div style="height:220px; overflow:hidden;"><img src="${item.image || fallbackImages[paperTag]}" style="width:100%; height:100%; object-fit:cover;" onerror="handleImgError(this, '${paperTag}')" /></div>
-        <div class="modal-padding">
-          <div style="display:flex; gap:0.4rem; align-items:center; flex-wrap:wrap; margin-bottom:0.75rem;">
-            <span class="badge badge-${paperTag}">${paperTag}</span>
-            <span class="badge-date">${item.date || '2026-10'}</span>
-            <span class="badge-topic" onclick="event.stopPropagation(); closeModal(); triggerSubtopicFilter('${item.topic || ''}')">${item.topic || item.static_linkage || ''}</span>
+      const isSaved = savedBookmarks.includes(item.title);
+      const topicName = item.topic || 'General';
+
+      const card = document.createElement('div');
+      card.className = "card";
+      card.onclick = () => openModal(item);
+      card.innerHTML = `
+        <div class="card-img-wrapper"><img src="${item.image || fallbackImages[paperTag]}" class="card-img" onerror="handleImgError(this, '${paperTag}')" /></div>
+        <div class="card-body">
+          <div>
+            <div class="card-header">
+              <span class="badge badge-${paperTag}">${paperTag}</span>
+              <span class="badge-date">${item.date || '2026-10'}</span>
+              <span class="badge-topic" onclick="event.stopPropagation(); triggerSubtopicFilter('${topicName}')" title="Click to view wiki portal for this topic">${topicName}</span>
+            </div>
+            <h2 class="card-title">${item.title}</h2>
+            <div class="section-title prelims-title">Prelims Pointers</div>
+            <div class="box"><ul>${prelimsList}</ul></div>
+            ${item.mains_perspective ? `
+            <div class="section-title mains-title">Mains Perspective</div>
+            <div class="box mains-box">
+              <p><strong>Context:</strong> ${item.mains_perspective.context || ''}</p>
+              <p><strong>Key Arguments:</strong> ${item.mains_perspective.key_arguments || ''}</p>
+              <p><strong>Way Forward:</strong> ${item.mains_perspective.way_forward || ''}</p>
+            </div>` : ''}
           </div>
-          <h2 style="font-size:1.6rem; font-weight:800; color:#fff; margin-bottom:1rem; line-height:1.3;">${item.title}</h2>
-          <div class="section-title prelims-title">Prelims Pointers</div>
-          <div class="box" style="padding:1rem;"><ul>${prelimsList}</ul></div>
-          ${item.mains_perspective ? `
-          <div class="section-title mains-title" style="margin-top:1.25rem;">Mains Multidimensional Perspective</div>
-          <div class="box mains-box" style="padding:1rem;">
-            <p style="margin-bottom:0.75rem;"><strong>Context:</strong> ${item.mains_perspective.context}</p>
-            <p style="margin-bottom:0.75rem;"><strong>Key Arguments:</strong> ${item.mains_perspective.key_arguments}</p>
-            <p><strong>Way Forward:</strong> ${item.mains_perspective.way_forward}</p>
-          </div>` : ''}
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:0.5rem;">
+            <button onclick="toggleBookmark(event, '${(item.title || '').replace(/'/g, "\\'")}')" class="mode-tab" style="padding:0.3rem 0.6rem; font-size:0.75rem;">${isSaved ? '⭐ Saved' : '☆ Save'}</button>
+            <div class="expand-hint">Read Wiki Article &rarr;</div>
+          </div>
         </div>
       `;
-      modal.classList.add('active');
-    }
-    function closeModal(e) { if (!e || e.target.id === 'detail-modal' || e.target.className === 'close-btn') document.getElementById('detail-modal').classList.remove('active'); }
-
-    function switchViewMode(mode) {
-      currentMode = mode;
-      document.getElementById('tab-daily').classList.toggle('active', mode === 'DAILY');
-      document.getElementById('tab-repo').classList.toggle('active', mode === 'REPO');
-      document.getElementById('tab-saved').classList.toggle('active', mode === 'SAVED');
-      applyFilters();
-    }
-
-    function filterPaper(paper) {
-      currentPaperFilter = paper;
-      const pills = document.querySelectorAll('#paper-pills .pill');
-      pills.forEach(btn => {
-        btn.classList.toggle('active', btn.textContent.includes(paper));
-      });
-      applyFilters();
-    }
-
-    function filterSubtopic(subtopic) {
-      triggerSubtopicFilter(subtopic);
-    }
-
-    function handleSearch() { applyFilters(); }
-
-    function applyFilters() {
-      const searchTerm = document.getElementById('search-input').value.toLowerCase().trim();
-      let activePool = MASTER_REPOSITORY;
-
-      if (currentMode === 'SAVED') {
-        activePool = activePool.filter(item => savedBookmarks.includes(item.title));
-      }
-      
-      // Paper Filter
-      if (currentPaperFilter !== 'ALL') {
-        activePool = activePool.filter(item => item.paper === currentPaperFilter);
-      }
-
-      // Subtopic Filter
-      if (currentSubtopicFilter !== 'ALL') {
-        activePool = activePool.filter(item => {
-          const topic = (item.topic || '').toLowerCase();
-          const linkage = (item.static_linkage || '').toLowerCase();
-          const filterTerm = currentSubtopicFilter.toLowerCase();
-          return topic.includes(filterTerm) || linkage.includes(filterTerm);
-        });
-      }
-
-      // Keyword Search
-      if (searchTerm.length > 0) {
-        activePool = activePool.filter(item => {
-          const title = (item.title || '').toLowerCase();
-          const topic = (item.topic || '').toLowerCase();
-          const linkage = (item.static_linkage || '').toLowerCase();
-          const context = (item.mains_perspective && item.mains_perspective.context || '').toLowerCase();
-          const args = (item.mains_perspective && item.mains_perspective.key_arguments || '').toLowerCase();
-          const prelims = (item.prelims_pointers || []).join(' ').toLowerCase();
-          
-          return title.includes(searchTerm) || 
-                 topic.includes(searchTerm) || 
-                 linkage.includes(searchTerm) || 
-                 context.includes(searchTerm) || 
-                 args.includes(searchTerm) || 
-                 prelims.includes(searchTerm);
-        });
-      }
-      renderModules(activePool);
-    }
-
-    // Initialize application by fetching the external repository JSON
-    initApp();
-  </script>
-</body>
-</html>
+      container.appendChild(card);
+    });
+  }
