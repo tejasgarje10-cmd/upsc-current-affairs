@@ -36,7 +36,6 @@
     }
     .subtitle { color: var(--text-muted); font-size: 0.95rem; max-width: 640px; margin: 0 auto; }
 
-    /* Controls Bar */
     .controls { display: flex; flex-direction: column; align-items: center; gap: 1rem; margin-bottom: 2rem; }
     .search-box {
       width: 100%; max-width: 540px; padding: 0.85rem 1.25rem; border-radius: 9999px;
@@ -59,7 +58,6 @@
       padding: 0.45rem 0.9rem; border-radius: 0.5rem; cursor: pointer; font-size: 0.8rem; font-weight: 600;
     }
 
-    /* Editorial Featured Top Hero Layout */
     .hero-card {
       display: grid; grid-template-columns: 1fr; gap: 1.5rem; background: var(--surface-glass);
       border: 1px solid rgba(56, 189, 248, 0.5); border-radius: 1.25rem; overflow: hidden;
@@ -67,10 +65,10 @@
     }
     @media (min-width: 768px) { .hero-card { grid-template-columns: 1.2fr 1fr; } }
     .hero-card:hover { transform: translateY(-3px); }
-    .hero-img { width: 100%; height: 100%; min-height: 250px; object-fit: cover; display: block; }
+    .hero-img-container { width: 100%; height: 100%; min-height: 250px; background: #0b0f19; overflow: hidden; }
+    .hero-img { width: 100%; height: 100%; object-fit: cover; display: block; }
     .hero-body { padding: 1.75rem; display: flex; flex-direction: column; justify-content: space-between; }
 
-    /* Secondary Grid Layout */
     .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 1.75rem; }
     
     .card {
@@ -81,8 +79,7 @@
     .card:hover { transform: translateY(-4px); border-color: rgba(56, 189, 248, 0.6); }
 
     .card-img-wrapper { width: 100%; height: 180px; overflow: hidden; background: #0b0f19; }
-    .card-img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.3s ease; }
-    .card:hover .card-img { transform: scale(1.05); }
+    .card-img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
     .card-body { padding: 1.25rem; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; }
 
@@ -127,13 +124,6 @@
       color: #ffffff; width: 36px; height: 36px; border-radius: 50%; font-size: 1.25rem; cursor: pointer;
       display: flex; align-items: center; justify-content: center; z-index: 10;
     }
-
-    @media print {
-      body { background: #ffffff !important; color: #000000 !important; }
-      .controls, .hero-title, .subtitle, .expand-hint, .btn-print, .close-btn { display: none !important; }
-      .grid, .hero-card { display: block !important; }
-      .card { background: #ffffff !important; border: 1px solid #ccc !important; color: #000000 !important; margin-bottom: 2rem !important; }
-    }
   </style>
 </head>
 <body>
@@ -159,10 +149,8 @@
       <button onclick="window.print()" class="btn-print">🖨️ Export Notes / Save PDF</button>
     </div>
 
-    <!-- Featured Lead Article Hero Container -->
     <div id="hero-container"></div>
 
-    <!-- Grid Container for Secondary Articles -->
     <div id="news-container" class="grid">
       <div style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 4rem 0;">Loading daily current affairs...</div>
     </div>
@@ -178,7 +166,18 @@
   <script>
     let allNews = [];
     let currentPaperFilter = 'ALL';
-    const fallbackImg = "[https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?w=800&auto=format&fit=crop&q=60](https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?w=800&auto=format&fit=crop&q=60)";
+
+    const fallbackImages = {
+      'GS-1': 'https://images.unsplash.com/photo-1590050752117-238cb0fb12b1?w=800&auto=format&fit=crop&q=60',
+      'GS-2': 'https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?w=800&auto=format&fit=crop&q=60',
+      'GS-3': 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&auto=format&fit=crop&q=60',
+      'GS-4': 'https://images.unsplash.com/photo-1450133064473-71024230f91b?w=800&auto=format&fit=crop&q=60'
+    };
+
+    function handleImgError(imgElement, paperTag) {
+      imgElement.onerror = null; // Prevents infinite loop
+      imgElement.src = fallbackImages[paperTag] || fallbackImages['GS-2'];
+    }
 
     async function fetchNews() {
       const container = document.getElementById('news-container');
@@ -203,18 +202,20 @@
         return;
       }
 
-      // 1. Render Top Article as Featured Hero (When ALL filter active)
       if (currentPaperFilter === 'ALL' && items.length > 0) {
         const lead = items[0];
         const paperTag = lead.paper || 'GS-2';
         const itemDate = lead.date || new Date().toISOString().split('T')[0];
         const prelimsList = (lead.prelims_pointers || []).map(p => `<li>• ${p}</li>`).join('');
+        const imgSrc = lead.image || fallbackImages[paperTag];
 
         const hero = document.createElement('div');
         hero.className = "hero-card";
         hero.onclick = () => openModal(0);
         hero.innerHTML = `
-          <img src="${lead.image || fallbackImg}" class="hero-img" alt="Lead News" onerror="this.src='${fallbackImg}';" />
+          <div class="hero-img-container">
+            <img src="${imgSrc}" class="hero-img" alt="Lead News" onerror="handleImgError(this, '${paperTag}')" />
+          </div>
           <div class="hero-body">
             <div>
               <div class="card-header">
@@ -232,7 +233,6 @@
         heroContainer.appendChild(hero);
       }
 
-      // 2. Render Secondary Articles Grid
       const gridItems = (currentPaperFilter === 'ALL') ? items.slice(1) : items;
 
       gridItems.forEach((item, index) => {
@@ -240,6 +240,7 @@
         const prelimsList = (item.prelims_pointers || []).map(p => `<li>• ${p}</li>`).join('');
         const itemDate = item.date || new Date().toISOString().split('T')[0];
         const paperTag = item.paper || 'GS-1';
+        const imgSrc = item.image || fallbackImages[paperTag];
 
         const card = document.createElement('div');
         card.className = "card";
@@ -247,7 +248,7 @@
         
         card.innerHTML = `
           <div class="card-img-wrapper">
-            <img src="${item.image || fallbackImg}" class="card-img" alt="News Image" onerror="this.src='${fallbackImg}';" />
+            <img src="${imgSrc}" class="card-img" alt="News Image" onerror="handleImgError(this, '${paperTag}')" />
           </div>
           <div class="card-body">
             <div>
@@ -282,11 +283,12 @@
       const modalContent = document.getElementById('modal-content');
       const itemDate = item.date || new Date().toISOString().split('T')[0];
       const paperTag = item.paper || 'GS-1';
+      const imgSrc = item.image || fallbackImages[paperTag];
       const prelimsList = (item.prelims_pointers || []).map(p => `<li style="margin-bottom:0.5rem;">• ${p}</li>`).join('');
 
       modalContent.innerHTML = `
         <div style="height:220px; overflow:hidden;">
-          <img src="${item.image || fallbackImg}" style="width:100%; height:100%; object-fit:cover;" onerror="this.src='${fallbackImg}';" />
+          <img src="${imgSrc}" style="width:100%; height:100%; object-fit:cover;" onerror="handleImgError(this, '${paperTag}')" />
         </div>
         <div class="modal-padding">
           <div style="display:flex; gap:0.4rem; align-items:center; flex-wrap:wrap; margin-bottom:0.85rem;">
