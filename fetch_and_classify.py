@@ -3,42 +3,42 @@ import json
 import os
 from google import genai
 
-# Configure Gemini Client
 api_key = os.environ.get("GEMINI_API_KEY")
 if not api_key:
     raise ValueError("GEMINI_API_KEY environment variable is missing.")
 
 client = genai.Client(api_key=api_key)
 
+# Working RSS feeds for UPSC-relevant news
 RSS_FEEDS = [
-    "https://pib.gov.in/rss/RssMain.aspx?ModId=6",                  # PIB Press Releases
-    "https://www.thehindu.com/news/national/feeder/default.rss",    # The Hindu National
-    "https://indianexpress.com/section/india/feed/"                 # Indian Express
+    "https://pib.gov.in/rss/RssMain.aspx?ModId=6",
+    "https://www.thehindu.com/news/national/feeder/default.rss",
+    "https://indianexpress.com/section/india/feed/"
 ]
 
 SYSTEM_PROMPT = """
-You are an expert UPSC Civil Services Examination (CSE) strategist and evaluator.
-Analyze the following news item for its relevance to the UPSC CSE General Studies (GS-1, GS-2, GS-3, GS-4) and optional syllabi.
+You are an expert UPSC Civil Services Examination (CSE) strategist.
+Evaluate if this news item is relevant to UPSC General Studies (GS-1, GS-2, GS-3, GS-4) or key optional subjects (e.g. Economics, Polity, Philosophy, Agriculture).
 
-If the news item is NOT relevant to UPSC preparation (e.g., routine political commentary, sports updates, crime news), return strictly:
-{"relevant": false}
-
-If it IS relevant, return ONLY a valid JSON object matching this exact structure:
+If relevant, return ONLY a raw JSON object matching this schema:
 {
   "relevant": true,
-  "title": "Concise issue-based title suitable for Mains/Prelims notes",
+  "title": "Concise issue-based title for Mains/Prelims notes",
   "paper": "GS-1" | "GS-2" | "GS-3" | "GS-4",
-  "topic": "Specific micro-topic (e.g., Digital Public Infrastructure, FLFPR, Land Reforms, Purva Mimamsa, Monetary Policy, Biodiversity)",
+  "topic": "Micro-topic (e.g., Digital Public Infrastructure, Monetary Policy, Agriculture, Polity)",
   "prelims_pointers": [
-    "Key factual point (e.g., statutory/constitutional provision, nodal agency, report name)",
-    "Core objective, index, or scientific principle involved"
+    "Key factual point (statutory/constitutional provision, nodal agency, report)",
+    "Core objective, index, or principle involved"
   ],
   "mains_perspective": {
     "context": "1-2 sentence core summary of the underlying issue",
-    "key_arguments": "Analytical takeaways, structural bottlenecks, or socio-economic impacts",
-    "way_forward": "Actionable solutions, ARC/Committee recommendations, or policy measures"
+    "key_arguments": "Analytical takeaways or policy implications",
+    "way_forward": "Actionable solutions or committee recommendations"
   }
 }
+
+If NOT relevant, return strictly:
+{"relevant": false}
 """
 
 def clean_json_text(text: str) -> str:
@@ -72,15 +72,25 @@ def main():
     print("Fetching news from RSS feeds...")
     for feed_url in RSS_FEEDS:
         feed = feedparser.parse(feed_url)
-        for entry in feed.entries[:8]:
+        for entry in feed.entries[:15]:
             title = getattr(entry, 'title', '').strip()
             if not title or title in seen_titles:
                 continue
             seen_titles.add(title)
 
-            summary = getattr(entry, 'summary', getattr(entry, 'description', ''))
-            item_data = process_feed_item(title, summary)
+            # Extract content from multiple fallback fields
+            summary = ""
+            if hasattr(entry, 'summary'):
+                summary = entry.summary
+            elif hasattr(entry, 'description'):
+                summary = entry.description
+            elif hasattr(entry, 'content'):
+                summary = entry.content[0].value
+            
+            if not summary:
+                summary = title
 
+            item_data = process_feed_item(title, summary)
             if item_data:
                 item_data.pop("relevant", None)
                 processed_items.append(item_data)
