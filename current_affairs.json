@@ -1,1 +1,30 @@
-[]
+[
+  {
+    "title": "Digital Public Infrastructure and Sovereign AI Stack",
+    "paper": "GS-3",
+    "topic": "Digital Infrastructure & Tech Governance",
+    "prelims_pointers": [
+      "India Stack includes Aadhaar, UPI, and DigiLocker as foundational open API layers.",
+      "Ministry of Electronics and IT (MeitY) serves as the nodal agency for National AI Mission implementation."
+    ],
+    "mains_perspective": {
+      "context": "Expanding DPI architecture beyond financial technology into healthcare, agriculture, and AI capabilities.",
+      "key_arguments": "Democratizes access to digital services while promoting domestic innovation and reducing dependence on proprietary global stacks.",
+      "way_forward": "Implement robust data protection frameworks and expand broadband connectivity across Tier-2 and rural sectors."
+    }
+  },
+  {
+    "title": "Sardar Patel Memorial Lecture & Agriculture Policy Directions",
+    "paper": "GS-2",
+    "topic": "Governance & Agriculture Policy",
+    "prelims_pointers": [
+      "Sardar Patel Memorial Lecture is organized annually by All India Radio (Prasar Bharati).",
+      "Focuses on policy frameworks for sustainable agricultural growth and farmer welfare."
+    ],
+    "mains_perspective": {
+      "context": "Evaluating structural changes required in agricultural supply chains and price stabilization mechanisms.",
+      "key_arguments": "Need to transition towards high-value agriculture, micro-irrigation, and climate-resilient seed technologies.",
+      "way_forward": "Strengthen Farmer Producer Organizations (FPOs) and scale up modern storage infrastructure."
+    }
+  }
+]
