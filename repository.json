@@ -1,66 +1,99 @@
 [
   {
-    "id": "repo-gs2-01",
-    "title": "UNCLOS & Maritime Security Architecture in the Indo-Pacific",
+    "title": "Cooperative Federalism vs. Aggressive Fiscal Centralization",
     "paper": "GS-2",
-    "topic": "International Relations & Geopolitics",
-    "static_linkage": "International Law & Maritime Security",
+    "topic": "Indian Polity & Federal Structure",
+    "static_linkage": "Centre-State Relations (Article 245-263)",
+    "image": "https://images.unsplash.com/photo-1541872703-74c5e44368f9?w=800&auto=format&fit=crop&q=60",
     "prelims_pointers": [
-      "UNCLOS defines Territorial Waters (12 NM), Contiguous Zone (24 NM), and Exclusive Economic Zone (200 NM).",
-      "International Seabed Authority (ISA) regulates mineral-related activities in international seabed areas.",
-      "India's SAGAR doctrine (Security and Growth for All in the Region) guides maritime diplomacy."
+      "Inter-State Council operates under Article 263 as a recommendatory body.",
+      "GST Council is a constitutional body under Article 279A.",
+      "Sarkaria and Punchhi Commissions examined the strengthening of cooperative federalism."
     ],
     "mains_perspective": {
-      "context": "Ensuring a rules-based order, freedom of navigation, and overflight in critical sea lines of communication.",
-      "key_arguments": "Rising maritime friction, non-traditional security threats (piracy, IUU fishing), and strategic bottlenecks.",
-      "way_forward": "Strengthen Quad Maritime Domain Awareness and operationalize joint bilateral naval exercises."
+      "context": "Rising friction between the Union and opposition-ruled states over cess/surcharges, Governor's role, and legislative incursions.",
+      "key_arguments": "Excessive reliance on cesses dilutes the divisible pool of taxes under the Finance Commission recommendations, starving states of fiscal autonomy.",
+      "way_forward": "Institutionalize regular meetings of the Inter-State Council and adhere strictly to Sarkaria Commission guidelines on gubernatorial discretion."
     }
   },
   {
-    "id": "repo-gs3-01",
-    "title": "Fiscal Responsibility and Budget Management (FRBM) Act & Macroeconomic Stability",
+    "title": "Secularism, Uniform Civil Code (UCC) & Constitutional Morality",
+    "paper": "GS-2",
+    "topic": "Indian Constitution & Polity",
+    "static_linkage": "Article 25-28 & Article 44 (DPSP)",
+    "image": "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=800&auto=format&fit=crop&q=60",
+    "prelims_pointers": [
+      "Article 44 directs the State to secure a Uniform Civil Code throughout India.",
+      "Freedom of religion under Article 25 is subject to public order, morality, and health."
+    ],
+    "mains_perspective": {
+      "context": "Balancing the mandate of a unified legal code with the protection of cultural and religious pluralism in a diverse democracy.",
+      "key_arguments": "While UCC promotes gender justice and legal uniformity, forced implementation without broad-based consensus can fracture social capital.",
+      "way_forward": "Adopt a gradual, consultative reform approach—amending discriminatory practices within personal laws first before pushing for a monolithic code."
+    }
+  },
+  {
+    "title": "Inclusive Growth, K-Shaped Recovery & Agrarian Distress",
     "paper": "GS-3",
-    "topic": "Indian Economy & Fiscal Policy",
-    "static_linkage": "Ramesh Singh Economy Ch 8 (Fiscal Policy)",
+    "topic": "Indian Economy & Inclusive Growth",
+    "static_linkage": "Growth, Development and Employment",
+    "image": "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?w=800&auto=format&fit=crop&q=60",
     "prelims_pointers": [
-      "NK Singh Committee recommended a Debt-to-GDP ratio target of 60% (40% Centre, 20% States).",
-      "Escape clause under FRBM allows deviation during national security, calamity, or structural collapse."
+      "MSME sector contributes nearly 30% to India's GDP and 40% to exports.",
+      "PM-KISAN provides income support of Rs 6,000 per year to landholding farmer families."
     ],
     "mains_perspective": {
-      "context": "Balancing growth-oriented capital spending with medium-term fiscal consolidation targets.",
-      "key_arguments": "High revenue expenditure, off-budget liabilities, and state-level fiscal deficits pressure public finances.",
-      "way_forward": "Establish an independent Fiscal Council to audit budget assumptions and enforce fiscal discipline."
-    },
-  {
-    "id": "repo-gs4-01",
-    "title": "2nd ARC Recommendations on Ethics in Governance & Probity",
-    "paper": "GS-4",
-    "topic": "Public Service Ethics & Probity",
-    "static_linkage": "Ethics in Administration & ARC 4th Report",
-    "prelims_pointers": [
-      "2nd ARC 4th Report specifically addresses Ethics in Governance.",
-      "CVC Act 2003 grants statutory status to Central Vigilance Commission."
-    ],
-    "mains_perspective": {
-      "context": "Building transparent, accountable administrative systems to eliminate discretionary corruption.",
-      "key_arguments": "Administrative opacity, lack of whistleblower protection, and delayed departmental proceedings undermine integrity.",
-      "way_forward": "Implement mandatory e-governance audits, proactive RTI disclosures, and value-based civil service training."
+      "context": "Macroeconomic GDP growth numbers outpacing wage growth and rural consumption recovery.",
+      "key_arguments": "High corporate profitability coexists with stagnant rural wages and high youth unemployment, pointing to structural distortions.",
+      "way_forward": "Shift focus from capital-intensive manufacturing subsidies to labor-intensive sectors (textiles, food processing) and climate-resilient agriculture."
     }
   },
   {
-    "id": "repo-gs1-01",
-    "title": "Preservation of Coastal Fortresses & Maratha Heritage Architecture",
-    "paper": "GS-1",
-    "topic": "Indian Art, Culture & Heritage",
-    "static_linkage": "Nitin Singhania Art & Culture Ch 1",
+    "title": "AI Ethics, Algorithmic Bias & Deepfakes Regulation",
+    "paper": "GS-3",
+    "topic": "Science & Tech - Emerging Tech",
+    "static_linkage": "IT Act & National AI Strategy",
+    "image": "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&auto=format&fit=crop&q=60",
     "prelims_pointers": [
-      "Maratha Military Landscapes were nominated for UNESCO World Heritage site recognition.",
-      "Archaeological Survey of India (ASI) acts as statutory custodian under AMASR Act 1958."
+      "IndiaAI Mission focuses on computing infrastructure and sovereign AI models.",
+      "IT Rules, 2021 mandate social media intermediaries to take down synthetic content within stipulated hours."
     ],
     "mains_perspective": {
-      "context": "Strategic conservation of 17th-century coastal, sea, and hill fort structures across Western India.",
-      "key_arguments": "Promoting sustainable eco-tourism while preventing structural degradation from coastal weathering.",
-      "way_forward": "Adopt scientific stone preservation methods and community-led heritage management."
+      "context": "Explosive growth of generative AI posing severe threats to electoral integrity, privacy, and national security.",
+      "key_arguments": "Unchecked algorithmic bias exacerbates social discrimination while deepfakes undermine public trust in democratic institutions.",
+      "way_forward": "Enact a robust Digital India Act with mandatory watermarking for synthetic media and algorithmic transparency audits."
+    }
+  },
+  {
+    "title": "Bureaucratic Ethics, Lateral Entry & Whistleblower Protection",
+    "paper": "GS-4",
+    "topic": "Ethics in Public Administration",
+    "static_linkage": "Civil Services Accountability & Probity",
+    "image": "https://images.unsplash.com/photo-1521791136064-7986c2920216?w=800&auto=format&fit=crop&q=60",
+    "prelims_pointers": [
+      "Second ARC 4th Report focuses extensively on ethics in governance.",
+      "Whistleblowers Protection Act provides legal mechanisms to safeguard informants against victimization."
+    ],
+    "mains_perspective": {
+      "context": "Navigating the tension between political executive directives, professional neutrality, and adherence to constitutional conscience.",
+      "key_arguments": "Anonymity and neutrality are often compromised by systemic political pressure and lack of statutory job security.",
+      "way_forward": "Implement 2nd ARC recommendations: establish Civil Services Boards for transparent postings and operationalize robust whistleblower safeguards."
+    }
+  },
+  {
+    "title": "Internal Security Challenges: Left Wing Extremism (LWE) & Nexus",
+    "paper": "GS-3",
+    "topic": "Internal Security & Border Management",
+    "static_linkage": "Security Challenges in Border Areas",
+    "image": "https://images.unsplash.com/photo-1557804506-669a67965ba0?w=800&auto=format&fit=crop&q=60",
+    "prelims_pointers": [
+      "Security Related Expenditure (SRE) scheme assists LWE-affected states.",
+      "Aspirational Districts Programme targets socio-economic backwardness in LWE corridors."
+    ],
+    "mains_perspective": {
+      "context": "Geographical shrinking of LWE influence accompanied by challenges in developmental governance in remote pockets.",
+      "key_arguments": "Kinetic military operations alone cannot resolve an ideological conflict rooted in land alienation and tribal marginalization.",
+      "way_forward": "Combine security dominance with aggressive infrastructure push (roads, mobile connectivity) and land rights regularization under FRA, 2006."
     }
   }
-]
+];
