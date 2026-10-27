@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-  <title>UPSC CSE Daily Pulse & Knowledge Base</title>
+  <title>UPSC CSE Daily Pulse & Live AI Research</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     
@@ -56,6 +56,12 @@
     }
     .btn-pdf:hover { background: rgba(16, 185, 129, 0.25); border-color: #34d399; }
 
+    .btn-settings {
+      background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.35);
+      padding: 0.5rem 0.9rem; border-radius: 0.5rem; cursor: pointer; font-size: 0.85rem; font-weight: 600; transition: all 0.2s;
+    }
+    .btn-settings:hover { background: rgba(245, 158, 11, 0.25); }
+
     .search-panel {
       background: var(--surface-glass); border: 1px solid var(--border-color);
       padding: 1.25rem; border-radius: 1rem; margin-bottom: 2rem; backdrop-filter: blur(12px);
@@ -77,17 +83,6 @@
     .pill.active { background: #0284c7; color: #fff; border-color: #38bdf8; }
 
     .search-stats { font-size: 0.8rem; color: #38bdf8; font-weight: 600; margin-left: auto; }
-
-    .hero-card {
-      display: grid; grid-template-columns: 1fr; gap: 1.5rem; background: var(--surface-glass);
-      border: 1px solid rgba(56, 189, 248, 0.5); border-radius: 1.25rem; overflow: hidden;
-      margin-bottom: 2.5rem; cursor: pointer; transition: transform 0.25s;
-    }
-    @media (min-width: 768px) { .hero-card { grid-template-columns: 1.2fr 1fr; } }
-    .hero-card:hover { transform: translateY(-3px); }
-    .hero-img-container { width: 100%; height: 100%; min-height: 250px; background: #0b0f19; overflow: hidden; }
-    .hero-img { width: 100%; height: 100%; object-fit: cover; display: block; }
-    .hero-body { padding: 1.75rem; display: flex; flex-direction: column; justify-content: space-between; }
 
     .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 1.75rem; }
     
@@ -130,6 +125,7 @@
 
     .expand-hint { text-align: right; font-size: 0.775rem; color: #38bdf8; margin-top: 0.5rem; font-weight: 600; }
 
+    /* Modal Styling */
     .modal-overlay {
       position: fixed; inset: 0; background: rgba(3, 7, 18, 0.85); backdrop-filter: blur(8px);
       display: none; align-items: center; justify-content: center; padding: 1rem; z-index: 100;
@@ -146,10 +142,20 @@
       display: flex; align-items: center; justify-content: center; z-index: 10;
     }
 
+    .ai-research-banner {
+      background: linear-gradient(135deg, rgba(2, 132, 199, 0.2), rgba(99, 102, 241, 0.2));
+      border: 1px solid rgba(56, 189, 248, 0.4); padding: 1.5rem; border-radius: 1rem; text-align: center; margin-bottom: 1.5rem;
+    }
+    .btn-ai {
+      background: linear-gradient(135deg, #0284c7, #6366f1); color: #fff; border: none;
+      padding: 0.75rem 1.5rem; border-radius: 0.625rem; font-weight: 700; cursor: pointer; font-size: 0.95rem; box-shadow: 0 4px 12px rgba(2, 132, 199, 0.4); transition: transform 0.2s;
+    }
+    .btn-ai:hover { transform: translateY(-2px); }
+
     @media print {
       body { background: #ffffff !important; color: #000000 !important; }
       .search-panel, .app-navbar, .expand-hint, .close-btn { display: none !important; }
-      .grid, .hero-card { display: block !important; }
+      .grid { display: block !important; }
       .card { background: #ffffff !important; border: 1px solid #ccc !important; color: #000000 !important; margin-bottom: 2rem !important; }
     }
   </style>
@@ -162,21 +168,22 @@
         <div class="brand-icon">CSE</div>
         <div>
           <div class="brand-title">UPSC IAS Daily Pulse</div>
-          <div class="brand-sub">Daily Feed & Consolidated Knowledge Base</div>
+          <div class="brand-sub">Knowledge Base & Live Gemini Search</div>
         </div>
       </div>
 
       <div class="nav-actions">
         <button onclick="switchViewMode('DAILY')" id="tab-daily" class="mode-tab active">📰 Today's Feed</button>
-        <button onclick="switchViewMode('REPO')" id="tab-repo" class="mode-tab">📚 Full Knowledge Base</button>
+        <button onclick="switchViewMode('REPO')" id="tab-repo" class="mode-tab">📚 Knowledge Base</button>
         <button onclick="switchViewMode('SAVED')" id="tab-saved" class="mode-tab">⭐ Saved Notes</button>
+        <button onclick="openSettings()" class="btn-settings">⚙️ Gemini Key</button>
         <button onclick="window.print()" class="btn-pdf">🖨️ Export PDF</button>
       </div>
     </nav>
 
     <div class="search-panel">
       <div class="search-row">
-        <input type="text" id="search-input" onkeyup="handleSearch()" class="search-box" placeholder="Type ANY keyword (e.g., UNCLOS, FRBM, Ethics, Speaker, ISRO, Agriculture, Monetary Policy)..." />
+        <input type="text" id="search-input" onkeyup="handleSearch()" class="search-box" placeholder="Type ANY keyword (e.g., ISRO, UNCLOS, FRBM, Ethics, Speaker, Agnipath, RBI)..." />
       </div>
       
       <div class="filter-pills">
@@ -189,12 +196,13 @@
       </div>
     </div>
 
-    <div id="hero-container"></div>
+    <div id="ai-banner-container"></div>
     <div id="news-container" class="grid">
-      <div style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 4rem 0;">Loading current affairs & knowledge base...</div>
+      <div style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 4rem 0;">Loading repository...</div>
     </div>
   </div>
 
+  <!-- Detail Modal -->
   <div id="detail-modal" class="modal-overlay" onclick="closeModal(event)">
     <div class="modal-body" onclick="event.stopPropagation()">
       <button onclick="closeModal()" class="close-btn">&times;</button>
@@ -202,9 +210,40 @@
     </div>
   </div>
 
+  <!-- Settings Modal for Gemini Key -->
+  <div id="settings-modal" class="modal-overlay" onclick="closeSettings(event)">
+    <div class="modal-body" onclick="event.stopPropagation()" style="max-width: 480px;">
+      <button onclick="closeSettings()" class="close-btn">&times;</button>
+      <div class="modal-padding">
+        <h2 style="font-size: 1.4rem; font-weight: 800; color: #fff; margin-bottom: 0.75rem;">Gemini API Key Settings</h2>
+        <p style="font-size: 0.855rem; color: var(--text-muted); margin-bottom: 1.25rem; line-height: 1.4;">
+          Enter your Gemini API key to enable live web-grounded research across open-source news articles, PIB, and magazines. Your key is stored securely in your browser's local storage.
+        </p>
+        <input type="password" id="api-key-input" class="search-box" style="width: 100%; margin-bottom: 1.25rem;" placeholder="Paste Gemini API Key here..." />
+        <button onclick="saveApiKey()" class="btn-ai" style="width: 100%;">Save API Key</button>
+      </div>
+    </div>
+  </div>
+
   <script>
-    // BUILT-IN FALLBACK REPOSITORY GUARANTEES ZERO EMPTY SCREENS
-    const BUILTIN_FALLBACK = [
+    const CORE_REPOSITORY = [
+      {
+        "title": "ISRO's Space Commercialization, Launch Vehicle Reforms & IN-SPACe",
+        "paper": "GS-3",
+        "topic": "Science & Tech - Space & ISRO",
+        "static_linkage": "Space Tech & National Policy",
+        "image": "https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&auto=format&fit=crop&q=60",
+        "prelims_pointers": [
+          "IN-SPACe acts as a single-window nodal agency for private sector participation.",
+          "NSIL handles commercial arms of ISRO missions.",
+          "SSLV is designed for on-demand launch of LEO micro-satellites."
+        ],
+        "mains_perspective": {
+          "context": "Expanding India's share in the global space economy through private enterprise.",
+          "key_arguments": "Reduces bureaucratic friction and attracts venture capital into deep-tech space startups.",
+          "way_forward": "Implement robust insurance frameworks for space assets."
+        }
+      },
       {
         "title": "UNCLOS & Maritime Security Architecture in the Indo-Pacific",
         "paper": "GS-2",
@@ -212,14 +251,13 @@
         "static_linkage": "International Law & Maritime Security",
         "image": "https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?w=800&auto=format&fit=crop&q=60",
         "prelims_pointers": [
-          "UNCLOS defines Territorial Waters (12 NM), Contiguous Zone (24 NM), and Exclusive Economic Zone (200 NM).",
-          "International Seabed Authority (ISA) regulates mineral-related activities in international seabed areas.",
-          "India's SAGAR doctrine (Security and Growth for All in the Region) guides maritime diplomacy."
+          "UNCLOS defines Territorial Waters (12 NM) and EEZ (200 NM).",
+          "India's SAGAR doctrine guides maritime diplomacy."
         ],
         "mains_perspective": {
-          "context": "Ensuring a rules-based order, freedom of navigation, and overflight in critical sea lines of communication.",
-          "key_arguments": "Rising maritime friction, non-traditional security threats (piracy, IUU fishing), and strategic bottlenecks.",
-          "way_forward": "Strengthen Quad Maritime Domain Awareness and operationalize joint bilateral naval exercises."
+          "context": "Ensuring a rules-based order and freedom of navigation in critical sea lanes.",
+          "key_arguments": "Addressing non-traditional security threats including IUU fishing and piracy.",
+          "way_forward": "Strengthen Quad Maritime Domain Awareness."
         }
       },
       {
@@ -229,50 +267,34 @@
         "static_linkage": "Ramesh Singh Economy Ch 8",
         "image": "https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&auto=format&fit=crop&q=60",
         "prelims_pointers": [
-          "NK Singh Committee recommended a Debt-to-GDP ratio target of 60% (40% Centre, 20% States).",
-          "Escape clause under FRBM allows deviation during national security, calamity, or structural collapse."
+          "NK Singh Committee recommended a Debt-to-GDP ratio target of 60%.",
+          "Escape clause allows deviation during national security or calamity."
         ],
         "mains_perspective": {
-          "context": "Balancing growth-oriented capital spending with medium-term fiscal consolidation targets.",
-          "key_arguments": "High revenue expenditure, off-budget liabilities, and state-level fiscal deficits pressure public finances.",
-          "way_forward": "Establish an independent Fiscal Council to audit budget assumptions and enforce fiscal discipline."
+          "context": "Balancing growth-oriented capital spending with fiscal consolidation targets.",
+          "key_arguments": "High revenue expenditure and off-budget liabilities pressure public finances.",
+          "way_forward": "Establish an independent Fiscal Council."
         }
       },
       {
         "title": "2nd ARC Recommendations on Ethics in Governance & Probity",
         "paper": "GS-4",
         "topic": "Public Service Ethics & Probity",
-        "static_linkage": "Ethics in Administration & ARC 4th Report",
+        "static_linkage": "Ethics in Administration & ARC Report",
         "image": "https://images.unsplash.com/photo-1450133064473-71024230f91b?w=800&auto=format&fit=crop&q=60",
         "prelims_pointers": [
-          "2nd ARC 4th Report specifically addresses Ethics in Governance.",
+          "2nd ARC 4th Report addresses Ethics in Governance.",
           "CVC Act 2003 grants statutory status to Central Vigilance Commission."
         ],
         "mains_perspective": {
-          "context": "Building transparent, accountable administrative systems to eliminate discretionary corruption.",
-          "key_arguments": "Administrative opacity, lack of whistleblower protection, and delayed departmental proceedings undermine integrity.",
-          "way_forward": "Implement mandatory e-governance audits, proactive RTI disclosures, and value-based civil service training."
-        }
-      },
-      {
-        "title": "Preservation of Coastal Fortresses & Maratha Heritage Architecture",
-        "paper": "GS-1",
-        "topic": "Indian Art, Culture & Heritage",
-        "static_linkage": "Nitin Singhania Art & Culture Ch 1",
-        "image": "https://images.unsplash.com/photo-1590050752117-238cb0fb12b1?w=800&auto=format&fit=crop&q=60",
-        "prelims_pointers": [
-          "Maratha Military Landscapes were nominated for UNESCO World Heritage site recognition.",
-          "Archaeological Survey of India (ASI) acts as statutory custodian under AMASR Act 1958."
-        ],
-        "mains_perspective": {
-          "context": "Strategic conservation of 17th-century coastal, sea, and hill fort structures across Western India.",
-          "key_arguments": "Promoting sustainable eco-tourism while preventing structural degradation from coastal weathering.",
-          "way_forward": "Adopt scientific stone preservation methods and community-led heritage management."
+          "context": "Building transparent, accountable administrative systems.",
+          "key_arguments": "Administrative opacity and lack of whistleblower protection undermine integrity.",
+          "way_forward": "Implement mandatory e-governance audits and proactive RTI disclosures."
         }
       }
     ];
 
-    let combinedPool = [...BUILTIN_FALLBACK];
+    let combinedPool = [...CORE_REPOSITORY];
     let currentMode = 'DAILY';
     let currentPaperFilter = 'ALL';
     let savedBookmarks = JSON.parse(localStorage.getItem('upsc_bookmarks') || '[]');
@@ -287,6 +309,24 @@
     function handleImgError(imgElement, paperTag) {
       imgElement.onerror = null;
       imgElement.src = fallbackImages[paperTag] || fallbackImages['GS-2'];
+    }
+
+    function openSettings() {
+      document.getElementById('api-key-input').value = localStorage.getItem('gemini_api_key') || '';
+      document.getElementById('settings-modal').classList.add('active');
+    }
+
+    function closeSettings(e) {
+      if (!e || e.target.id === 'settings-modal' || e.target.className === 'close-btn') {
+        document.getElementById('settings-modal').classList.remove('active');
+      }
+    }
+
+    function saveApiKey() {
+      const key = document.getElementById('api-key-input').value.trim();
+      localStorage.setItem('gemini_api_key', key);
+      alert('Gemini API key saved successfully in browser storage!');
+      closeSettings();
     }
 
     function toggleBookmark(e, title) {
@@ -311,7 +351,7 @@
         const fetchedRepo = repoRes.status === 'fulfilled' && Array.isArray(repoRes.value) ? repoRes.value : [];
 
         const seen = new Set();
-        const merged = [...fetchedNews, ...fetchedRepo, ...BUILTIN_FALLBACK];
+        const merged = [...fetchedNews, ...fetchedRepo, ...CORE_REPOSITORY];
         combinedPool = [];
 
         merged.forEach(item => {
@@ -324,63 +364,86 @@
           }
         });
       } catch (err) {
-        console.log("Using built-in fallback dataset:", err);
+        console.log("Using core repository pool.");
       }
       applyFilters();
     }
 
-    function renderNews(items) {
-      const heroContainer = document.getElementById('hero-container');
+    async function triggerGeminiWebResearch(keyword) {
+      const apiKey = localStorage.getItem('gemini_api_key');
+      if (!apiKey) {
+        alert("Please set your Gemini API key first using the ⚙️ Gemini Key button in the navbar.");
+        openSettings();
+        return;
+      }
+
+      const container = document.getElementById('news-container');
+      container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: #38bdf8; padding: 4rem 0;">✨ Gemini is scouring live open-source news, PIB releases & magazines for "${keyword}"...</div>`;
+
+      const prompt = `Act as an expert UPSC Civil Services mentor. Research current open-source news, articles, and policy reports regarding "${keyword}" with Google Search. Return strictly a valid JSON object (no markdown formatting blocks) with this exact structure:
+      {
+        "title": "Clear issue-based title",
+        "paper": "GS-2" (choose GS-1, GS-2, GS-3 or GS-4),
+        "topic": "Micro-topic name",
+        "prelims_pointers": ["Fact 1", "Fact 2"],
+        "mains_perspective": {
+          "context": "Core summary",
+          "key_arguments": "Key impacts and arguments",
+          "way_forward": "Policy recommendations"
+        }
+      }`;
+
+      try {
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: prompt }] }],
+            tools: [{ googleSearch: {} }]
+          })
+        });
+
+        const data = await response.json();
+        const rawText = data.candidates[0].content.parts[0].text;
+        const cleaned = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
+        const aiNote = JSON.parse(cleaned);
+
+        aiNote.date = "Live AI Research";
+        aiNote.image = fallbackImages[aiNote.paper] || fallbackImages['GS-2'];
+
+        combinedPool.unshift(aiNote);
+        applyFilters();
+      } catch (err) {
+        alert("AI Research failed. Please check your Gemini API key and try again.");
+        applyFilters();
+      }
+    }
+
+    function renderNews(items, searchTerm = '') {
+      const bannerContainer = document.getElementById('ai-banner-container');
       const container = document.getElementById('news-container');
       const countEl = document.getElementById('match-count');
-      heroContainer.innerHTML = '';
+      bannerContainer.innerHTML = '';
       container.innerHTML = '';
 
       if (countEl) countEl.textContent = `${items.length} Modules Available`;
 
       if (!items || items.length === 0) {
-        container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 4rem 0;">No UPSC modules match your search query. Try typing keywords like 'UNCLOS', 'FRBM', 'ISRO', 'Heritage', 'ARC', or 'Ethics'.</div>`;
+        bannerContainer.innerHTML = `
+          <div class="ai-research-banner">
+            <h3 style="font-size: 1.15rem; font-weight: 700; color: #fff; margin-bottom: 0.5rem;">No local repository notes found for "${searchTerm}"</h3>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">Click below to have Gemini scour live open-source news and synthesize a targeted UPSC note instantly.</p>
+            <button onclick="triggerGeminiWebResearch('${searchTerm}')" class="btn-ai">✨ Research "${searchTerm}" with Gemini Live</button>
+          </div>
+        `;
+        container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 2rem 0;">Ready for AI web grounding.</div>`;
         return;
       }
 
-      const isSearchActive = document.getElementById('search-input').value.trim().length > 0;
-      if (currentMode === 'DAILY' && currentPaperFilter === 'ALL' && !isSearchActive && items.length > 0) {
-        const lead = items[0];
-        const paperTag = lead.paper || 'GS-2';
-        const itemDate = lead.date || 'Today';
-        const prelimsList = (lead.prelims_pointers || []).map(p => `<li>• ${p}</li>`).join('');
-
-        const hero = document.createElement('div');
-        hero.className = "hero-card";
-        hero.onclick = () => openModal(lead);
-        hero.innerHTML = `
-          <div class="hero-img-container">
-            <img src="${lead.image || fallbackImages[paperTag]}" class="hero-img" alt="Lead News" onerror="handleImgError(this, '${paperTag}')" />
-          </div>
-          <div class="hero-body">
-            <div>
-              <div class="card-header">
-                <span class="badge badge-${paperTag}">Featured Story • ${paperTag}</span>
-                <span class="badge-date">${itemDate}</span>
-                <span class="badge-topic">${lead.topic || 'Geopolitics'}</span>
-                ${lead.static_linkage ? `<span class="badge-static">📚 ${lead.static_linkage}</span>` : ''}
-              </div>
-              <h2 style="font-size:1.6rem; font-weight:800; color:#fff; margin-bottom:1rem; line-height:1.3;">${lead.title}</h2>
-              <div class="section-title prelims-title">Prelims Key Facts</div>
-              <div class="box"><ul>${prelimsList}</ul></div>
-            </div>
-            <div class="expand-hint">Click to read full analytical module &rarr;</div>
-          </div>
-        `;
-        heroContainer.appendChild(hero);
-      }
-
-      const gridItems = (currentMode === 'DAILY' && currentPaperFilter === 'ALL' && !isSearchActive) ? items.slice(1) : items;
-
-      gridItems.forEach((item) => {
+      items.forEach((item) => {
         const prelimsList = (item.prelims_pointers || []).map(p => `<li>• ${p}</li>`).join('');
-        const itemDate = item.date || 'Today';
-        const paperTag = item.paper || 'GS-1';
+        const itemDate = item.date || 'Repository';
+        const paperTag = item.paper || 'GS-2';
         const isSaved = savedBookmarks.includes(item.title);
 
         const card = document.createElement('div');
@@ -397,7 +460,6 @@
                 <span class="badge badge-${paperTag}">${paperTag}</span>
                 <span class="badge-date">${itemDate}</span>
                 <span class="badge-topic">${item.topic || 'General'}</span>
-                ${item.static_linkage ? `<span class="badge-static">📚 ${item.static_linkage}</span>` : ''}
               </div>
               <h2 class="card-title">${item.title}</h2>
               
@@ -425,8 +487,8 @@
     function openModal(item) {
       const modal = document.getElementById('detail-modal');
       const modalContent = document.getElementById('modal-content');
-      const itemDate = item.date || 'Today';
-      const paperTag = item.paper || 'GS-1';
+      const itemDate = item.date || 'Repository';
+      const paperTag = item.paper || 'GS-2';
       const imgSrc = item.image || fallbackImages[paperTag];
       const prelimsList = (item.prelims_pointers || []).map(p => `<li style="margin-bottom:0.5rem;">• ${p}</li>`).join('');
 
@@ -439,7 +501,6 @@
             <span class="badge badge-${paperTag}">${paperTag}</span>
             <span class="badge-date">${itemDate}</span>
             <span class="badge-topic">${item.topic}</span>
-            ${item.static_linkage ? `<span class="badge-static">📚 ${item.static_linkage}</span>` : ''}
           </div>
           <h2 style="font-size:1.6rem; font-weight:800; color:#ffffff; margin-bottom:1.25rem; line-height:1.35;">${item.title}</h2>
           
@@ -469,10 +530,6 @@
       document.getElementById('tab-daily').classList.toggle('active', mode === 'DAILY');
       document.getElementById('tab-repo').classList.toggle('active', mode === 'REPO');
       document.getElementById('tab-saved').classList.toggle('active', mode === 'SAVED');
-      
-      if (mode === 'REPO') {
-        document.getElementById('search-input').focus();
-      }
       applyFilters();
     }
 
@@ -504,11 +561,15 @@
       }
 
       if (searchTerm.length > 0) {
+        activePool = combinedPool;
+        if (currentPaperFilter !== 'ALL') {
+          activePool = activePool.filter(item => item.paper === currentPaperFilter);
+        }
+
         activePool = activePool.filter(item => {
           const titleMatch = (item.title || '').toLowerCase().includes(searchTerm);
           const topicMatch = (item.topic || '').toLowerCase().includes(searchTerm);
           const paperMatch = (item.paper || '').toLowerCase().includes(searchTerm);
-          const staticMatch = (item.static_linkage || '').toLowerCase().includes(searchTerm);
           const prelimsMatch = item.prelims_pointers && item.prelims_pointers.some(p => p.toLowerCase().includes(searchTerm));
           
           let mainsMatch = false;
@@ -518,11 +579,11 @@
                          (item.mains_perspective.way_forward || '').toLowerCase().includes(searchTerm);
           }
 
-          return titleMatch || topicMatch || paperMatch || staticMatch || prelimsMatch || mainsMatch;
+          return titleMatch || topicMatch || paperMatch || prelimsMatch || mainsMatch;
         });
       }
 
-      renderNews(activePool);
+      renderNews(activePool, searchTerm);
     }
 
     initApp();
