@@ -4,6 +4,7 @@
     "paper": "GS-2",
     "topic": "Indian Polity & Federal Structure",
     "static_linkage": "Centre-State Relations (Article 245-263)",
+    "date": "2026-10",
     "image": "https://images.unsplash.com/photo-1541872703-74c5e44368f9?w=800&auto=format&fit=crop&q=60",
     "prelims_pointers": [
       "Inter-State Council operates under Article 263 as a recommendatory body.",
@@ -21,6 +22,7 @@
     "paper": "GS-2",
     "topic": "Indian Constitution & Polity",
     "static_linkage": "Article 25-28 & Article 44 (DPSP)",
+    "date": "2026-10",
     "image": "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=800&auto=format&fit=crop&q=60",
     "prelims_pointers": [
       "Article 44 directs the State to secure a Uniform Civil Code throughout India.",
@@ -37,6 +39,7 @@
     "paper": "GS-3",
     "topic": "Indian Economy & Inclusive Growth",
     "static_linkage": "Growth, Development and Employment",
+    "date": "2026-10",
     "image": "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?w=800&auto=format&fit=crop&q=60",
     "prelims_pointers": [
       "MSME sector contributes nearly 30% to India's GDP and 40% to exports.",
@@ -53,6 +56,7 @@
     "paper": "GS-3",
     "topic": "Science & Tech - Emerging Tech",
     "static_linkage": "IT Act & National AI Strategy",
+    "date": "2026-10",
     "image": "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&auto=format&fit=crop&q=60",
     "prelims_pointers": [
       "IndiaAI Mission focuses on computing infrastructure and sovereign AI models.",
@@ -69,6 +73,7 @@
     "paper": "GS-4",
     "topic": "Ethics in Public Administration",
     "static_linkage": "Civil Services Accountability & Probity",
+    "date": "2026-10",
     "image": "https://images.unsplash.com/photo-1521791136064-7986c2920216?w=800&auto=format&fit=crop&q=60",
     "prelims_pointers": [
       "Second ARC 4th Report focuses extensively on ethics in governance.",
@@ -85,6 +90,7 @@
     "paper": "GS-3",
     "topic": "Internal Security & Border Management",
     "static_linkage": "Security Challenges in Border Areas",
+    "date": "2026-10",
     "image": "https://images.unsplash.com/photo-1557804506-669a67965ba0?w=800&auto=format&fit=crop&q=60",
     "prelims_pointers": [
       "Security Related Expenditure (SRE) scheme assists LWE-affected states.",
@@ -96,4 +102,4 @@
       "way_forward": "Combine security dominance with aggressive infrastructure push (roads, mobile connectivity) and land rights regularization under FRA, 2006."
     }
   }
-];
+]
