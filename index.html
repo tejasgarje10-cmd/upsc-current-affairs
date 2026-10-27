@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-  <title>UPSC Pulse Workspace & AI Evaluator</title>
+  <title>UPSC Pulse Workspace & Vision Evaluator</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     
@@ -52,10 +52,9 @@
 
     .btn-eval {
       background: rgba(168, 85, 247, 0.2); color: #e879f9; border: 1px solid rgba(168, 85, 247, 0.4);
-      padding: 0.5rem 1rem; border-radius: 0.5rem; cursor: pointer; font-size: 0.85rem; font-weight: 600; transition: all 0.2s;
+      padding: 0.5rem 1rem; border-radius: 0.5rem; cursor: pointer; font-size: 0.85rem; font-weight: 600;
     }
     .btn-eval:hover { background: rgba(168, 85, 247, 0.35); }
-
     .btn-settings {
       background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.35);
       padding: 0.5rem 0.9rem; border-radius: 0.5rem; cursor: pointer; font-size: 0.85rem; font-weight: 600;
@@ -84,7 +83,6 @@
     .search-stats { font-size: 0.8rem; color: #38bdf8; font-weight: 600; margin-left: auto; }
 
     .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 1.75rem; }
-    
     .card {
       background: var(--surface-glass); border: 1px solid var(--border-color);
       border-radius: 1rem; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between;
@@ -150,7 +148,7 @@
         <div class="brand-icon">CSE</div>
         <div>
           <div class="brand-title">UPSC Pulse Workspace</div>
-          <div class="brand-sub">Knowledge Base & AI Answer Evaluator</div>
+          <div class="brand-sub">Knowledge Base & Vision Answer Grader</div>
         </div>
       </div>
 
@@ -158,7 +156,7 @@
         <button onclick="switchViewMode('DAILY')" id="tab-daily" class="mode-tab active">📰 Feed</button>
         <button onclick="switchViewMode('REPO')" id="tab-repo" class="mode-tab">📚 Repository</button>
         <button onclick="switchViewMode('SAVED')" id="tab-saved" class="mode-tab">⭐ Saved</button>
-        <button onclick="openEvaluator()" class="btn-eval">✍️ AI Answer Grader</button>
+        <button onclick="openEvaluator()" class="btn-eval">📸 AI Vision Grader</button>
         <button onclick="openSettings()" class="btn-settings">⚙️ Key</button>
       </div>
     </nav>
@@ -192,35 +190,44 @@
     </div>
   </div>
 
-  <!-- AI Answer Evaluator Modal -->
+  <!-- AI Vision Answer Evaluator Modal -->
   <div id="evaluator-modal" class="modal-overlay" onclick="closeEvaluator(event)">
     <div class="modal-body" onclick="event.stopPropagation()" style="max-width: 640px;">
       <button onclick="closeEvaluator()" class="close-btn">&times;</button>
       <div class="modal-padding">
-        <h2 style="font-size: 1.4rem; font-weight: 800; color: #fff; margin-bottom: 0.5rem;">✍️ AI UPSC Answer Grader</h2>
-        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">Paste your written answer below. Gemini will evaluate it against strict UPSC CSE parameters (Content, Structure, Keywords, and Intro-Body-Conclusion format).</p>
+        <h2 style="font-size: 1.4rem; font-weight: 800; color: #fff; margin-bottom: 0.5rem;">📸 AI Vision Answer Grader</h2>
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">Upload a photo of your handwritten answer sheet (10-marker or 15-marker). Gemini Vision will read your handwriting and grade it instantly!</p>
         
-        <div style="margin-bottom: 1rem;">
-          <label style="font-size: 0.75rem; font-weight: 700; color: #38bdf8; text-transform: uppercase;">Select GS Paper:</label>
-          <select id="eval-paper" class="search-box" style="width: 100%; margin-top: 0.3rem;">
-            <option value="GS-1">GS-1 (History, Society, Geography)</option>
-            <option value="GS-2" selected>GS-2 (Polity, Governance, IR)</option>
-            <option value="GS-3">GS-3 (Economy, Environment, Security)</option>
-            <option value="GS-4">GS-4 (Ethics, Integrity, Aptitude)</option>
-          </select>
+        <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+          <div style="flex: 1;">
+            <label style="font-size: 0.75rem; font-weight: 700; color: #38bdf8; text-transform: uppercase;">Paper:</label>
+            <select id="eval-paper" class="search-box" style="width: 100%; margin-top: 0.3rem;">
+              <option value="GS-1">GS-1</option>
+              <option value="GS-2" selected>GS-2</option>
+              <option value="GS-3">GS-3</option>
+              <option value="GS-4">GS-4</option>
+            </select>
+          </div>
+          <div style="flex: 1;">
+            <label style="font-size: 0.75rem; font-weight: 700; color: #38bdf8; text-transform: uppercase;">Marker Type:</label>
+            <select id="eval-type" class="search-box" style="width: 100%; margin-top: 0.3rem;">
+              <option value="10-Marker (150 Words)">10-Marker (150 Words)</option>
+              <option value="15-Marker (250 Words)" selected>15-Marker (250 Words)</option>
+            </select>
+          </div>
         </div>
 
         <div style="margin-bottom: 1rem;">
           <label style="font-size: 0.75rem; font-weight: 700; color: #38bdf8; text-transform: uppercase;">Question Prompt:</label>
-          <input type="text" id="eval-question" class="search-box" style="width: 100%; margin-top: 0.3rem;" placeholder="e.g., Examine the role of UNCLOS in resolving maritime disputes..." />
+          <input type="text" id="eval-question" class="search-box" style="width: 100%; margin-top: 0.3rem;" placeholder="e.g., Examine the role of UNCLOS in maritime security..." />
         </div>
 
         <div style="margin-bottom: 1.25rem;">
-          <label style="font-size: 0.75rem; font-weight: 700; color: #38bdf8; text-transform: uppercase;">Your Answer:</label>
-          <textarea id="eval-text" class="search-box" style="width: 100%; height: 140px; margin-top: 0.3rem; resize: vertical;" placeholder="Type or paste your answer here..."></textarea>
+          <label style="font-size: 0.75rem; font-weight: 700; color: #38bdf8; text-transform: uppercase;">Upload Answer Sheet Photo:</label>
+          <input type="file" id="eval-image" accept="image/*" class="search-box" style="width: 100%; margin-top: 0.3rem; padding: 0.6rem;" />
         </div>
 
-        <button onclick="evaluateAnswerWithGemini()" class="btn-ai" style="width: 100%;">Evaluate Answer (Out of 10)</button>
+        <button onclick="evaluateHandwrittenAnswer()" class="btn-ai" style="width: 100%;">Grade Handwritten Answer with Vision AI</button>
         <div id="eval-result" style="margin-top: 1.25rem;"></div>
       </div>
     </div>
@@ -232,7 +239,7 @@
       <button onclick="closeSettings()" class="close-btn">&times;</button>
       <div class="modal-padding">
         <h2 style="font-size: 1.3rem; font-weight: 800; color: #fff; margin-bottom: 0.75rem;">Gemini API Key</h2>
-        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">Required for AI web research and answer evaluation. Saved locally in your browser.</p>
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">Required for Vision AI grading and web research. Saved locally in your browser.</p>
         <input type="password" id="api-key-input" class="search-box" style="width: 100%; margin-bottom: 1rem;" placeholder="Paste API Key..." />
         <button onclick="saveApiKey()" class="btn-ai" style="width: 100%;">Save Key</button>
       </div>
@@ -256,22 +263,6 @@
           "context": "Expanding India's share in the global space economy through private enterprise.",
           "key_arguments": "Reduces bureaucratic friction and attracts venture capital into deep-tech startups.",
           "way_forward": "Implement robust insurance frameworks for space assets."
-        }
-      },
-      {
-        "title": "UNCLOS & Maritime Security Architecture in the Indo-Pacific",
-        "paper": "GS-2",
-        "topic": "International Relations",
-        "static_linkage": "International Law",
-        "image": "https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?w=800&auto=format&fit=crop&q=60",
-        "prelims_pointers": [
-          "UNCLOS defines Territorial Waters (12 NM) and EEZ (200 NM).",
-          "India's SAGAR doctrine guides maritime diplomacy."
-        ],
-        "mains_perspective": {
-          "context": "Ensuring a rules-based order and freedom of navigation.",
-          "key_arguments": "Addressing non-traditional security threats including IUU fishing.",
-          "way_forward": "Strengthen Quad Maritime Domain Awareness."
         }
       }
     ];
@@ -298,58 +289,74 @@
       document.getElementById('settings-modal').classList.add('active');
     }
     function closeSettings(e) {
-      if (!e || e.target.id === 'settings-modal' || e.target.className === 'close-btn') {
-        document.getElementById('settings-modal').classList.remove('active');
-      }
+      if (!e || e.target.id === 'settings-modal' || e.target.className === 'close-btn') document.getElementById('settings-modal').classList.remove('active');
     }
     function saveApiKey() {
       localStorage.setItem('gemini_api_key', document.getElementById('api-key-input').value.trim());
-      alert('API key saved!');
-      closeSettings();
+      alert('API key saved!'); closeSettings();
     }
 
     function openEvaluator() { document.getElementById('evaluator-modal').classList.add('active'); }
     function closeEvaluator(e) {
-      if (!e || e.target.id === 'evaluator-modal' || e.target.className === 'close-btn') {
-        document.getElementById('evaluator-modal').classList.remove('active');
-      }
+      if (!e || e.target.id === 'evaluator-modal' || e.target.className === 'close-btn') document.getElementById('evaluator-modal').classList.remove('active');
     }
 
-    async function evaluateAnswerWithGemini() {
+    // Helper to convert uploaded image file to base64
+    function fileToBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result.split(',')[1]);
+        reader.onerror = error => reject(error);
+      });
+    }
+
+    async function evaluateHandwrittenAnswer() {
       const apiKey = localStorage.getItem('gemini_api_key');
       if (!apiKey) { alert('Please set your Gemini API key first using the ⚙️ Key button.'); openSettings(); return; }
 
       const paper = document.getElementById('eval-paper').value;
+      const markerType = document.getElementById('eval-type').value;
       const question = document.getElementById('eval-question').value.trim();
-      const answer = document.getElementById('eval-text').value.trim();
+      const fileInput = document.getElementById('eval-image');
       const resultDiv = document.getElementById('eval-result');
 
-      if (!question || !answer) { alert('Please enter both the question and your answer.'); return; }
+      if (!question) { alert('Please enter the question prompt.'); return; }
+      if (fileInput.files.length === 0) { alert('Please upload a photo of your handwritten answer sheet.'); return; }
 
-      resultDiv.innerHTML = `<div style="color:#38bdf8; text-align:center; padding:1rem;">Evaluating answer against UPSC parameters...</div>`;
-
-      const prompt = `Act as a strict UPSC Civil Services Mains examiner. Evaluate the following aspirant's answer for ${paper}.
-      Question: "${question}"
-      Aspirant Answer: "${answer}"
-
-      Provide your evaluation in clean HTML format (using strong tags, bullet points, and paragraphs):
-      1. Overall Score out of 10 (e.g., 6.5/10) with a brief verdict.
-      2. Strengths (what was done well regarding structure, keywords, intro/conclusion).
-      3. Areas of Improvement / Missing Dimensions (governance angles, committee reports, Supreme Court judgments, or policy linkage).
-      4. Model Conclusion tip.`;
+      resultDiv.innerHTML = `<div style="color:#38bdf8; text-align:center; padding:1rem;">Gemini Vision is reading your handwriting and evaluating against UPSC standards...</div>`;
 
       try {
+        const base64Data = await fileToBase64(fileInput.files[0]);
+        const mimeType = fileInput.files[0].type;
+
+        const prompt = `Act as a strict UPSC Civil Services Mains examiner. Examine the provided handwritten answer photo for ${paper} (${markerType}).
+        Question: "${question}"
+
+        Provide your evaluation in clean HTML format:
+        1. Overall Score out of 10 with a brief examiner verdict.
+        2. Handwriting & Presentation Review (spacing, structure, margins, headings).
+        3. Content & Breadth (dimensional coverage, committee reports, keywords used vs missing).
+        4. Scope for Improvement & Model Conclusion suggestion.`;
+
         const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+          body: JSON.stringify({
+            contents: [{
+              parts: [
+                { text: prompt },
+                { inline_data: { mime_type: mimeType, data: base64Data } }
+              ]
+            }]
+          })
         });
 
         const data = await response.json();
         const feedback = data.candidates[0].content.parts[0].text;
-        resultDiv.innerHTML = `<div class="box" style="margin-top:1rem; max-height:250px; overflow-y:auto; padding:1rem; color:#f3f4f6;">${feedback}</div>`;
+        resultDiv.innerHTML = `<div class="box" style="margin-top:1rem; max-height:280px; overflow-y:auto; padding:1rem; color:#f3f4f6;">${feedback}</div>`;
       } catch (err) {
-        resultDiv.innerHTML = `<div style="color:#f87171; text-align:center;">Evaluation failed. Check your API key.</div>`;
+        resultDiv.innerHTML = `<div style="color:#f87171; text-align:center;">Vision evaluation failed. Make sure the photo is clear and try again.</div>`;
       }
     }
 
@@ -378,9 +385,7 @@
         aiNote.image = fallbackImages[aiNote.paper] || fallbackImages['GS-2'];
         combinedPool.unshift(aiNote);
         applyFilters();
-      } catch (err) {
-        alert("Research failed."); applyFilters();
-      }
+      } catch (err) { alert("Research failed."); applyFilters(); }
     }
 
     function toggleBookmark(e, title) {
@@ -397,8 +402,7 @@
           fetch('./repository.json?t=' + Date.now()).then(r => r.json())
         ]);
         const merged = [...(newsRes.value || []), ...(repoRes.value || []), ...CORE_REPOSITORY];
-        const seen = new Set();
-        combinedPool = [];
+        const seen = new Set(); combinedPool = [];
         merged.forEach(item => {
           if (item && item.title) {
             const key = item.title.toLowerCase().trim();
