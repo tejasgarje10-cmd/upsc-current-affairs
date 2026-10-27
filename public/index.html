@@ -34,10 +34,10 @@
       border-radius: 1rem; backdrop-filter: blur(12px); margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;
     }
     .brand-group { display: flex; align-items: center; gap: 0.75rem; }
-    .brand-icon {
-      width: 42px; height: 42px; background: linear-gradient(135deg, #0284c7, #38bdf8);
-      border-radius: 0.625rem; display: flex; align-items: center; justify-content: center;
-      box-shadow: 0 4px 12px rgba(2, 132, 199, 0.35);
+    .brand-logo {
+      width: 42px; height: 42px; object-fit: contain; border-radius: 0.625rem;
+      background: #0b0f19; border: 1px solid var(--border-color); padding: 2px;
+      box-shadow: 0 4px 12px rgba(2, 132, 199, 0.25);
     }
     .brand-title { font-size: 1.3rem; font-weight: 800; color: #ffffff; letter-spacing: -0.01em; }
     .brand-sub { font-size: 0.75rem; color: #38bdf8; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
@@ -136,15 +136,8 @@
     
     <nav class="app-navbar">
       <div class="brand-group">
-        <div class="brand-icon">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M16 3h5v5"></path>
-            <path d="M4 20L21 3"></path>
-            <path d="M21 16v5h-5"></path>
-            <path d="M15 15l6 6"></path>
-            <path d="M4 4l5 5"></path>
-          </svg>
-        </div>
+        <!-- Loads your uploaded logo file from the public folder -->
+        <img src="./logo.png" alt="NexusGS Logo" class="brand-logo" />
         <div>
           <div class="brand-title">NexusGS</div>
           <div class="brand-sub">UPSC Knowledge Base & Vision Grader</div>
