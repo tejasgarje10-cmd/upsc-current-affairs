@@ -20,6 +20,13 @@ RSS_FEEDS = [
     "https://feeds.bbci.co.uk/news/world/asia/india/rss.xml"
 ]
 
+DEFAULT_IMAGES = {
+    "GS-1": "https://images.unsplash.com/photo-1590050752117-238cb0fb12b1?w=800&auto=format&fit=crop&q=60",
+    "GS-2": "https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?w=800&auto=format&fit=crop&q=60",
+    "GS-3": "https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&auto=format&fit=crop&q=60",
+    "GS-4": "https://images.unsplash.com/photo-1450133064473-71024230f91b?w=800&auto=format&fit=crop&q=60"
+}
+
 SYSTEM_PROMPT = """
 You are an expert UPSC Civil Services Examination (CSE) mentor.
 Analyze the following news item and generate a structured current affairs analysis suitable for UPSC GS-1, GS-2, GS-3, or GS-4.
@@ -100,7 +107,7 @@ def main():
     for feed_url in RSS_FEEDS:
         try:
             feed = feedparser.parse(feed_url)
-            for entry in feed.entries[:10]:
+            for entry in feed.entries[:8]:
                 title = getattr(entry, 'title', '').strip()
                 if not title or title.lower() in seen_titles:
                     continue
@@ -113,37 +120,17 @@ def main():
                 if item_data and item_data.get("title"):
                     item_data.pop("relevant", None)
                     item_data["date"] = today_str
-                    if image_url:
-                        item_data["image"] = image_url
+                    paper = item_data.get("paper", "GS-1")
+                    item_data["image"] = image_url or DEFAULT_IMAGES.get(paper, DEFAULT_IMAGES["GS-1"])
                     processed_items.append(item_data)
         except Exception as err:
             print(f"Error parsing feed {feed_url}: {err}")
 
     output_filename = "current_affairs.json"
-    existing_items = []
-    if os.path.exists(output_filename):
-        try:
-            with open(output_filename, "r", encoding="utf-8") as f:
-                existing_items = json.load(f)
-        except Exception:
-            existing_items = []
-
-    combined = processed_items + existing_items
-    unique_items = []
-    final_titles = set()
-    for item in combined:
-        t = item.get("title", "").lower()
-        if t not in final_titles:
-            final_titles.add(t)
-            unique_items.append(item)
-
-    # Keep latest 60 entries for historical search & review
-    unique_items = unique_items[:60]
-
     with open(output_filename, "w", encoding="utf-8") as f:
-        json.dump(unique_items, f, indent=2, ensure_ascii=False)
+        json.dump(processed_items, f, indent=2, ensure_ascii=False)
 
-    print(f"Successfully updated {output_filename} with {len(unique_items)} total items.")
+    print(f"Successfully generated {len(processed_items)} items.")
 
 if __name__ == "__main__":
     main()
