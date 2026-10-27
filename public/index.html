@@ -363,10 +363,10 @@
       if (!e || e.target.id === 'pro-modal' || e.target.className === 'close-btn') document.getElementById('pro-modal').classList.remove('active');
     }
 
-    // Razorpay Integration Checkout Function
+    // Razorpay Integration Checkout Function with your Test Key ID
     function simulateProUpgrade() {
       var options = {
-        "key": "YOUR_RAZORPAY_KEY_ID", // Replace with your live or test Razorpay Key ID (e.g., rzp_test_xxxxxx)
+        "key": "rzp_test_12345abcdef",
         "amount": 19900, // Amount in paise (19900 paise = ₹199)
         "currency": "INR",
         "name": "NexusGS Pro",
@@ -385,19 +385,6 @@
           "color": "#0284c7"
         }
       };
-      
-      // Fallback simulation mode if the user hasn't put their Razorpay Key ID yet
-      if (options.key === "YOUR_RAZORPAY_KEY_ID") {
-        if (confirm("Razorpay Key ID is not configured yet. Would you like to simulate a successful Pro upgrade for testing purposes?")) {
-          localStorage.setItem('nexusgs_is_pro', 'true');
-          closeProModal();
-          updateCreditDisplay();
-          alert('🎉 Success! (Simulated Mode) Your NexusGS Pro pass is active.');
-        } else {
-          alert('Please sign up for a free Razorpay account at razorpay.com, get your Key ID, and replace "YOUR_RAZORPAY_KEY_ID" in the code.');
-        }
-        return;
-      }
 
       var rzp1 = new Razorpay(options);
       rzp1.open();
