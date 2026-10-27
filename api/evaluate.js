@@ -1,6 +1,15 @@
-import { GoogleGenAI } from '@google/genai';
+const { GoogleGenAI } = require('@google/genai');
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
+  // Enable CORS headers so your frontend can talk smoothly to the backend
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
@@ -8,8 +17,12 @@ export default async function handler(req, res) {
   try {
     const { question, paper, markerType, imageBase64, mimeType } = req.body;
     
-    // Uses Vercel's secure server environment variable
-    const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey) {
+      return res.status(500).json({ error: 'Server configuration error: GEMINI_API_KEY is missing in Vercel Environment Variables.' });
+    }
+
+    const ai = new GoogleGenAI({ apiKey });
 
     const prompt = `Act as a strict UPSC Civil Services Mains examiner. Evaluate the provided handwritten answer photo for ${paper} (${markerType}).
     Question: "${question}"
@@ -20,19 +33,28 @@ export default async function handler(req, res) {
     3. Content & Breadth (dimensional coverage, committee reports, keywords used vs missing).
     4. Scope for Improvement & Model Conclusion suggestion.`;
 
-    const contents = [
-      { text: prompt },
-      { inlineData: { mimeType: mimeType || 'image/jpeg', data: imageBase64 } }
-    ];
+    // Clean base64 string if data URL prefix exists
+    let cleanBase64 = imageBase64;
+    if (imageBase64 && imageBase64.includes(',')) {
+      cleanBase64 = imageBase64.split(',')[1];
+    }
 
     const response = await ai.models.generateContent({
       model: 'gemini-2.5-flash',
-      contents: contents,
+      contents: [
+        { text: prompt },
+        { 
+          inlineData: { 
+            mimeType: mimeType || 'image/jpeg', 
+            data: cleanBase64 
+          } 
+        }
+      ],
     });
 
     return res.status(200).json({ feedback: response.text });
   } catch (error) {
-    console.error(error);
-    return res.status(500).json({ error: 'Failed to evaluate answer.' });
+    console.error("Gemini Vision Error:", error);
+    return res.status(500).json({ error: error.message || 'Failed to evaluate answer.' });
   }
-}
+};
