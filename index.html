@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-  <title>UPSC CSE Daily Current Affairs & Knowledge Repository</title>
+  <title>UPSC CSE Daily Pulse & Knowledge Base</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     
@@ -28,7 +28,7 @@
     }
     .container { max-width: 1240px; margin: 0 auto; }
     
-    /* Executive Header */
+    /* Header Navbar */
     .app-navbar {
       display: flex; justify-content: space-between; align-items: center;
       padding: 1rem 1.5rem; background: var(--surface-glass); border: 1px solid var(--border-color);
@@ -92,7 +92,7 @@
     .hero-img { width: 100%; height: 100%; object-fit: cover; display: block; }
     .hero-body { padding: 1.75rem; display: flex; flex-direction: column; justify-content: space-between; }
 
-    /* Main Grid Layout */
+    /* Grid Layout */
     .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 1.75rem; }
     
     .card {
@@ -117,6 +117,7 @@
 
     .badge-date { background: #090d16; color: var(--text-muted); border: 1px solid var(--border-color); font-size: 0.75rem; font-weight: 600; padding: 0.25rem 0.5rem; border-radius: 0.25rem; }
     .badge-topic { background: #374151; color: #e5e7eb; font-size: 0.75rem; font-weight: 500; padding: 0.25rem 0.55rem; border-radius: 0.25rem; }
+    .badge-static { background: rgba(129, 140, 248, 0.15); color: #a5b4fc; border: 1px solid rgba(129, 140, 248, 0.3); font-size: 0.725rem; padding: 0.2rem 0.45rem; border-radius: 0.25rem; }
 
     .card-title { font-size: 1.15rem; font-weight: 700; color: #ffffff; margin-bottom: 0.85rem; line-height: 1.4; }
 
@@ -167,27 +168,27 @@
         <div class="brand-icon">CSE</div>
         <div>
           <div class="brand-title">UPSC IAS Daily Pulse</div>
-          <div class="brand-sub">Syllabus-Aligned Current Affairs & Knowledge Base</div>
+          <div class="brand-sub">Daily Feed & Consolidated Knowledge Base</div>
         </div>
       </div>
 
       <div class="nav-actions">
-        <button onclick="switchViewMode('DAILY')" id="tab-daily" class="mode-tab active">📰 Today's Daily Feed</button>
-        <button onclick="switchViewMode('REPO')" id="tab-repo" class="mode-tab">📚 Repository Knowledge Base</button>
+        <button onclick="switchViewMode('DAILY')" id="tab-daily" class="mode-tab active">📰 Today's Feed</button>
+        <button onclick="switchViewMode('REPO')" id="tab-repo" class="mode-tab">📚 Full Knowledge Base</button>
         <button onclick="switchViewMode('SAVED')" id="tab-saved" class="mode-tab">⭐ Saved Notes</button>
-        <button onclick="window.print()" class="btn-pdf">🖨️ Export PDF Notes</button>
+        <button onclick="window.print()" class="btn-pdf">🖨️ Export PDF</button>
       </div>
     </nav>
 
-    <!-- Deep Search & Filter Controls -->
+    <!-- Deep Search Controls -->
     <div class="search-panel">
       <div class="search-row">
-        <input type="text" id="search-input" onkeyup="handleSearch()" class="search-box" placeholder="Type ANY topic or keyword (e.g., West Asia, UNCLOS, RBI, DPI, Ethics, ARC, Heritage, Agriculture)..." />
+        <input type="text" id="search-input" onkeyup="handleSearch()" class="search-box" placeholder="Type ANY keyword (e.g., UNCLOS, FRBM, Ethics, Speaker, ISRO, Agriculture, Monetary Policy)..." />
       </div>
       
       <div class="filter-pills">
         <button onclick="filterPaper('ALL')" class="pill active">All Syllabus</button>
-        <button onclick="filterPaper('GS-1')" class="pill">GS-1 Culture & Society</button>
+        <button onclick="filterPaper('GS-1')" class="pill">GS-1 Culture & History</button>
         <button onclick="filterPaper('GS-2')" class="pill">GS-2 Polity & IR</button>
         <button onclick="filterPaper('GS-3')" class="pill">GS-3 Economy & Security</button>
         <button onclick="filterPaper('GS-4')" class="pill">GS-4 Ethics & Integrity</button>
@@ -197,7 +198,7 @@
 
     <div id="hero-container"></div>
     <div id="news-container" class="grid">
-      <div style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 4rem 0;">Loading current affairs repository...</div>
+      <div style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 4rem 0;">Loading current affairs & knowledge base...</div>
     </div>
   </div>
 
@@ -209,7 +210,9 @@
   </div>
 
   <script>
-    let allNews = [];
+    let dailyNews = [];
+    let staticRepo = [];
+    let combinedPool = [];
     let currentMode = 'DAILY'; // 'DAILY', 'REPO', 'SAVED'
     let currentPaperFilter = 'ALL';
     let savedBookmarks = JSON.parse(localStorage.getItem('upsc_bookmarks') || '[]');
@@ -237,15 +240,32 @@
       applyFilters();
     }
 
-    async function fetchNews() {
+    async function fetchPayloads() {
       const container = document.getElementById('news-container');
       try {
-        const response = await fetch('./current_affairs.json?t=' + Date.now());
-        if (!response.ok) throw new Error('JSON missing');
-        allNews = await response.json();
-        renderNews(allNews);
+        const [newsRes, repoRes] = await Promise.allSettled([
+          fetch('./current_affairs.json?t=' + Date.now()).then(r => r.json()),
+          fetch('./repository.json?t=' + Date.now()).then(r => r.json())
+        ]);
+
+        dailyNews = newsRes.status === 'fulfilled' ? newsRes.value : [];
+        staticRepo = repoRes.status === 'fulfilled' ? repoRes.value : [];
+
+        // Deduplicate and combine payloads
+        const seen = new Set();
+        combinedPool = [];
+
+        [...dailyNews, ...staticRepo].forEach(item => {
+          const key = (item.title || '').toLowerCase().strip();
+          if (!seen.has(key)) {
+            seen.add(key);
+            combinedPool.push(item);
+          }
+        });
+
+        applyFilters();
       } catch (error) {
-        container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: #f87171; padding: 4rem 0;">Unable to load current affairs payload.</div>`;
+        container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: #f87171; padding: 4rem 0;">Unable to load data payload.</div>`;
       }
     }
 
@@ -256,24 +276,23 @@
       heroContainer.innerHTML = '';
       container.innerHTML = '';
 
-      if (countEl) countEl.textContent = `${items.length} Modules Found`;
+      if (countEl) countEl.textContent = `${items.length} Modules Available`;
 
       if (!items || items.length === 0) {
-        container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 4rem 0;">No UPSC modules match your search query. Try typing keywords like 'Indo-Pacific', 'RBI', 'ISRO', 'Heritage', 'ARC', or 'Ethics'.</div>`;
+        container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 4rem 0;">No UPSC modules match your search query. Try typing keywords like 'UNCLOS', 'FRBM', 'ISRO', 'Heritage', 'ARC', or 'Ethics'.</div>`;
         return;
       }
 
-      // Featured Top Lead Card (Active on Daily Mode when no search filter applied)
       const isSearchActive = document.getElementById('search-input').value.trim().length > 0;
       if (currentMode === 'DAILY' && currentPaperFilter === 'ALL' && !isSearchActive && items.length > 0) {
         const lead = items[0];
         const paperTag = lead.paper || 'GS-2';
-        const itemDate = lead.date || new Date().toISOString().split('T')[0];
+        const itemDate = lead.date || 'Today';
         const prelimsList = (lead.prelims_pointers || []).map(p => `<li>• ${p}</li>`).join('');
 
         const hero = document.createElement('div');
         hero.className = "hero-card";
-        hero.onclick = () => openModal(0);
+        hero.onclick = () => openModal(lead);
         hero.innerHTML = `
           <div class="hero-img-container">
             <img src="${lead.image || fallbackImages[paperTag]}" class="hero-img" alt="Lead News" onerror="handleImgError(this, '${paperTag}')" />
@@ -281,9 +300,10 @@
           <div class="hero-body">
             <div>
               <div class="card-header">
-                <span class="badge badge-${paperTag}">Featured Lead • ${paperTag}</span>
+                <span class="badge badge-${paperTag}">Featured Story • ${paperTag}</span>
                 <span class="badge-date">${itemDate}</span>
                 <span class="badge-topic">${lead.topic || 'Geopolitics'}</span>
+                ${lead.static_linkage ? `<span class="badge-static">📚 ${lead.static_linkage}</span>` : ''}
               </div>
               <h2 style="font-size:1.6rem; font-weight:800; color:#fff; margin-bottom:1rem; line-height:1.3;">${lead.title}</h2>
               <div class="section-title prelims-title">Prelims Key Facts</div>
@@ -298,15 +318,14 @@
       const gridItems = (currentMode === 'DAILY' && currentPaperFilter === 'ALL' && !isSearchActive) ? items.slice(1) : items;
 
       gridItems.forEach((item) => {
-        const originalIndex = allNews.indexOf(item);
         const prelimsList = (item.prelims_pointers || []).map(p => `<li>• ${p}</li>`).join('');
-        const itemDate = item.date || new Date().toISOString().split('T')[0];
+        const itemDate = item.date || 'Today';
         const paperTag = item.paper || 'GS-1';
         const isSaved = savedBookmarks.includes(item.title);
 
         const card = document.createElement('div');
         card.className = "card";
-        card.onclick = () => openModal(originalIndex);
+        card.onclick = () => openModal(item);
         
         card.innerHTML = `
           <div class="card-img-wrapper">
@@ -318,6 +337,7 @@
                 <span class="badge badge-${paperTag}">${paperTag}</span>
                 <span class="badge-date">${itemDate}</span>
                 <span class="badge-topic">${item.topic || 'General'}</span>
+                ${item.static_linkage ? `<span class="badge-static">📚 ${item.static_linkage}</span>` : ''}
               </div>
               <h2 class="card-title">${item.title}</h2>
               
@@ -328,12 +348,12 @@
               <div class="section-title mains-title">Mains Perspective</div>
               <div class="box mains-box">
                 <p><strong>Context:</strong> ${item.mains_perspective.context || ''}</p>
-                <p><strong>Key Takeaways:</strong> ${item.mains_perspective.key_arguments || ''}</p>
+                <p><strong>Key Arguments:</strong> ${item.mains_perspective.key_arguments || ''}</p>
                 <p><strong>Way Forward:</strong> ${item.mains_perspective.way_forward || ''}</p>
               </div>` : ''}
             </div>
             <div style="display:flex; justify-content:space-between; align-items:center; margin-top:0.5rem;">
-              <button onclick="toggleBookmark(event, '${item.title.replace(/'/g, "\\'")}')" class="mode-tab" style="padding:0.3rem 0.6rem; font-size:0.75rem;">${isSaved ? '⭐ Saved' : '☆ Save Note'}</button>
+              <button onclick="toggleBookmark(event, '${(item.title || '').replace(/'/g, "\\'")}')" class="mode-tab" style="padding:0.3rem 0.6rem; font-size:0.75rem;">${isSaved ? '⭐ Saved' : '☆ Save Note'}</button>
               <div class="expand-hint">Click to expand &rarr;</div>
             </div>
           </div>
@@ -342,11 +362,10 @@
       });
     }
 
-    function openModal(index) {
-      const item = allNews[index];
+    function openModal(item) {
       const modal = document.getElementById('detail-modal');
       const modalContent = document.getElementById('modal-content');
-      const itemDate = item.date || new Date().toISOString().split('T')[0];
+      const itemDate = item.date || 'Today';
       const paperTag = item.paper || 'GS-1';
       const imgSrc = item.image || fallbackImages[paperTag];
       const prelimsList = (item.prelims_pointers || []).map(p => `<li style="margin-bottom:0.5rem;">• ${p}</li>`).join('');
@@ -360,6 +379,7 @@
             <span class="badge badge-${paperTag}">${paperTag}</span>
             <span class="badge-date">${itemDate}</span>
             <span class="badge-topic">${item.topic}</span>
+            ${item.static_linkage ? `<span class="badge-static">📚 ${item.static_linkage}</span>` : ''}
           </div>
           <h2 style="font-size:1.6rem; font-weight:800; color:#ffffff; margin-bottom:1.25rem; line-height:1.35;">${item.title}</h2>
           
@@ -370,7 +390,7 @@
           <div class="section-title mains-title" style="font-size:0.85rem; margin-bottom:0.5rem; margin-top:1.25rem;">Mains Perspective</div>
           <div class="box mains-box" style="padding:1.15rem;">
             <p style="margin-bottom:0.75rem;"><strong>Context:</strong> ${item.mains_perspective.context || ''}</p>
-            <p style="margin-bottom:0.75rem;"><strong>Key Takeaways:</strong> ${item.mains_perspective.key_arguments || ''}</p>
+            <p style="margin-bottom:0.75rem;"><strong>Key Arguments:</strong> ${item.mains_perspective.key_arguments || ''}</p>
             <p><strong>Way Forward:</strong> ${item.mains_perspective.way_forward || ''}</p>
           </div>` : ''}
         </div>
@@ -411,24 +431,34 @@
 
     function handleSearch() { applyFilters(); }
 
-    /* UNIVERSAL MULTI-FIELD FUZZY SEARCH */
     function applyFilters() {
       const searchTerm = document.getElementById('search-input').value.toLowerCase().trim();
-      let filtered = allNews;
-
-      if (currentMode === 'SAVED') {
-        filtered = filtered.filter(item => savedBookmarks.includes(item.title));
+      
+      // Determine active target pool
+      let activePool = [];
+      if (currentMode === 'DAILY') {
+        activePool = dailyNews.length > 0 ? dailyNews : combinedPool;
+      } else if (currentMode === 'REPO') {
+        activePool = combinedPool;
+      } else if (currentMode === 'SAVED') {
+        activePool = combinedPool.filter(item => savedBookmarks.includes(item.title));
       }
 
+      // Filter by paper
       if (currentPaperFilter !== 'ALL') {
-        filtered = filtered.filter(item => item.paper === currentPaperFilter);
+        activePool = activePool.filter(item => item.paper === currentPaperFilter);
       }
 
+      // Universal Multi-Field Search
       if (searchTerm.length > 0) {
-        filtered = filtered.filter(item => {
+        // Automatically search full pool when searching in Daily mode
+        if (currentMode === 'DAILY') activePool = combinedPool;
+
+        activePool = activePool.filter(item => {
           const titleMatch = (item.title || '').toLowerCase().includes(searchTerm);
           const topicMatch = (item.topic || '').toLowerCase().includes(searchTerm);
           const paperMatch = (item.paper || '').toLowerCase().includes(searchTerm);
+          const staticMatch = (item.static_linkage || '').toLowerCase().includes(searchTerm);
           
           const prelimsMatch = item.prelims_pointers && item.prelims_pointers.some(p => p.toLowerCase().includes(searchTerm));
           
@@ -439,14 +469,14 @@
                          (item.mains_perspective.way_forward || '').toLowerCase().includes(searchTerm);
           }
 
-          return titleMatch || topicMatch || paperMatch || prelimsMatch || mainsMatch;
+          return titleMatch || topicMatch || paperMatch || staticMatch || prelimsMatch || mainsMatch;
         });
       }
 
-      renderNews(filtered);
+      renderNews(activePool);
     }
 
-    fetchNews();
+    fetchPayloads();
   </script>
 </body>
 </html>
