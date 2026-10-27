@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>UPSC Syllabus-Aligned Current Affairs</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="[https://cdn.tailwindcss.com](https://cdn.tailwindcss.com)"></script>
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen font-sans">
   <div class="max-w-6xl mx-auto px-4 py-8">
@@ -17,7 +17,7 @@
       </p>
     </header>
 
-    <!-- Navigation Tabs -->
+    <!-- Navigation Filter Buttons -->
     <div class="flex flex-wrap justify-center gap-2 mb-8" id="filter-buttons">
       <button onclick="filterNews('ALL')" class="filter-btn bg-sky-500 text-white px-4 py-2 rounded-lg font-medium text-sm transition">All Papers</button>
       <button onclick="filterNews('GS-1')" class="filter-btn bg-slate-800 hover:bg-slate-700 text-slate-300 px-4 py-2 rounded-lg font-medium text-sm transition">GS-1</button>
@@ -26,9 +26,17 @@
       <button onclick="filterNews('GS-4')" class="filter-btn bg-slate-800 hover:bg-slate-700 text-slate-300 px-4 py-2 rounded-lg font-medium text-sm transition">GS-4</button>
     </div>
 
-    <!-- Content Feed Container -->
+    <!-- Content Cards Container -->
     <div id="news-container" class="grid gap-6 md:grid-cols-2">
       <div class="col-span-full text-center py-12 text-slate-400">Loading daily current affairs...</div>
+    </div>
+  </div>
+
+  <!-- Detail Modal for Expanded View -->
+  <div id="detail-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50 overflow-y-auto">
+    <div class="bg-slate-800 border border-slate-700 rounded-2xl max-w-2xl w-full p-6 relative shadow-2xl">
+      <button onclick="closeModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-2xl font-bold">&times;</button>
+      <div id="modal-content"></div>
     </div>
   </div>
 
@@ -41,14 +49,9 @@
         const response = await fetch('./current_affairs.json?v=' + new Date().getTime());
         if (!response.ok) throw new Error('JSON file not found');
         allNews = await response.json();
-        
-        if (allNews.length === 0) {
-          container.innerHTML = `<div class="col-span-full text-center py-12 text-slate-400">No news items classified for today yet. Re-run the pipeline from GitHub Actions!</div>`;
-          return;
-        }
         renderNews(allNews);
       } catch (error) {
-        container.innerHTML = `<div class="col-span-full text-center py-12 text-rose-400">Error loading current affairs payload. Make sure current_affairs.json exists.</div>`;
+        container.innerHTML = `<div class="col-span-full text-center py-12 text-rose-400">Error loading current affairs payload.</div>`;
       }
     }
 
@@ -56,18 +59,25 @@
       const container = document.getElementById('news-container');
       container.innerHTML = '';
 
-      items.forEach(item => {
+      if (items.length === 0) {
+        container.innerHTML = `<div class="col-span-full text-center py-12 text-slate-400">No items available for this filter.</div>`;
+        return;
+      }
+
+      items.forEach((item, index) => {
         const prelimsList = (item.prelims_pointers || []).map(p => `<li class="mb-1">• ${p}</li>`).join('');
         
         const card = document.createElement('div');
-        card.className = "bg-slate-800 border border-slate-700 rounded-xl p-6 shadow-lg hover:border-slate-600 transition flex flex-col justify-between";
+        card.className = "bg-slate-800 border border-slate-700 hover:border-sky-500/50 cursor-pointer rounded-xl p-6 shadow-lg transition flex flex-col justify-between";
+        card.onclick = () => openModal(index);
+        
         card.innerHTML = `
           <div>
             <div class="flex items-center justify-between mb-3">
               <span class="bg-sky-500/20 text-sky-400 border border-sky-500/30 text-xs px-2.5 py-1 rounded-md font-semibold">${item.paper || 'GS'}</span>
               <span class="text-xs text-slate-400 bg-slate-700/50 px-2 py-1 rounded">${item.topic || 'General'}</span>
             </div>
-            <h2 class="text-xl font-semibold text-white mb-4">${item.title}</h2>
+            <h2 class="text-xl font-semibold text-white mb-4 hover:text-sky-400 transition">${item.title}</h2>
             
             <div class="mb-4">
               <h3 class="text-xs uppercase font-bold tracking-wider text-amber-400 mb-2">Prelims Pointers</h3>
@@ -84,9 +94,48 @@
               </div>
             </div>` : ''}
           </div>
+          <div class="mt-4 text-right">
+            <span class="text-xs text-sky-400 font-medium">Click card to expand view &rarr;</span>
+          </div>
         `;
         container.appendChild(card);
       });
+    }
+
+    function openModal(index) {
+      const item = allNews[index];
+      const modal = document.getElementById('detail-modal');
+      const modalContent = document.getElementById('modal-content');
+
+      const prelimsList = (item.prelims_pointers || []).map(p => `<li class="mb-2 text-slate-200">• ${p}</li>`).join('');
+
+      modalContent.innerHTML = `
+        <div class="flex items-center gap-2 mb-3">
+          <span class="bg-sky-500/20 text-sky-400 border border-sky-500/30 text-xs px-3 py-1 rounded-md font-semibold">${item.paper}</span>
+          <span class="text-xs text-slate-400 bg-slate-700 px-2.5 py-1 rounded">${item.topic}</span>
+        </div>
+        <h2 class="text-2xl font-bold text-white mb-6">${item.title}</h2>
+        
+        <div class="mb-6">
+          <h3 class="text-sm uppercase font-bold tracking-wider text-amber-400 mb-3">Prelims Pointers</h3>
+          <ul class="text-sm bg-slate-900 p-4 rounded-xl border border-slate-700/60">${prelimsList}</ul>
+        </div>
+
+        ${item.mains_perspective ? `
+        <div>
+          <h3 class="text-sm uppercase font-bold tracking-wider text-emerald-400 mb-3">Mains Perspective</h3>
+          <div class="bg-slate-900 p-4 rounded-xl border border-slate-700/60 space-y-3 text-sm text-slate-300">
+            <p><strong class="text-white">Context:</strong> ${item.mains_perspective.context || ''}</p>
+            <p><strong class="text-white">Key Takeaways:</strong> ${item.mains_perspective.key_arguments || ''}</p>
+            <p><strong class="text-white">Way Forward:</strong> ${item.mains_perspective.way_forward || ''}</p>
+          </div>
+        </div>` : ''}
+      `;
+      modal.classList.remove('hidden');
+    }
+
+    function closeModal() {
+      document.getElementById('detail-modal').classList.add('hidden');
     }
 
     function filterNews(paper) {
