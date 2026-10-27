@@ -35,9 +35,10 @@
     }
     .brand-group { display: flex; align-items: center; gap: 0.75rem; }
     .brand-icon {
-      width: 42px; height: 42px; background: linear-gradient(135deg, #0284c7, #38bdf8);
-      border-radius: 0.625rem; display: flex; align-items: center; justify-content: center;
-      box-shadow: 0 4px 12px rgba(2, 132, 199, 0.35);
+      width: 42px; height: 42px; border-radius: 0.625rem; overflow: hidden;
+      background: rgba(11, 15, 25, 0.9); border: 1px solid var(--border-color);
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3);
     }
     .brand-title { font-size: 1.3rem; font-weight: 800; color: #ffffff; letter-spacing: -0.01em; }
     .brand-sub { font-size: 0.75rem; color: #38bdf8; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
@@ -137,13 +138,8 @@
     <nav class="app-navbar">
       <div class="brand-group">
         <div class="brand-icon">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M16 3h5v5"></path>
-            <path d="M4 20L21 3"></path>
-            <path d="M21 16v5h-5"></path>
-            <path d="M15 15l6 6"></path>
-            <path d="M4 4l5 5"></path>
-          </svg>
+          <!-- Loads uploaded logo.png with automatic fallback if missing -->
+          <img src="./logo.png" alt="NexusGS" style="width:100%; height:100%; object-fit:contain;" onerror="this.onerror=null; this.parentNode.innerHTML='<svg width=\'22\' height=\'22\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'#38bdf8\' stroke-width=\'2.5\' stroke-linecap=\'round\' stroke-linejoin=\'round\'><path d=\'M16 3h5v5\'/><path d=\'M4 20L21 3\'/><path d=\'M21 16v5h-5\'/><path d=\'M15 15l6 6\'/><path d=\'M4 4l5 5\'/></svg>';" />
         </div>
         <div>
           <div class="brand-title">NexusGS</div>
@@ -161,14 +157,14 @@
 
     <div class="search-panel">
       <div class="search-row">
-        <input type="text" id="search-input" onkeyup="handleSearch()" class="search-box" placeholder="Search keywords across static linkages, committees, polity, economy..." />
+        <input type="text" id="search-input" onkeyup="handleSearch()" class="search-box" placeholder="Search keywords across static linkages, committees, nuclear, federalism..." />
       </div>
       
       <div class="filter-pills">
         <button onclick="filterPaper('ALL')" class="pill active">All Syllabus</button>
         <button onclick="filterPaper('GS-1')" class="pill">GS-1 Culture</button>
         <button onclick="filterPaper('GS-2')" class="pill">GS-2 Polity & IR</button>
-        <button onclick="filterPaper('GS-3')" class="pill">GS-3 Economy</button>
+        <button onclick="filterPaper('GS-3')" class="pill">GS-3 Economy & Tech</button>
         <button onclick="filterPaper('GS-4')" class="pill">GS-4 Ethics</button>
         <span id="match-count" class="search-stats"></span>
       </div>
@@ -234,6 +230,23 @@
   <script>
     const CORE_REPOSITORY = [
       {
+        "title": "India's Three-Stage Nuclear Power Programme & Civil Liability",
+        "paper": "GS-3",
+        "topic": "Science & Tech - Energy Security",
+        "static_linkage": "Nuclear Energy Policy",
+        "date": "2026-10",
+        "image": "https://images.unsplash.com/photo-1563986768609-322da13575f3?w=800&auto=format&fit=crop&q=60",
+        "prelims_pointers": [
+          "Stage I uses PHWRs; Stage II uses Fast Breeder Reactors (FBR); Stage III utilizes Thorium-Uranium-233 cycle.",
+          "Civil Liability for Nuclear Damage Act (CLNDA), 2010 mandates operator liability while balancing supplier recourse."
+        ],
+        "mains_perspective": {
+          "context": "Expanding base-load clean energy capacity to meet net-zero targets while ensuring energy autonomy.",
+          "key_arguments": "India possesses world-class thorium reserves, making Stage III critical for long-term energy security, though commercial scaling remains technologically challenging.",
+          "way_forward": "Foster public-private research partnerships and streamline nuclear insurance frameworks to attract advanced reactor technology."
+        }
+      },
+      {
         "title": "Cooperative Federalism vs. Aggressive Fiscal Centralization",
         "paper": "GS-2",
         "topic": "Indian Polity & Federal Structure",
@@ -246,8 +259,8 @@
           "Sarkaria and Punchhi Commissions examined the strengthening of cooperative federalism."
         ],
         "mains_perspective": {
-          "context": "Rising friction between the Union and opposition-ruled states over cess/surcharges, Governor's role, and legislative incursions.",
-          "key_arguments": "Excessive reliance on cesses dilutes the divisible pool of taxes under the Finance Commission recommendations, starving states of fiscal autonomy.",
+          "context": "Rising friction between the Union and states over cess/surcharges, Governor's role, and legislative incursions.",
+          "key_arguments": "Excessive reliance on cesses dilutes the divisible pool of taxes under Finance Commission recommendations, starving states of fiscal autonomy.",
           "way_forward": "Institutionalize regular meetings of the Inter-State Council and adhere strictly to Sarkaria Commission guidelines on gubernatorial discretion."
         }
       },
@@ -317,23 +330,6 @@
           "context": "Navigating the tension between political executive directives, professional neutrality, and adherence to constitutional conscience.",
           "key_arguments": "Anonymity and neutrality are often compromised by systemic political pressure and lack of statutory job security.",
           "way_forward": "Implement 2nd ARC recommendations: establish Civil Services Boards for transparent postings and operationalize robust whistleblower safeguards."
-        }
-      },
-      {
-        "title": "Internal Security Challenges: Left Wing Extremism (LWE) & Nexus",
-        "paper": "GS-3",
-        "topic": "Internal Security & Border Management",
-        "static_linkage": "Security Challenges in Border Areas",
-        "date": "2026-10",
-        "image": "https://images.unsplash.com/photo-1557804506-669a67965ba0?w=800&auto=format&fit=crop&q=60",
-        "prelims_pointers": [
-          "Security Related Expenditure (SRE) scheme assists LWE-affected states.",
-          "Aspirational Districts Programme targets socio-economic backwardness in LWE corridors."
-        ],
-        "mains_perspective": {
-          "context": "Geographical shrinking of LWE influence accompanied by challenges in developmental governance in remote pockets.",
-          "key_arguments": "Kinetic military operations alone cannot resolve an ideological conflict rooted in land alienation and tribal marginalization.",
-          "way_forward": "Combine security dominance with aggressive infrastructure push (roads, mobile connectivity) and land rights regularization under FRA, 2006."
         }
       }
     ];
@@ -461,7 +457,7 @@
       document.getElementById('match-count').textContent = `${items.length} Modules`;
 
       if (!items || items.length === 0) {
-        container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 4rem 0;">No matching modules found in repository.</div>`;
+        container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 4rem 0;">No matching modules found in repository. Try searching for terms like 'Nuclear', 'Federalism', 'AI', or 'UCC'.</div>`;
         return;
       }
 
