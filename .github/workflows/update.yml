@@ -1,9 +1,12 @@
 name: UPSC Current Affairs Daily Pipeline
 
 on:
+  push:
+    branches:
+      - main
   schedule:
-    - cron: '0 2 * * *' # Runs every day at 02:00 UTC
-  workflow_dispatch:
+    - cron: '0 2 * * *'   # Runs automatically at 7:30 AM IST
+  workflow_dispatch:      # Allows manual trigger if needed
 
 jobs:
   run-pipeline:
@@ -27,9 +30,9 @@ jobs:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: python fetch_and_classify.py
 
-      - name: Commit and push generated JSON payload
+      - name: Commit and push updated current affairs payload
         run: |
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-          git add -A
+          git add current_affairs.json
           git diff-index --quiet HEAD || (git commit -m "Auto-update UPSC current affairs [skip ci]" && git push)
