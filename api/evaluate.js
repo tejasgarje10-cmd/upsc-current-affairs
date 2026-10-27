@@ -16,14 +16,14 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: 'Search term is required' });
       }
 
-      const prompt = `Act as an elite UPSC civil services expert and master curriculum author. A student searched for the topic "${searchTerm}" in the NexusGS open-source Wikipedia repository. 
-      Generate a comprehensive, publication-grade study article for this exact topic tailored for UPSC Civil Services (GS-1, GS-2, GS-3, or GS-4).
+      const prompt = `Act as an elite UPSC civil services expert and master curriculum author. A student searched for the topic "${searchTerm}" in the NexusGS Wikipedia repository. 
+      Generate a comprehensive, publication-grade study article for this exact topic tailored for UPSC Civil Services.
       
-      Return ONLY valid raw JSON matching this exact structure, with no extra markdown formatting blocks:
+      Return ONLY valid raw JSON matching this exact structure, with no markdown code blocks or extra text:
       {
         "title": "A precise, professional title for ${searchTerm}",
-        "paper": "GS-2",
-        "topic": "General Syllabus Subtopic",
+        "paper": "GS-3",
+        "topic": "Economy & Growth",
         "static_linkage": "Core constitutional article, statutory body, or theoretical framework",
         "date": "2026-10",
         "image": "https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&auto=format&fit=crop&q=60",
@@ -64,7 +64,7 @@ export default async function handler(req, res) {
     Paper: ${paper}
     Marker Type: ${markerType}
     
-    Provide rigorous, constructive feedback following standard UPSC evaluation parameters (Introduction, Core Body structure, Multidimensional Analysis, Keywords/Committees used, and Conclusion/Way Forward), along with an estimated score out of 10 or 15. Format your output cleanly with HTML tags or clear headings.`;
+    Provide rigorous, constructive feedback following standard UPSC evaluation parameters (Introduction, Core Body structure, Multidimensional Analysis, Keywords/Committees used, and Conclusion/Way Forward), along with an estimated score out of 10 or 15.`;
 
     const imagePart = {
       inlineData: {
