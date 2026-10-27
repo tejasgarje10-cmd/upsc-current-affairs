@@ -2,57 +2,61 @@
   {
     "title": "Preservation of Chhatrapati Shivaji Maharaj Forts & Maratha Military Landscapes",
     "paper": "GS-1",
-    "topic": "Indian Culture, Art & Heritage Conservation",
+    "topic": "Culture & Heritage Conservation",
+    "date": "2026-10-27",
     "prelims_pointers": [
-      "Maratha Military Landscapes of India were nominated for UNESCO World Heritage recognition.",
-      "Archaeological Survey of India (ASI) under the Ministry of Culture oversees central heritage site restoration."
+      "Maratha Military Landscapes nominated for UNESCO World Heritage status.",
+      "Archaeological Survey of India (ASI) oversees national fortress restoration."
     ],
     "mains_perspective": {
-      "context": "Strategic efforts to preserve 17th-century coastal and hill fortresses across Maharashtra and Southern India.",
-      "key_arguments": "Balancing heritage tourism with environmental preservation while building local eco-tourism livelihoods.",
-      "way_forward": "Incorporate community-led conservation frameworks and modern architectural stabilization techniques."
+      "context": "Strategic conservation of 17th-century coastal and hill fortresses.",
+      "key_arguments": "Balancing heritage tourism with environmental preservation.",
+      "way_forward": "Incorporate community-led eco-tourism frameworks."
     }
   },
   {
-    "title": "Sardar Patel Memorial Lecture & Agriculture Governance Directions",
+    "title": "Sardar Patel Memorial Lecture & Agriculture Policy Directions",
     "paper": "GS-2",
-    "topic": "Governance, Statutory Bodies & Agriculture Policy",
+    "topic": "Governance & Agriculture Policy",
+    "date": "2026-10-27",
     "prelims_pointers": [
-      "Sardar Patel Memorial Lecture is organized annually by Prasar Bharati (All India Radio).",
-      "Focuses on policy frameworks for sustainable agricultural growth, cooperative federalism, and farmer welfare."
+      "Sardar Patel Memorial Lecture organized annually by Prasar Bharati.",
+      "Focuses on policy frameworks for sustainable agricultural growth."
     ],
     "mains_perspective": {
-      "context": "Evaluating structural reforms required in agricultural supply chains and institutional price stabilization.",
-      "key_arguments": "Necessity to shift towards high-value agriculture, micro-irrigation, and decentralized cold-storage infrastructure.",
-      "way_forward": "Strengthen Farmer Producer Organizations (FPOs) and streamline digital agricultural market access."
+      "context": "Evaluating structural reforms in agricultural supply chains.",
+      "key_arguments": "Transitioning towards high-value agriculture and micro-irrigation.",
+      "way_forward": "Strengthen Farmer Producer Organizations (FPOs)."
     }
   },
   {
     "title": "Digital Public Infrastructure and Sovereign AI Stack Integration",
     "paper": "GS-3",
-    "topic": "Digital Infrastructure, AI Stack & Tech Governance",
+    "topic": "Digital Tech & Tech Governance",
+    "date": "2026-10-27",
     "prelims_pointers": [
-      "India Stack includes Aadhaar, UPI, and DigiLocker as open-standard API infrastructure layers.",
-      "Ministry of Electronics and Information Technology (MeitY) acts as the nodal agency for the IndiaAI Mission."
+      "India Stack includes Aadhaar, UPI, and DigiLocker as open APIs.",
+      "MeitY acts as nodal agency for National AI Mission."
     ],
     "mains_perspective": {
-      "context": "Expanding DPI architecture beyond fintech into digital agriculture, healthcare diagnostics, and sovereign AI compute.",
-      "key_arguments": "Democratizes access to public services while incentivizing domestic technology manufacturing and data sovereignty.",
-      "way_forward": "Enforce strict data governance, secure cybersecurity protocols, and roll out high-speed rural digital connectivity."
+      "context": "Expanding DPI architecture into healthcare, agriculture, and AI.",
+      "key_arguments": "Democratizes access while building domestic AI compute capacity.",
+      "way_forward": "Enforce strict data governance and broadband expansion."
     }
   },
   {
     "title": "Ethical Frameworks in Public Administration and Probity in Governance",
     "paper": "GS-4",
-    "topic": "Public Service Values, Ethics & Probity in Governance",
+    "topic": "Ethics & Probity in Governance",
+    "date": "2026-10-27",
     "prelims_pointers": [
-      "Civil Services Code of Conduct guidelines emphasize neutrality, integrity, and non-partisanship.",
-      "2nd Administrative Reforms Commission (ARC) Report 4 deals specifically with Ethics in Governance."
+      "Code of Conduct guidelines emphasize neutrality and integrity.",
+      "2nd ARC Report 4 deals with Ethics in Governance."
     ],
     "mains_perspective": {
-      "context": "Establishing transparent decision-making systems and institutional safeguards against administrative corruption.",
-      "key_arguments": "Proactive disclosure under RTI and citizen charters reinforce public trust in executive administration.",
-      "way_forward": "Implement mandatory e-governance audits, whistleblower protections, and value-based training modules for civil servants."
+      "context": "Establishing transparent decision-making systems in administration.",
+      "key_arguments": "Proactive disclosure under RTI reinforces public trust.",
+      "way_forward": "Implement mandatory e-governance audits and whistleblower protection."
     }
   }
 ]
