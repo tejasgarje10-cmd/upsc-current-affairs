@@ -4,14 +4,14 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-  <title>NexusGS Workspace & Vision Evaluator</title>
+  <title>NexusGS - UPSC Knowledge Wiki</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     
     :root {
       --bg-gradient: linear-gradient(135deg, #090d16 0%, #111827 50%, #0b0f19 100%);
-      --surface-glass: rgba(17, 24, 39, 0.8);
-      --border-color: rgba(55, 65, 81, 0.5);
+      --surface-glass: rgba(17, 24, 39, 0.85);
+      --border-color: rgba(55, 65, 81, 0.6);
       --text-main: #f3f4f6;
       --text-muted: #9ca3af;
       
@@ -26,7 +26,7 @@
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       min-height: 100vh; padding: 1.5rem 1rem; line-height: 1.5;
     }
-    .container { max-width: 1240px; margin: 0 auto; }
+    .container { max-width: 1280px; margin: 0 auto; }
     
     .app-navbar {
       display: flex; justify-content: space-between; align-items: center;
@@ -115,17 +115,17 @@
     .expand-hint { text-align: right; font-size: 0.775rem; color: #38bdf8; margin-top: 0.5rem; font-weight: 600; }
 
     .modal-overlay {
-      position: fixed; inset: 0; background: rgba(3, 7, 18, 0.85); backdrop-filter: blur(8px);
+      position: fixed; inset: 0; background: rgba(3, 7, 18, 0.88); backdrop-filter: blur(8px);
       display: none; align-items: center; justify-content: center; padding: 1rem; z-index: 100;
     }
     .modal-overlay.active { display: flex; }
     .modal-body {
       background: #111827; border: 1px solid var(--border-color); border-radius: 1.25rem;
-      max-width: 740px; width: 100%; position: relative; max-height: 85vh; overflow-y: auto; overflow-x: hidden;
+      max-width: 800px; width: 100%; position: relative; max-height: 88vh; overflow-y: auto; overflow-x: hidden;
     }
-    .modal-padding { padding: 1.75rem; }
+    .modal-padding { padding: 2rem; }
     .close-btn {
-      position: absolute; top: 1.25rem; right: 1.25rem; background: rgba(31, 41, 55, 0.8); border: 1px solid var(--border-color);
+      position: absolute; top: 1.25rem; right: 1.25rem; background: rgba(31, 41, 55, 0.9); border: 1px solid var(--border-color);
       color: #ffffff; width: 36px; height: 36px; border-radius: 50%; font-size: 1.25rem; cursor: pointer;
       display: flex; align-items: center; justify-content: center; z-index: 10;
     }
@@ -144,14 +144,14 @@
           <img src="./logo.png" alt="NexusGS" style="width:100%; height:100%; object-fit:contain;" onerror="this.onerror=null; this.parentNode.innerHTML='<svg width=\'22\' height=\'22\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'#38bdf8\' stroke-width=\'2.5\' stroke-linecap=\'round\' stroke-linejoin=\'round\'><path d=\'M16 3h5v5\'/><path d=\'M4 20L21 3\'/><path d=\'M21 16v5h-5\'/><path d=\'M15 15l6 6\'/><path d=\'M4 4l5 5\'/></svg>';" />
         </div>
         <div>
-          <div class="brand-title">NexusGS</div>
-          <div class="brand-sub">UPSC Knowledge Base & Vision Grader</div>
+          <div class="brand-title">NexusGS Wiki</div>
+          <div class="brand-sub">UPSC Static & Dynamic Knowledge Base</div>
         </div>
       </div>
 
       <div class="nav-actions">
         <button onclick="switchViewMode('DAILY')" id="tab-daily" class="mode-tab active">📰 Feed</button>
-        <button onclick="switchViewMode('REPO')" id="tab-repo" class="mode-tab">📚 Repository</button>
+        <button onclick="switchViewMode('REPO')" id="tab-repo" class="mode-tab">📚 Wiki Repository</button>
         <button onclick="switchViewMode('SAVED')" id="tab-saved" class="mode-tab">⭐ Saved</button>
         <button onclick="openEvaluator()" class="btn-eval">📸 AI Vision Grader</button>
       </div>
@@ -159,7 +159,7 @@
 
     <div class="search-panel">
       <div class="search-row">
-        <input type="text" id="search-input" onkeyup="handleSearch()" class="search-box" placeholder="Search open-source repository (e.g. nuclear, federalism, ethics, economy)..." />
+        <input type="text" id="search-input" onkeyup="handleSearch()" class="search-box" placeholder="Search Wikipedia knowledge base (e.g., Federalism, AI, RBI, Temple, Ethics, LWE)..." />
       </div>
       
       <!-- Paper Filter Row -->
@@ -177,11 +177,13 @@
 
       <!-- Granular Subtopic Filter Row -->
       <div class="filter-section" style="margin-top: 0.75rem;">
-        <span class="filter-label">Subtopic Master Portals:</span>
+        <span class="filter-label">Wiki Subtopics:</span>
         <div class="filter-pills" id="subtopic-pills">
           <button onclick="filterSubtopic('ALL')" class="pill active">All Subtopics</button>
           <button onclick="filterSubtopic('Art & Culture')" class="pill">Art & Culture</button>
+          <button onclick="filterSubtopic('Indian Society')" class="pill">Indian Society</button>
           <button onclick="filterSubtopic('Polity & Federalism')" class="pill">Polity & Federalism</button>
+          <button onclick="filterSubtopic('International Relations')" class="pill">International Relations</button>
           <button onclick="filterSubtopic('Economy & Growth')" class="pill">Economy & Growth</button>
           <button onclick="filterSubtopic('Science & Tech')" class="pill">Science & Tech</button>
           <button onclick="filterSubtopic('Internal Security')" class="pill">Internal Security</button>
@@ -246,8 +248,8 @@
   </div>
 
   <script>
-    // Comprehensive Multi-Article Master Repository Covering All Subtopics
-    const MASTER_REPOSITORY = [
+    // Massive Wiki Knowledge Base (Static Consolidation + Dynamic Current Affairs)
+    const WIKI_REPOSITORY = [
       {
         "title": "Maratha Military Landscapes & UNESCO World Heritage Conservation",
         "paper": "GS-1",
@@ -280,6 +282,23 @@
           "context": "Understanding religious architecture as a reflection of socio-political patronage and regional integration.",
           "key_arguments": "Temple complexes served not only as places of worship but as economic hubs, employers, and centers of classical arts.",
           "way_forward": "Promote digital archiving of temple inscriptions and structural mapping to prevent archaeological degradation."
+        }
+      },
+      {
+        "title": "Indian Society: Regionalism, Communalism & Social Capital",
+        "paper": "GS-1",
+        "topic": "Indian Society",
+        "static_linkage": "Salient Features of Indian Society & Diversity",
+        "date": "2026-10",
+        "image": "https://images.unsplash.com/photo-1532375810709-75b1da00537c?w=800&auto=format&fit=crop&q=60",
+        "prelims_pointers": [
+          "India's unity in diversity is safeguarded under the Basic Structure doctrine of the Constitution.",
+          "Secularism in the Indian context implies 'Sarva Dharma Sambhava' (equal respect for all religions)."
+        ],
+        "mains_perspective": {
+          "context": "Rising instances of sub-national regionalism and identity politics challenging national cohesion.",
+          "key_arguments": "Uneven regional economic development and cultural alienation often fuel militant regionalism.",
+          "way_forward": "Strengthen institutional mechanisms like the Zonal Councils and promote equitable resource distribution to bridge regional disparities."
         }
       },
       {
@@ -318,10 +337,27 @@
         }
       },
       {
+        "title": "UNCLOS & Indo-Pacific Maritime Security Architecture",
+        "paper": "GS-2",
+        "topic": "International Relations",
+        "static_linkage": "India and Neighborhood- Bilateral Relations",
+        "date": "2026-10",
+        "image": "https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?w=800&auto=format&fit=crop&q=60",
+        "prelims_pointers": [
+          "UNCLOS establishes territorial waters (12 NM) and Exclusive Economic Zones (EEZ up to 200 NM).",
+          "India's SAGAR (Security and Growth for All in the Region) doctrine guides regional maritime cooperation."
+        ],
+        "mains_perspective": {
+          "context": "Assertive naval expansion and gray-zone tactics in critical sea lanes threatening freedom of navigation.",
+          "key_arguments": "Rules-based maritime order is essential for global supply chain security and energy transit.",
+          "way_forward": "Deepen intelligence sharing through Quad mechanisms and build indigenous naval shipbuilding capabilities in friendly littoral nations."
+        }
+      },
+      {
         "title": "India's Three-Stage Nuclear Power Programme & Civil Liability",
         "paper": "GS-3",
         "topic": "Science & Tech",
-        "static_linkage": "Nuclear Energy Policy",
+        "static_linkage": "Nuclear Energy Policy & Tech",
         "date": "2026-10",
         "image": "https://images.unsplash.com/photo-1563986768609-322da13575f3?w=800&auto=format&fit=crop&q=60",
         "prelims_pointers": [
@@ -491,10 +527,10 @@
       const container = document.getElementById('news-container');
       bannerContainer.innerHTML = ''; 
       container.innerHTML = '';
-      document.getElementById('match-count').textContent = `${items.length} Modules`;
+      document.getElementById('match-count').textContent = `${items.length} Wiki Articles`;
 
       if (!items || items.length === 0) {
-        container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 4rem 0;">No matching modules found in repository. Try searching for terms like 'Nuclear', 'Federalism', 'Ethics', or 'Economy'.</div>`;
+        container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 4rem 0;">No articles found matching this topic in the knowledge base. Try searching keywords like 'Nuclear', 'Federalism', 'Ethics', or 'Economy'.</div>`;
         return;
       }
 
@@ -514,7 +550,7 @@
               <div class="card-header">
                 <span class="badge badge-${paperTag}">${paperTag}</span>
                 <span class="badge-date">${item.date || '2026-10'}</span>
-                <span class="badge-topic" onclick="event.stopPropagation(); triggerSubtopicFilter('${topicName}')" title="Click to view all articles in this subtopic">${topicName}</span>
+                <span class="badge-topic" onclick="event.stopPropagation(); triggerSubtopicFilter('${topicName}')" title="Click to view wiki portal for this topic">${topicName}</span>
               </div>
               <h2 class="card-title">${item.title}</h2>
               <div class="section-title prelims-title">Prelims Pointers</div>
@@ -529,7 +565,7 @@
             </div>
             <div style="display:flex; justify-content:space-between; align-items:center; margin-top:0.5rem;">
               <button onclick="toggleBookmark(event, '${(item.title || '').replace(/'/g, "\\'")}')" class="mode-tab" style="padding:0.3rem 0.6rem; font-size:0.75rem;">${isSaved ? '⭐ Saved' : '☆ Save'}</button>
-              <div class="expand-hint">Complete Guide &rarr;</div>
+              <div class="expand-hint">Read Wiki Article &rarr;</div>
             </div>
           </div>
         `;
@@ -542,21 +578,21 @@
       const paperTag = item.paper || 'GS-2';
       const prelimsList = (item.prelims_pointers || []).map(p => `<li style="margin-bottom:0.5rem;">• ${p}</li>`).join('');
       document.getElementById('modal-content').innerHTML = `
-        <div style="height:200px; overflow:hidden;"><img src="${item.image || fallbackImages[paperTag]}" style="width:100%; height:100%; object-fit:cover;" onerror="handleImgError(this, '${paperTag}')" /></div>
+        <div style="height:220px; overflow:hidden;"><img src="${item.image || fallbackImages[paperTag]}" style="width:100%; height:100%; object-fit:cover;" onerror="handleImgError(this, '${paperTag}')" /></div>
         <div class="modal-padding">
           <div style="display:flex; gap:0.4rem; align-items:center; flex-wrap:wrap; margin-bottom:0.75rem;">
             <span class="badge badge-${paperTag}">${paperTag}</span>
             <span class="badge-date">${item.date || '2026-10'}</span>
             <span class="badge-topic" onclick="event.stopPropagation(); closeModal(); triggerSubtopicFilter('${item.topic || ''}')">${item.topic || item.static_linkage || ''}</span>
           </div>
-          <h2 style="font-size:1.5rem; font-weight:800; color:#fff; margin-bottom:1rem;">${item.title}</h2>
+          <h2 style="font-size:1.6rem; font-weight:800; color:#fff; margin-bottom:1rem; line-height:1.3;">${item.title}</h2>
           <div class="section-title prelims-title">Prelims Pointers</div>
           <div class="box" style="padding:1rem;"><ul>${prelimsList}</ul></div>
           ${item.mains_perspective ? `
-          <div class="section-title mains-title" style="margin-top:1rem;">Mains Perspective</div>
+          <div class="section-title mains-title" style="margin-top:1.25rem;">Mains Multidimensional Perspective</div>
           <div class="box mains-box" style="padding:1rem;">
-            <p style="margin-bottom:0.5rem;"><strong>Context:</strong> ${item.mains_perspective.context}</p>
-            <p style="margin-bottom:0.5rem;"><strong>Key Arguments:</strong> ${item.mains_perspective.key_arguments}</p>
+            <p style="margin-bottom:0.75rem;"><strong>Context:</strong> ${item.mains_perspective.context}</p>
+            <p style="margin-bottom:0.75rem;"><strong>Key Arguments:</strong> ${item.mains_perspective.key_arguments}</p>
             <p><strong>Way Forward:</strong> ${item.mains_perspective.way_forward}</p>
           </div>` : ''}
         </div>
@@ -590,7 +626,7 @@
 
     function applyFilters() {
       const searchTerm = document.getElementById('search-input').value.toLowerCase().trim();
-      let activePool = MASTER_REPOSITORY;
+      let activePool = WIKI_REPOSITORY;
 
       if (currentMode === 'SAVED') {
         activePool = activePool.filter(item => savedBookmarks.includes(item.title));
