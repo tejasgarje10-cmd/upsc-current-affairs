@@ -6,8 +6,8 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <title>NexusGS - UPSC Knowledge Wiki</title>
   
-  <!-- Clerk Frontend SDK -->
-  <script async crossorigin="anonymous" data-clerk-publishable-key="YOUR_CLERK_PUBLISHABLE_KEY" src="https://cdn.jsdelivr.net/npm/@clerk/clerk-js@latest/dist/clerk.browser.js"></script>
+  <!-- Clerk Frontend SDK with your Publishable Key -->
+  <script async crossorigin="anonymous" data-clerk-publishable-key="pk_test_bmVhdC1tYW4tMzI4Mi5jbGVyay5hY2NvdW50cy5kZXYk" src="https://cdn.jsdelivr.net/npm/@clerk/clerk-js@latest/dist/clerk.browser.js"></script>
 
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -268,10 +268,8 @@
         const authContainer = document.getElementById('auth-container');
         
         if (window.Clerk.user) {
-          // User is signed in, show User Button
           window.Clerk.mountUserButton(authContainer);
         } else {
-          // User is signed out, show Sign In button
           authContainer.innerHTML = `<button onclick="window.Clerk.openSignIn()" class="mode-tab" style="background:#0284c7; color:#fff; border-color:#38bdf8;">Sign In</button>`;
         }
       }
