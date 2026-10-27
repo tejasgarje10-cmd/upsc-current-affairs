@@ -56,7 +56,6 @@ function applyFilters() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Failed to generate article');
 
-      // Add newly generated article to repository pool and open it instantly
       MASTER_REPOSITORY.unshift(data.article);
       applyFilters();
       openModal(data.article);
