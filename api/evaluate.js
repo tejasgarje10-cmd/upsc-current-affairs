@@ -16,11 +16,11 @@ export default async function handler(req, res) {
     const ai = new GoogleGenAI({ apiKey });
     const modelName = 'gemini-2.0-flash';
 
-    // 1. Bulk Daily Current Affairs Synthesis (Generates comprehensive multi-news feed)
+    // 1. Bulk Daily Current Affairs Synthesis
     if (action === 'generateDailyBatch') {
       const prompt = `You are a senior UPSC Civil Services examination expert and current affairs director at a premier Delhi institute. 
-      Generate a comprehensive batch of at least 8 to 10 distinct, high-yield current affairs articles covering recent national policy changes, international relations, economic shifts, scientific breakthroughs, and governance issues.
-      Return ONLY a valid JSON array (no markdown formatting blocks like \`\`\`json) matching this exact schema:
+      Generate a comprehensive batch of exactly 8 distinct, high-yield current affairs articles covering recent national policy changes, international relations, economic shifts, scientific breakthroughs, and governance issues spanning GS-1, GS-2, GS-3, and GS-4.
+      Return ONLY a valid JSON array (no markdown code blocks, no backticks) matching this exact schema:
       [
         {
           "title": "Precise UPSC-grade title",
@@ -28,10 +28,10 @@ export default async function handler(req, res) {
           "date": "2026-10",
           "topic": "Polity & Federalism",
           "static_linkage": "Constitutional Framework & Evolution",
-          "prelims_pointers": ["Point 1 with exact factual detail", "Point 2 with constitutional/economic article or data reference", "Point 3"],
+          "prelims_pointers": ["Point 1 with factual detail", "Point 2 with reference", "Point 3"],
           "mains_perspective": {
             "context": "Comprehensive analytical context background for civil services mains.",
-            "key_arguments": "Multi-dimensional arguments covering social, economic, political, and administrative angles.",
+            "key_arguments": "Multi-dimensional arguments covering social, economic, political angles.",
             "way_forward": "Actionable administrative and policy recommendations."
           },
           "image": "https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?w=800&auto=format&fit=crop&q=60"
@@ -56,7 +56,7 @@ export default async function handler(req, res) {
       if (!searchTerm) return res.status(400).json({ error: 'Search term is required.' });
 
       const prompt = `You are a senior UPSC Civil Services examination expert. Synthesize a comprehensive, Wikipedia-grade study article for the topic: "${searchTerm}".
-      Return ONLY a valid JSON object (no markdown formatting blocks like \`\`\`json) matching this exact schema:
+      Return ONLY a valid JSON object (no markdown code blocks, no backticks) matching this exact schema:
       {
         "article": {
           "title": "Precise UPSC-grade title",
@@ -99,16 +99,16 @@ export default async function handler(req, res) {
       };
 
       const evalPrompt = `You are an expert UPSC Civil Services Mains Evaluator at a premier Delhi institute. 
-      Examine this handwritten student answer sheet for the following parameters:
+      Examine this handwritten student answer sheet for:
       - Paper: ${paper || 'GS-2'}
       - Marker Type: ${markerType || '15-Marker (250 Words)'}
       - Question: "${question}"
 
       Provide rigorous, structured feedback:
-      1. Structure & Introduction (Demand of the question addressed?)
-      2. Body Content & Multidimensional Arguments (Political, Economic, Social, Ethical angles)
+      1. Structure & Introduction
+      2. Body Content & Multidimensional Arguments
       3. Handwriting & Presentation Legibility
-      4. Scope for Improvement & Model Keywords to Include
+      4. Scope for Improvement & Model Keywords
       5. Estimated Score out of 10 or 15.`;
 
       const response = await ai.models.generateContent({
