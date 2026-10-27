@@ -37,22 +37,35 @@ module.exports = async function handler(req, res) {
       cleanBase64 = imageBase64.split(',')[1];
     }
 
-    const response = await ai.models.generateContent({
-      model: 'gemini-3.8-flash',
-      contents: [
-        { text: prompt },
-        { 
-          inlineData: { 
-            mimeType: mimeType || 'image/jpeg', 
-            data: cleanBase64 
-          } 
-        }
-      ],
-    });
+    const contents = [
+      { text: prompt },
+      { 
+        inlineData: { 
+          mimeType: mimeType || 'image/jpeg', 
+          data: cleanBase64 
+        } 
+      }
+    ];
+
+    let response;
+    try {
+      // Try primary model
+      response = await ai.models.generateContent({
+        model: 'gemini-3.8-flash',
+        contents: contents,
+      });
+    } catch (primaryErr) {
+      console.warn("Primary model busy, switching to fallback gemini-3.6-flash...", primaryErr);
+      // Automatic fallback to secondary stable model if high demand occurs
+      response = await ai.models.generateContent({
+        model: 'gemini-3.6-flash',
+        contents: contents,
+      });
+    }
 
     return res.status(200).json({ feedback: response.text });
   } catch (error) {
     console.error("Gemini Vision Error:", error);
-    return res.status(500).json({ error: error.message || 'Failed to evaluate answer.' });
+    return res.status(500).json({ error: error.message || 'Failed to evaluate answer. Please try again.' });
   }
 };
