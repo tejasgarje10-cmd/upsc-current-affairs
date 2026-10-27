@@ -57,6 +57,13 @@
     }
     .btn-eval:hover { background: rgba(168, 85, 247, 0.35); }
 
+    .btn-pro {
+      background: linear-gradient(135deg, #f59e0b, #d97706); color: #fff; border: none;
+      padding: 0.5rem 1rem; border-radius: 0.5rem; cursor: pointer; font-size: 0.85rem; font-weight: 700;
+      box-shadow: 0 4px 10px rgba(245, 158, 11, 0.3);
+    }
+    .btn-pro:hover { filter: brightness(1.1); }
+
     .search-panel {
       background: var(--surface-glass); border: 1px solid var(--border-color);
       padding: 1.25rem; border-radius: 1rem; margin-bottom: 2rem; backdrop-filter: blur(12px);
@@ -79,7 +86,7 @@
     .pill:hover { background: #374151; color: #fff; }
     .pill.active { background: #0284c7; color: #fff; border-color: #38bdf8; }
 
-    .search-stats { font-size: 0.8rem; color: #38bdf8; font-weight: 600; margin-left: auto; }
+    .search-stats { font-size: 0.8rem; color: #38bdf8; font-weight: 600; margin-left: auto; display: flex; gap: 1rem; align-items: center; }
 
     .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 1.75rem; }
     .card {
@@ -154,6 +161,7 @@
         <button onclick="switchViewMode('REPO')" id="tab-repo" class="mode-tab">📚 Wiki Repository</button>
         <button onclick="switchViewMode('SAVED')" id="tab-saved" class="mode-tab">⭐ Saved</button>
         <button onclick="openEvaluator()" class="btn-eval">📸 AI Vision Grader</button>
+        <button onclick="openProModal()" class="btn-pro">⚡ Upgrade to Pro</button>
         <div id="auth-nav-container">
           <button onclick="openAuthModal()" class="mode-tab" style="background:#0284c7; color:#fff; border-color:#38bdf8;">👤 Sign In</button>
         </div>
@@ -174,7 +182,10 @@
           <button onclick="filterPaper('GS-2')" class="pill">GS-2</button>
           <button onclick="filterPaper('GS-3')" class="pill">GS-3</button>
           <button onclick="filterPaper('GS-4')" class="pill">GS-4</button>
-          <span id="match-count" class="search-stats"></span>
+          <div class="search-stats">
+            <span id="credit-badge" style="color: #f59e0b; background: rgba(245,158,11,0.15); padding: 0.2rem 0.6rem; border-radius: 0.3rem; border: 1px solid rgba(245,158,11,0.3);">⚡ Free AI Credits: 2/2</span>
+            <span id="match-count"></span>
+          </div>
         </div>
       </div>
 
@@ -250,6 +261,26 @@
     </div>
   </div>
 
+  <!-- Upgrade to Pro Modal -->
+  <div id="pro-modal" class="modal-overlay" onclick="closeProModal(event)">
+    <div class="modal-body" onclick="event.stopPropagation()" style="max-width: 440px; text-align: center;">
+      <button onclick="closeProModal()" class="close-btn">&times;</button>
+      <div class="modal-padding">
+        <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">⚡</div>
+        <h2 style="font-size: 1.5rem; font-weight: 800; color: #fff; margin-bottom: 0.5rem;">Upgrade to NexusGS Pro</h2>
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.5rem;">Unlock unlimited AI Wikipedia article generation, unlimited handwriting answer evaluations, and priority scoring.</p>
+        
+        <div style="background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 0.75rem; padding: 1rem; margin-bottom: 1.5rem;">
+          <div style="font-size: 1.5rem; font-weight: 800; color: #fbbf24;">₹199 <span style="font-size: 0.8rem; font-weight: 400; color: var(--text-muted);">/ month</span></div>
+          <div style="font-size: 0.75rem; color: #34d399; margin-top: 0.3rem;">✓ Cancel anytime • Instant activation</div>
+        </div>
+
+        <button onclick="simulateProUpgrade()" class="btn-pro" style="width: 100%; padding: 0.85rem; font-size: 1rem; margin-bottom: 0.75rem;">Unlock Pro Access Now</button>
+        <button onclick="resetCreditsForTesting()" style="background: none; border: none; color: var(--text-muted); font-size: 0.75rem; cursor: pointer; text-decoration: underline;">Test: Reset Daily Free Credits</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Native Auth Modal -->
   <div id="auth-modal" class="modal-overlay" onclick="closeAuthModal(event)">
     <div class="modal-body" onclick="event.stopPropagation()" style="max-width: 420px;">
@@ -276,8 +307,76 @@
     let savedBookmarks = JSON.parse(localStorage.getItem('upsc_bookmarks') || '[]');
     let currentUser = JSON.parse(localStorage.getItem('nexusgs_user') || 'null');
 
+    // Freemium Credit Management System
+    const DAILY_FREE_LIMIT = 2;
+    function checkAndResetCredits() {
+      const today = new Date().toDateString();
+      let record = JSON.parse(localStorage.getItem('nexusgs_ai_credits') || 'null');
+      if (!record || record.date !== today) {
+        record = { date: today, used: 0 };
+        localStorage.setItem('nexusgs_ai_credits', JSON.stringify(record));
+      }
+      return record;
+    }
+
+    function getRemainingCredits() {
+      const isPro = localStorage.getItem('nexusgs_is_pro') === 'true';
+      if (isPro) return 'UNLIMITED (PRO)';
+      const record = checkAndResetCredits();
+      return Math.max(0, DAILY_FREE_LIMIT - record.used);
+    }
+
+    function consumeCredit() {
+      const isPro = localStorage.getItem('nexusgs_is_pro') === 'true';
+      if (isPro) return true;
+      const record = checkAndResetCredits();
+      if (record.used >= DAILY_FREE_LIMIT) {
+        openProModal();
+        return false;
+      }
+      record.used++;
+      localStorage.setItem('nexusgs_ai_credits', JSON.stringify(record));
+      updateCreditDisplay();
+      return true;
+    }
+
+    function updateCreditDisplay() {
+      const badge = document.getElementById('credit-badge');
+      const isPro = localStorage.getItem('nexusgs_is_pro') === 'true';
+      if (isPro) {
+        badge.innerHTML = `⚡ Pro Plan: <strong>Active (Unlimited)</strong>`;
+        badge.style.color = '#34d399';
+        badge.style.borderColor = 'rgba(52, 211, 153, 0.4)';
+        badge.style.background = 'rgba(52, 211, 153, 0.15)';
+      } else {
+        const remaining = getRemainingCredits();
+        badge.innerHTML = `⚡ Free AI Credits: <strong>${remaining}/${DAILY_FREE_LIMIT}</strong>`;
+      }
+    }
+
+    function openProModal() { document.getElementById('pro-modal').classList.add('active'); }
+    function closeProModal(e) {
+      if (!e || e.target.id === 'pro-modal' || e.target.className === 'close-btn') document.getElementById('pro-modal').classList.remove('active');
+    }
+
+    function simulateProUpgrade() {
+      localStorage.setItem('nexusgs_is_pro', 'true');
+      closeProModal();
+      updateCreditDisplay();
+      alert('🎉 Success! Your NexusGS Pro pass is now active. Enjoy unlimited AI generation and answer grading.');
+    }
+
+    function resetCreditsForTesting() {
+      localStorage.removeItem('nexusgs_ai_credits');
+      localStorage.removeItem('nexusgs_is_pro');
+      updateCreditDisplay();
+      closeProModal();
+      alert('Credits reset to 2/2 free daily uses.');
+    }
+
     window.addEventListener('load', () => {
       updateAuthUI();
+      updateCreditDisplay();
       initApp();
     });
 
@@ -369,6 +468,8 @@
     }
 
     async function evaluateHandwrittenAnswer() {
+      if (!consumeCredit()) return;
+
       const paper = document.getElementById('eval-paper').value;
       const markerType = document.getElementById('eval-type').value;
       const question = document.getElementById('eval-question').value.trim();
@@ -473,6 +574,8 @@
     }
 
     async function generateDynamicWikiArticle(searchTerm) {
+      if (!consumeCredit()) return;
+
       const container = document.getElementById('news-container');
       container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: #38bdf8; padding: 4rem 0;">✨ Gemini AI is synthesizing a Wikipedia-grade study article for <strong>"${searchTerm}"</strong>...</div>`;
 
