@@ -23,13 +23,17 @@ module.exports = async function handler(req, res) {
 
     const ai = new GoogleGenAI({ apiKey });
 
+    // Dynamically set total marks based on whether it's a 10-marker or 15-marker
+    const totalMarks = markerType && markerType.includes('15') ? 15 : 10;
+    const wordLimit = markerType && markerType.includes('15') ? '250 words' : '150 words';
+
     const prompt = `Act as a strict UPSC Civil Services Mains examiner. Evaluate the provided handwritten answer photo for ${paper} (${markerType}).
     Question: "${question}"
 
     Provide your evaluation in clean HTML format:
-    1. Overall Score out of 10 with a brief examiner verdict.
-    2. Handwriting & Presentation Review (spacing, structure, margins, headings).
-    3. Content & Breadth (dimensional coverage, committee reports, keywords used vs missing).
+    1. Overall Score out of ${totalMarks} (e.g., X / ${totalMarks}) with a brief examiner verdict. Check word count adherence (${wordLimit}) and structural depth.
+    2. Handwriting & Presentation Review (spacing, structure, margins, sub-headings).
+    3. Content & Breadth (dimensional coverage, committee reports, Supreme Court judgments, keywords used vs missing).
     4. Scope for Improvement & Model Conclusion suggestion.`;
 
     let cleanBase64 = imageBase64;
@@ -49,14 +53,11 @@ module.exports = async function handler(req, res) {
 
     let response;
     try {
-      // Try primary model
       response = await ai.models.generateContent({
         model: 'gemini-3.8-flash',
         contents: contents,
       });
     } catch (primaryErr) {
-      console.warn("Primary model busy, switching to fallback gemini-3.6-flash...", primaryErr);
-      // Automatic fallback to secondary stable model if high demand occurs
       response = await ai.models.generateContent({
         model: 'gemini-3.6-flash',
         contents: contents,
