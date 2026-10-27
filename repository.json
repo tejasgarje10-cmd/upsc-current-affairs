@@ -1,0 +1,66 @@
+[
+  {
+    "id": "repo-gs2-01",
+    "title": "UNCLOS & Maritime Security Architecture in the Indo-Pacific",
+    "paper": "GS-2",
+    "topic": "International Relations & Geopolitics",
+    "static_linkage": "International Law & Maritime Security",
+    "prelims_pointers": [
+      "UNCLOS defines Territorial Waters (12 NM), Contiguous Zone (24 NM), and Exclusive Economic Zone (200 NM).",
+      "International Seabed Authority (ISA) regulates mineral-related activities in international seabed areas.",
+      "India's SAGAR doctrine (Security and Growth for All in the Region) guides maritime diplomacy."
+    ],
+    "mains_perspective": {
+      "context": "Ensuring a rules-based order, freedom of navigation, and overflight in critical sea lines of communication.",
+      "key_arguments": "Rising maritime friction, non-traditional security threats (piracy, IUU fishing), and strategic bottlenecks.",
+      "way_forward": "Strengthen Quad Maritime Domain Awareness and operationalize joint bilateral naval exercises."
+    }
+  },
+  {
+    "id": "repo-gs3-01",
+    "title": "Fiscal Responsibility and Budget Management (FRBM) Act & Macroeconomic Stability",
+    "paper": "GS-3",
+    "topic": "Indian Economy & Fiscal Policy",
+    "static_linkage": "Ramesh Singh Economy Ch 8 (Fiscal Policy)",
+    "prelims_pointers": [
+      "NK Singh Committee recommended a Debt-to-GDP ratio target of 60% (40% Centre, 20% States).",
+      "Escape clause under FRBM allows deviation during national security, calamity, or structural collapse."
+    ],
+    "mains_perspective": {
+      "context": "Balancing growth-oriented capital spending with medium-term fiscal consolidation targets.",
+      "key_arguments": "High revenue expenditure, off-budget liabilities, and state-level fiscal deficits pressure public finances.",
+      "way_forward": "Establish an independent Fiscal Council to audit budget assumptions and enforce fiscal discipline."
+    },
+  {
+    "id": "repo-gs4-01",
+    "title": "2nd ARC Recommendations on Ethics in Governance & Probity",
+    "paper": "GS-4",
+    "topic": "Public Service Ethics & Probity",
+    "static_linkage": "Ethics in Administration & ARC 4th Report",
+    "prelims_pointers": [
+      "2nd ARC 4th Report specifically addresses Ethics in Governance.",
+      "CVC Act 2003 grants statutory status to Central Vigilance Commission."
+    ],
+    "mains_perspective": {
+      "context": "Building transparent, accountable administrative systems to eliminate discretionary corruption.",
+      "key_arguments": "Administrative opacity, lack of whistleblower protection, and delayed departmental proceedings undermine integrity.",
+      "way_forward": "Implement mandatory e-governance audits, proactive RTI disclosures, and value-based civil service training."
+    }
+  },
+  {
+    "id": "repo-gs1-01",
+    "title": "Preservation of Coastal Fortresses & Maratha Heritage Architecture",
+    "paper": "GS-1",
+    "topic": "Indian Art, Culture & Heritage",
+    "static_linkage": "Nitin Singhania Art & Culture Ch 1",
+    "prelims_pointers": [
+      "Maratha Military Landscapes were nominated for UNESCO World Heritage site recognition.",
+      "Archaeological Survey of India (ASI) acts as statutory custodian under AMASR Act 1958."
+    ],
+    "mains_perspective": {
+      "context": "Strategic conservation of 17th-century coastal, sea, and hill fort structures across Western India.",
+      "key_arguments": "Promoting sustainable eco-tourism while preventing structural degradation from coastal weathering.",
+      "way_forward": "Adopt scientific stone preservation methods and community-led heritage management."
+    }
+  }
+]
