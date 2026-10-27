@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-  <title>UPSC Pulse Workspace & Vision Evaluator</title>
+  <title>NexusGS Workspace & Vision Evaluator</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     
@@ -125,11 +125,6 @@
       color: #ffffff; width: 36px; height: 36px; border-radius: 50%; font-size: 1.25rem; cursor: pointer;
       display: flex; align-items: center; justify-content: center; z-index: 10;
     }
-
-    .ai-research-banner {
-      background: linear-gradient(135deg, rgba(2, 132, 199, 0.2), rgba(99, 102, 241, 0.2));
-      border: 1px solid rgba(56, 189, 248, 0.4); padding: 1.5rem; border-radius: 1rem; text-align: center; margin-bottom: 1.5rem;
-    }
     .btn-ai {
       background: linear-gradient(135deg, #0284c7, #6366f1); color: #fff; border: none;
       padding: 0.75rem 1.5rem; border-radius: 0.625rem; font-weight: 700; cursor: pointer; font-size: 0.95rem; box-shadow: 0 4px 12px rgba(2, 132, 199, 0.4);
@@ -141,10 +136,10 @@
     
     <nav class="app-navbar">
       <div class="brand-group">
-        <div class="brand-icon">CSE</div>
+        <div class="brand-icon">NG</div>
         <div>
-          <div class="brand-title">UPSC Pulse Workspace</div>
-          <div class="brand-sub">Knowledge Base & Vision Answer Grader</div>
+          <div class="brand-title">NexusGS</div>
+          <div class="brand-sub">UPSC Knowledge Base & Vision Grader</div>
         </div>
       </div>
 
@@ -319,7 +314,6 @@
       if (!e || e.target.id === 'evaluator-modal' || e.target.className === 'close-btn') document.getElementById('evaluator-modal').classList.remove('active');
     }
 
-    // Local image compression to bypass Vercel limits
     function compressImageAndConvertToBase64(file) {
       return new Promise((resolve, reject) => {
         const reader = new FileReader();
