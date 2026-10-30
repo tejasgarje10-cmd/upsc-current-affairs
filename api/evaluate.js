@@ -1,14 +1,13 @@
 import { GoogleGenAI } from '@google/genai';
 
 export default async function handler(req, res) {
-  if (req.method !== 'POST') {
+  // Support both POST (manual frontend calls) and GET (Vercel automatic daily Cron triggers)
+  if (req.method !== 'POST' && req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
   try {
-    const { action, searchTerm, question, paper, markerType, imageBase64, mimeType } = req.body;
     const apiKey = process.env.GEMINI_API_KEY;
-    
     if (!apiKey) {
       return res.status(500).json({ error: 'GEMINI_API_KEY is not configured on Vercel.' });
     }
@@ -16,8 +15,11 @@ export default async function handler(req, res) {
     const ai = new GoogleGenAI({ apiKey });
     const modelName = 'gemini-2.0-flash';
 
-    // 1. Bulk Daily Current Affairs Synthesis
-    if (action === 'generateDailyBatch') {
+    const action = req.body?.action || (req.method === 'GET' ? 'generateDailyBatch' : null);
+    const { searchTerm, question, paper, markerType, imageBase64, mimeType } = req.body || {};
+
+    // 1. Bulk Daily Current Affairs Synthesis (Triggered automatically by Cron or manually)
+    if (action === 'generateDailyBatch' || req.method === 'GET') {
       const prompt = `You are a senior UPSC Civil Services examination expert and current affairs director at a premier Delhi institute. 
       Generate a comprehensive batch of exactly 8 distinct, high-yield current affairs articles covering recent national policy changes, international relations, economic shifts, scientific breakthroughs, and governance issues spanning GS-1, GS-2, GS-3, and GS-4.
       Return ONLY a valid JSON array (no markdown code blocks, no backticks) matching this exact schema:
@@ -48,6 +50,12 @@ export default async function handler(req, res) {
       else if (rawText.startsWith('```')) rawText = rawText.replace(/^```/, '').replace(/```$/, '').trim();
 
       const parsed = JSON.parse(rawText);
+      
+      // If it's a Vercel cron job trigger (GET request), return a clean success confirmation
+      if (req.method === 'GET') {
+        return res.status(200).json({ success: true, message: "Daily current affairs batch successfully generated via cron.", count: parsed.length });
+      }
+
       return res.status(200).json({ articles: parsed });
     }
 
